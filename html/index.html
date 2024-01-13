@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Add some basic styling for the navigation bar */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        nav a {
+        float: left;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Grid list styles */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 40px;
+            padding: 30px;
+        }
+
+        .grid-item {
+            border-radius: 20px;
+
+            text-align: center;
+            display: grid;
+            grid-auto-flow: row;
+            align-items: center;
+            justify-items: center;
+
+            width: 150px;
+            height: 150px;
+            background-color: rgb(235, 235, 235);
+        }
+
+        .icon {
+            display: inline-block;
+            width: 80%;
+            height: 50px;
+            background-color: rgb(255, 255, 255);
+            border-radius: 30px;
+            line-height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .icon.active {
+            background-color: #4CAF50;
+            color: rgb(0, 0, 0);
+        }
+
+        .settings-button {
+            margin-top: -30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background-color: rgb(133, 133, 133);
+            padding: 5px 10px;
+
+            a {
+                text-decoration: none;
+                color: rgb(0, 0, 0);
+            }
+        }
+
+        #fx-1 {
+            background: linear-gradient(-45deg, white, gray, white, gray, white, gray);
+        }
+
+        #fx-2 {
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet, red);
+        }
+
+        #fx-3 {
+            background: radial-gradient(circle, #F9FF00, #0600FF, #00FFC4, #FF00E0, #00FF1F, blue);
+        }
+  </style>
+</head>
+<body>
+
+<!-- Navigation bar -->
+<nav>
+    <a href="/">Home</a>
+    <a href="colors">Colors</a>
+    <a href="setup">Setup</a>
+    <a href="settings">Settings</a>
+  </nav>
+  
+  <!-- Content with Grid List -->
+  <div class="grid-container">
+    <div class="grid-item" id="fx-1">
+      <div class="icon" id="icon1">Strobo</div>
+      <div class="settings-button"><a href="#settings1">Settings</a></div>
+    </div>
+    <div class="grid-item" id="fx-2">
+      <div class="icon" id="icon2">Flow</div>
+      <div class="settings-button"><a href="#settings2">Settings</a></div>
+    </div>
+    <div class="grid-item" id="fx-3">
+        <div class="icon" id="icon2">Shooter</div>
+        <div class="settings-button"><a href="#settings3">Settings</a></div>
+      </div>
+  </div>
+  
+  <script>
+    // JavaScript to handle icon activation and deactivation
+    document.addEventListener('DOMContentLoaded', function() {
+      const icons = document.querySelectorAll('.icon');
+  
+      icons.forEach(icon => {
+        icon.addEventListener('click', function() {
+          icons.forEach(otherIcon => {
+            if (otherIcon !== icon) {
+              otherIcon.classList.remove('active');
+            }
+          });
+  
+          icon.classList.toggle('active');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
