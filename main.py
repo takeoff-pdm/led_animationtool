@@ -1,6 +1,35 @@
 from random import randint
 from time import sleep
-from rpi_ws281x import Adafruit_NeoPixel, Color
+# from rpi_ws281x import Adafruit_NeoPixel, Color
+
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # LED strip configuration:
 LED_COUNT      = 60      # Number of LED pixels.
@@ -122,4 +151,28 @@ def main():
         return
 
 if __name__ == '__main__':
-    main()
+    # main()
+    pass
+
+app = FastAPI()
+
+@app.get('/', response_class=HTMLResponse)
+async def root():
+    with open('./html/index.html', 'r', encoding='utf-8') as txt_file:
+        return txt_file.read()
+
+@app.get('/colors', response_class=HTMLResponse)
+async def colors():
+    with open('./html/colors.html', 'r', encoding='utf-8') as txt_file:
+        return txt_file.read()
+
+@app.get('/setup', response_class=HTMLResponse)
+async def root():
+    with open('./html/setup.html', 'r', encoding='utf-8') as txt_file:
+        return txt_file.read()
+    
+
+@app.get('/settings', response_class=HTMLResponse)
+async def root():
+    with open('./html/settings.html', 'r', encoding='utf-8') as txt_file:
+        return txt_file.read()
