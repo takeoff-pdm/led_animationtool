@@ -26,6 +26,16 @@ def remove_color_sequence(name: str):
     
     return True
 
+def update_color_sequence(name: str, description: str, selection: int, color_amount: int) -> bool:
+    """Update color_sequence by name.
+    """
+    if not Database.push_to_db('UPDATE color_sequences SET description = :description, selection = :selection, color_amount = :color_amount \
+                                WHERE name = :name', 
+                                  {'name': name, 'description': description, 'selection': selection, 'color_amount': color_amount}):
+        return False
+    
+    return True
+
 def fetch_color_sequences():
     color_sequences_data = Database.fetchall_from_db('SELECT name, description, selection FROM color_sequences', {})
 

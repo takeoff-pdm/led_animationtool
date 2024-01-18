@@ -20,6 +20,16 @@ def remove_section(name: str):
     
     return True
 
+def update_section(name: str, start_led: int, end_led: int) -> bool:
+    """Update section by name.
+    """
+    if not Database.push_to_db('UPDATE sections SET start_led = :start_led, end_led = :end_led \
+                                WHERE name = :name', 
+                                  {'name': name, 'start_led': start_led, 'end_led': end_led}):
+        return False
+    
+    return True
+
 def fetch_sections():
     sections_data = Database.fetchall_from_db('SELECT name, start_led, end_led FROM sections', {})
 

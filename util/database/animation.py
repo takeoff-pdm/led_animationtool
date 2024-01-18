@@ -26,6 +26,16 @@ def remove_animation(name: str):
     
     return True
 
+def update_animation(name: str, description: str, variation: int, direction: int) -> bool:
+    """Update animation by name.
+    """
+    if not Database.push_to_db('UPDATE animations SET description = :description, variation = :variation, direction = :direction \
+                                WHERE name = :name', 
+                                  {'name': name, 'description': description, 'variation': variation, 'direction': direction}):
+        return False
+    
+    return True
+
 def fetch_animations():
     animations_data = Database.fetchall_from_db('SELECT name, description, variation, direction FROM animations', {})
 
