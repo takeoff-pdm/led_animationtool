@@ -30,7 +30,7 @@
     }
 
      /* Color sequences */
-     .add-chunk-btn {
+     .add-section-btn {
       display: block;
       margin: 20px 20%;
       padding: 10px 20px;
@@ -44,12 +44,12 @@
       cursor: pointer;
     }
 
-    .chunk-list {
+    .section-list {
       list-style-type: none;
       padding: 0;
     }
 
-    .chunk-item {
+    .section-item {
       margin: 10px 7%;
       padding: 10px;
       border: 1px solid #ddd;
@@ -103,55 +103,39 @@
   <a href="settings">Settings</a>
 </nav>
 
-<!-- Add Chunk button -->
-<a href="setup/create-chunk" class="add-chunk-btn">Add Chunk</a>
+<!-- Add Section button -->
+<a href="setup/create-section" class="add-section-btn">Add Section</a>
 
-<!-- Chunk List -->
-<ul class="chunk-list">
-  <li class="chunk-item">
+<!-- Section List -->
+<ul class="section-list">
+  <li class="section-item">
     <strong>Decke links</strong>
     <input type="number" class="text-area start" id="start-1" placeholder="Start-Pixel"></input>
     <input type="number" class="text-area end" id="end-1" placeholder="End-Pixel"></input>
 
-    <label for="reverse-1" class="reverse-checkbox">
-    <input type="checkbox" id="reverse2" name="reverse-1"> Reverse
-    </label>
-
     <button class="update-btn">Update</button>
     <button class="delete-btn">Delete</button>
   </li>
-  <li class="chunk-item">
+  <li class="section-item">
     <strong>Decke mitte</strong>
     <input type="number" class="text-area start" id="start-1" placeholder="Start-Pixel"></input>
     <input type="number" class="text-area end" id="end-1" placeholder="End-Pixel"></input>
 
-    <label for="reverse-1" class="reverse-checkbox">
-    <input type="checkbox" id="reverse2" name="reverse-1"> Reverse
-    </label>
-
     <button class="update-btn">Update</button>
     <button class="delete-btn">Delete</button>
   </li>
-  <li class="chunk-item">
+  <li class="section-item">
     <strong>Decke rechts</strong>
     <input type="number" class="text-area start" id="start-1" placeholder="Start-Pixel"></input>
     <input type="number" class="text-area end" id="end-1" placeholder="End-Pixel"></input>
 
-    <label for="reverse-1" class="reverse-checkbox">
-    <input type="checkbox" id="reverse2" name="reverse-1"> Reverse
-    </label>
-
     <button class="update-btn">Update</button>
     <button class="delete-btn">Delete</button>
   </li>
-  <li class="chunk-item">
+  <li class="section-item">
     <strong>Wand</strong>
     <input type="number" class="text-area start" id="start-1" placeholder="Start-Pixel"></input>
     <input type="number" class="text-area end" id="end-1" placeholder="End-Pixel"></input>
-
-    <label for="reverse-1" class="reverse-checkbox">
-    <input type="checkbox" id="reverse2" name="reverse-1"> Reverse
-    </label>
 
     <button class="update-btn">Update</button>
     <button class="delete-btn">Delete</button>
