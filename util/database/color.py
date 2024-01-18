@@ -88,3 +88,13 @@ def fetch_colors_from_sequence(color_sequence: str):
     
     else:
         return [ recreate_color(colors_data) ]
+
+def fetch_color(color_sequence: str, position: int):
+    color_data = Database.fetchone_from_db('SELECT color_sequence, position, red, green, blue FROM colors \
+                                            WHERE color_sequence = :color_sequence AND position = :position', 
+                                           {'color_sequence': color_sequence})
+
+    if not color_data:
+        return False
+
+    return recreate_color(color_data)

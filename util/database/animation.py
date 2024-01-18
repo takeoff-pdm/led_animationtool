@@ -5,16 +5,18 @@ def recreate_animation(animation_data):
         'name': animation_data[0],
         'description': animation_data[1],
         'variation': animation_data[2],
-        'direction': animation_data[3]
+        'direction': animation_data[3],
+        'color_sequence': animation_data[4]
     }
 
-def add_animation(name: str, description: str, variation: int, direction: int) -> bool:
-    if not Database.push_to_db('INSERT INTO animations VALUES(:name, :description, :variation)', 
+def add_animation(name: str, description: str, variation: int, direction: int, color_sequence: str) -> bool:
+    if not Database.push_to_db('INSERT INTO animations VALUES(:name, :description, :variation, :color_sequence)', 
                                   {
                                       'name': name, 
                                       'description': description, 
                                       'variation': variation, 
-                                      'direction': direction
+                                      'direction': direction,
+                                      'color_sequence': color_sequence
                                   }):
         return False
     
@@ -26,18 +28,25 @@ def remove_animation(name: str):
     
     return True
 
-def update_animation(name: str, description: str, variation: int, direction: int) -> bool:
+def update_animation(name: str, description: str, variation: int, direction: int, color_sequence: str) -> bool:
     """Update animation by name.
     """
-    if not Database.push_to_db('UPDATE animations SET description = :description, variation = :variation, direction = :direction \
-                                WHERE name = :name', 
-                                  {'name': name, 'description': description, 'variation': variation, 'direction': direction}):
+    if not Database.push_to_db('UPDATE animations SET description = :description, variation = :variation, \
+                                direction = :direction, color_sequence = :color_sequence WHERE name = :name', 
+                                  {
+                                      'name': name, 
+                                      'description': description, 
+                                      'variation': variation, 
+                                      'direction': direction, 
+                                      'color_sequence': color_sequence
+                                  }):
         return False
     
     return True
 
 def fetch_animations():
-    animations_data = Database.fetchall_from_db('SELECT name, description, variation, direction FROM animations', {})
+    animations_data = Database.fetchall_from_db('SELECT name, description, variation, direction, \
+                                                 color_sequence FROM animations', {})
 
     if animations_data == None:
         return False
@@ -56,8 +65,9 @@ def fetch_animations():
         return [ recreate_animation(animations_data) ]
 
 def fetch_animation(name: str):
-    animation_data = Database.fetchone_from_db('SELECT name, description, variation, direction FROM animations \
-                                              WHERE name = :name', {'name': name})
+    animation_data = Database.fetchone_from_db('SELECT name, description, variation, direction, \
+                                                color_sequence FROM animations \
+                                                WHERE name = :name', {'name': name})
 
     if animation_data == None:
         return False

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS color_sequences (
 );
 
 CREATE TABLE IF NOT EXISTS colors (
-    color_sequence VARCHAR(32) UNIQUE NOT NULL, -- Name of the sequence
+    color_sequence VARCHAR(32) NOT NULL, -- Name of the sequence
     position INT(32) NOT NULL, -- Position in sequence
     red INT(32) NOT NULL DEFAULT 0,
     green INT(32) NOT NULL DEFAULT 0,
@@ -24,5 +24,6 @@ CREATE TABLE IF NOT EXISTS animations (
     name VARCHAR(32) UNIQUE NOT NULL,
     description VARCHAR(128) NOT NULL,
     variation INT(32) NOT NULL DEFAULT 0, -- If multiple variations are possible
-    direction INT(32) NOT NULL DEFAULT 0 -- 0 normal, 1 reverse, 2, 3, 4, 5 switching every time, second, fourth, eighth time
+    direction INT(32) NOT NULL DEFAULT 0, -- 0 normal, 1 reverse, 2, 3, 4, 5 switching every time, second, fourth, eighth time
+    color_sequence VARCHAR(32) NOT NULL -- Name of the color sequence to play
 );
