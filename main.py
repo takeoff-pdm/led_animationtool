@@ -1,178 +1,109 @@
-from random import randint
-from time import sleep
-# from rpi_ws281x import Adafruit_NeoPixel, Color
-
+from uvicorn import run as run_api
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+from fastapi.responses import HTMLResponse, JSONResponse
+from typing import Union
 
+from util.database.database import Database
+from util.database.section import fetch_sections, fetch_section
+from util.database.color_sequence import fetch_color_sequences, fetch_color_sequence
+from util.database.color import fetch_colors, fetch_colors_from_sequence, fetch_color
+from util.database.animation import fetch_animations, fetch_animation
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# LED strip configuration:
-LED_COUNT      = 60      # Number of LED pixels.
-LED_PIN        = 18      # GPIO pin connected to the pixels (18 uses PWM!).
-LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 65      # Set to 0 for darkest and 255 for brightest
-LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
-LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
-
-def color_wipe(strip, color):
-    """Wipe color across display a pixel at a time."""
-    for i in range(strip.numPixels()):
-        strip.setPixelColor(i, color)
-    strip.show()
-
-def wheel(pos):
-    """Generate rainbow colors across 0-255 positions."""
-    if pos < 85:
-        return Color(pos * 3, 255 - pos * 3, 0)
-    elif pos < 170:
-        pos -= 85
-        return Color(255 - pos * 3, 0, pos * 3)
-    else:
-        pos -= 170
-        return Color(0, pos * 3, 255 - pos * 3)
-
-def rainbow_flow(strip, sleep_time):
-    first_led = int(LED_COUNT / 2)
-    second_led = first_led + 1
-    color_randomizer = randint(0, 256)
-
-    for x in range(int(LED_COUNT / 2)):
-        for i in range(strip.numPixels()):
-            # White blind effect
-            if i in range(int(LED_COUNT / 2) - int(LED_COUNT / 6) + int(x / 3), int(LED_COUNT / 2) + int(LED_COUNT / 6) + 1 - int(x / 3)):# and x < int(LED_COUNT / 2) * .5:
-                strip.setPixelColor(i, Color(255, 255, 255))
-            
-            # Rainbow flow
-            elif i in range(first_led - int(LED_COUNT / 5), first_led + 1):
-                strip.setPixelColor(i, wheel((i * 2 + color_randomizer) & 255))
-            
-            elif i in range(second_led, second_led + int(LED_COUNT / 5) + 1):
-                strip.setPixelColor(i, wheel((i * 2 + color_randomizer) & 255))
-            
-            # Rest
-            elif i <= int(LED_COUNT / 2):
-                strip.setPixelColor(i, wheel((color_randomizer - 64) & 255))
-            
-            else:
-                strip.setPixelColor(i, wheel((color_randomizer + 64) & 255))
-
-        strip.show()
-
-        first_led -= 1
-        second_led += 1
-
-        sleep(sleep_time / int(LED_COUNT / 2))
-
-def shooting_color(strip, sleep_time):
-    color = Color(255, 255, 255)
-    random_color = True
-
-    if random_color:
-        color = wheel((randint(0, 256)) & 255)
-
-    for x in range(int(LED_COUNT)):
-        for i in range(strip.numPixels()):
-            if i in range(x - int(LED_COUNT * .2), x + 1):
-                if i < 0:
-                    continue
-                
-                strip.setPixelColor(i, color)
-            
-            else:
-                strip.setPixelColor(i, 0)
-
-        strip.show()
-        sleep(sleep_time / int(LED_COUNT))
-
-def strobo(strip, sleep_time):
-    color = Color(255, 255, 255)
-    speed = 4
-    random_color = True
-
-    for x in range(4):
-        if random_color:
-            color = wheel((randint(0, 256)) & 255)
-        
-        for y in range(speed):
-            for i in range(strip.numPixels()):
-                if y % 2 == 0 and not (x == 0 and y == 2):
-                    strip.setPixelColor(i, color)
-                
-                elif x == 0 and y == 1:
-                    strip.setPixelColor(i, color)
-                
-                else:
-                    strip.setPixelColor(i, 0)
-
-            strip.show()
-            sleep(sleep_time / speed)
-
-def main():
-    # Initialize strip
-    strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
-    strip.begin()
-
-    # Arguments
-    bpm = 128
-    sleep_time = 60 / bpm
-
-    try:
-        while True:
-            strobo(strip, sleep_time)
-
-    except KeyboardInterrupt:
-        color_wipe(strip, Color(0,0,0))
-        return
-
-if __name__ == '__main__':
-    # main()
-    pass
+from section import Section
+from color_sequence import ColorSequence
+from color import Color
+from strip import Strip
 
 app = FastAPI()
+database = Database()
+strip = Strip()
 
-@app.get('/', response_class=HTMLResponse)
-async def root():
-    with open('./html/index.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
+class Name(BaseModel):
+    name: str
 
-@app.get('/colors', response_class=HTMLResponse)
-async def colors():
-    with open('./html/colors.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
 
-@app.get('/setup', response_class=HTMLResponse)
-async def root():
-    with open('./html/setup.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
+class Section(BaseModel):
+    old_name: Union[str, None]
+    name: str
+    start_led: int
+    end_led: int
+
+
+class Color(BaseModel):
+    color_sequence: str
+    position: int
+
+
+# API
+# Section
+@app.get('/api/get/sections', response_class=JSONResponse)
+async def get_sections():
+    return { 'sections': fetch_sections()}
+
+@app.get('/api/get/section', response_class=JSONResponse)
+async def get_section(name: Name):
+    return { 'section': fetch_section(name.name)}
+
+@app.post('/api/add/section', response_class=JSONResponse)
+async def add_section(section: Section):
+    if not strip.add_section(section.name, section.start_led, section.end_led):
+        return { 'success': False }
     
+    return { 'success': True }
 
-@app.get('/settings', response_class=HTMLResponse)
-async def root():
-    with open('./html/settings.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
+@app.post('/api/remove/section', response_class=JSONResponse)
+async def remove_section(name: Name):
+    if not strip.remove_section(name.name):
+        return { 'success': False }
+    
+    return { 'success': True }
+
+@app.post('/api/update/section', response_class=JSONResponse)
+async def update_section(section: Section):
+    if not strip.update_section(section.old_name, section.name, section.start_led, section.end_led):
+        return { 'success': False }
+    
+    return { 'success': True }
+
+# Color Sequence
+@app.get('/api/get/color_sequences', response_class=JSONResponse)
+async def get_color_sequences():
+    return fetch_color_sequence()
+
+@app.get('/api/get/color_sequence', response_class=JSONResponse)
+async def get_color_sequence(name: Name):
+    return fetch_color_sequence(name.name)
+
+# Color
+@app.get('/api/get/colors', response_class=JSONResponse)
+async def get_colors():
+    return fetch_colors()
+
+@app.get('/api/get/colors_from_sequence', response_class=JSONResponse)
+async def get_colors_from_sequence(name: Name):  # name is color-sequence
+    return fetch_colors_from_sequence(name.name)
+
+@app.get('/api/get/color', response_class=JSONResponse)
+async def get_color(color: Color):
+    return fetch_color(color.color_sequence, color.position)
+
+# Animation
+@app.get('/api/get/animations', response_class=JSONResponse)
+async def get_animations():
+    return fetch_animations
+
+@app.get('/api/get/animation', response_class=JSONResponse)
+async def get_animation(name: Name):
+    return fetch_animation(name.name)
+
+# Settings
+@app.get('/api/get/settings', response_class=JSONResponse)
+async def get_settings():
+    return strip.fetch_config()
+
+def main():
+    run_api("main:app", host='0.0.0.0', port=8000, log_level="info")
+
+if __name__ == "__main__":
+    main()
