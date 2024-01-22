@@ -1,4 +1,3 @@
-from logging import basicConfig, info as log_info, error as log_error, warning as log_warning
 from sqlite3 import connect
 from os.path import exists, join
 from os import getcwd
@@ -9,8 +8,7 @@ from os.path import dirname, abspath, join
 
 path.insert(0, join(dirname(abspath(__file__)), '..', '..'))
 
-from __init__ import DATABASE_FILE, LOG_LEVEL
-from util.log.logger import init_logger
+from __init__ import DATABASE_FILE
 
 
 def create_tables(cursor):
@@ -40,12 +38,9 @@ def create_database(overwrite=False):
     :return: Status code whether creation was successful
     :rtype: bool
     """
-    handler = init_logger()
-    basicConfig(level=LOG_LEVEL, handlers=[handler])
-
     # Check if the database already exists
     if exists(DATABASE_FILE) and not overwrite:
-        log_warning('Database already exists, not overwriting')
+        print('Database already exists, not overwriting')
 
         return False
 
