@@ -153,26 +153,3 @@ def main():
 if __name__ == '__main__':
     # main()
     pass
-
-app = FastAPI()
-
-@app.get('/', response_class=HTMLResponse)
-async def root():
-    with open('./html/index.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
-
-@app.get('/colors', response_class=HTMLResponse)
-async def colors():
-    with open('./html/colors.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
-
-@app.get('/setup', response_class=HTMLResponse)
-async def root():
-    with open('./html/setup.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
-    
-
-@app.get('/settings', response_class=HTMLResponse)
-async def root():
-    with open('./html/settings.html', 'r', encoding='utf-8') as txt_file:
-        return txt_file.read()
