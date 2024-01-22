@@ -14,7 +14,7 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
   animation,
 }) => {
   return (
-    <Card className="max-w-sm w-full">
+    <Card className="max-w-sm min-w-[384px] w-full">
       <CardHeader>
         <CardTitle className="">{animation.name}</CardTitle>
         <CardDescription>{animation.description}</CardDescription>

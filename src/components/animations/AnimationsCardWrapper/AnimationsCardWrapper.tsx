@@ -6,7 +6,7 @@ import { useAnimationsContext } from "../Context/Context";
 export const AnimationsCardWrapper: React.FC<{}> = ({}) => {
   const { loaded, animations } = useAnimationsContext();
   return (
-    <div className="gap-4 flex px-14">
+    <div className="gap-4 flex px-14 transition-all flex-col md:flex-row">
       {animations.map((a) => (
         <AnimationCard animation={a} />
       ))}
