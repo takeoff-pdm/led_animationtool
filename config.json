@@ -1,6 +1,7 @@
 {
     "brightness": 60,
     "led_count": 60,
+    "element_length": 60,
     "pin": 18,
     "frequency": 800000,
     "dma": 10,
