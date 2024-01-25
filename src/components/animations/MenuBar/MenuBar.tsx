@@ -12,8 +12,8 @@ import { useState } from "react";
 
 export const MenuBar: React.FC = () => {
   return (
-    <div className="w-full min-h-20 space-y-2 py-2 sm:flex justify-between px-14 items-center">
-      <div className="space-y-2 sm:space-y-0 sm:flex sm:space-x-5 items-center sm:mr-2">
+    <div className="w-full min-h-20 space-y-2 py-2 sm:flex justify-between sm:px-14 px-4  items-center">
+      <div className="flex space-x-2 sm:mr-2">
         <SectionSelector />
         <ColorSequenceSelector />
       </div>
@@ -37,7 +37,7 @@ const ColorSequenceSelector: React.FC = () => {
 
   return (
     <Select value={selectedSequence?.name} onValueChange={onSelect}>
-      <SelectTrigger className="w-56">
+      <SelectTrigger className="sm:w-56 w-1/2">
         <SelectValue placeholder="Select Sequence"></SelectValue>
       </SelectTrigger>
       <SelectContent>
@@ -65,7 +65,7 @@ const SectionSelector: React.FC = () => {
 
   return (
     <Select value={selectedSelection?.name} onValueChange={onSelect}>
-      <SelectTrigger className="w-56">
+      <SelectTrigger className="sm:w-56 w-1/2">
         <SelectValue placeholder="Select Section"></SelectValue>
       </SelectTrigger>
       <SelectContent>

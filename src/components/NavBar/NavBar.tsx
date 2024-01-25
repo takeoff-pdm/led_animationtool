@@ -44,7 +44,7 @@ const ITEMS_NAVBAR: NavBarItem[] = [
 
 export const NavBar: React.FC = () => {
   return (
-    <div className="h-20 flex items-center px-10 border-b">
+    <div className="h-20 flex items-center sm:px-10 px-4  border-b">
       {ITEMS_NAVBAR.map((item) => (
         <NavBarItem key={item.href} {...item} />
       ))}
