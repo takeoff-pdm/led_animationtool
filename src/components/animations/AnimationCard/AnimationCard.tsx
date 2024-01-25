@@ -72,12 +72,18 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
                 <SelectValue placeholder="Sequence"></SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">Red-Blue</SelectItem>
+                <SelectItem
+                  value="0"
+                >
+                  Red-Blue
+                </SelectItem>
                 <SelectItem value="1">Green-Yellow-Red</SelectItem>
                 <SelectItem value="2">Blue-Purple-Yellow</SelectItem>
               </SelectContent>
             </Select>
-            <Button className="w-full" variant={"secondary"}>Update</Button>
+            <Button className="w-full" variant={"secondary"}>
+              Update
+            </Button>
           </div>
         )}
       </CardContent>

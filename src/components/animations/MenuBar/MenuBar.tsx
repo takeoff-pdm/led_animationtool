@@ -87,20 +87,23 @@ const BPMController: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      <Input
-        className="w-20"
-        placeholder="120"
-        value={bpmValue}
-        onChange={(e) => {
-          setBpmValue(parseInt(e.target.value));
-        }}
-        type="number"
-      />
-      <Button onClick={autoDetectBPM} variant={"secondary"}>
-        Auto Detect
-      </Button>
-      <Button onClick={onSave}>Save</Button>
+    <div className="sm:flex items-center sm:space-x-2 space-y-2">
+      <Button className="w-full sm:w-40">BPM Tapper</Button>
+      <div className="flex items-center space-x-2">
+        <Input
+          className="w-20"
+          placeholder="120"
+          value={bpmValue}
+          onChange={(e) => {
+            setBpmValue(parseInt(e.target.value));
+          }}
+          type="number"
+        />
+        <Button onClick={autoDetectBPM} variant={"secondary"}>
+          Auto Detect
+        </Button>
+        <Button onClick={onSave}>Save</Button>
+      </div>
     </div>
   );
 };
