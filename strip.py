@@ -3,9 +3,11 @@ from rpi_ws281x import Adafruit_NeoPixel
 
 from __init__ import CONFIG_FILE
 
-from util.database.section import fetch_sections, fetch_section
+from util.database.section import fetch_sections, fetch_section, remove_section
+from util.database.color_sequence import fetch_color_sequences, fetch_color_sequence, remove_color_sequence
 
 from section import Section
+from color_sequence import ColorSequence
 
 from animations.animation import Animation
 from animations.flow import Flow
@@ -36,7 +38,14 @@ class Strip():
             self.sections.append(Section(section_data['name'], section_data['start_led'], section_data['end_led']))
         
         self.running_animations = []
-        
+
+        # Init color sequences
+        self.color_sequences =  []
+        color_sequences_data = fetch_color_sequences()
+
+        for color_sequence_data in color_sequences_data:
+            self.color_sequences.append(Section(color_sequence_data['name'], color_sequence_data['start_led'], color_sequence_data['end_led']))
+
     @staticmethod
     def fetch_config() -> dict:
         with open(CONFIG_FILE, 'r') as f:
@@ -56,6 +65,12 @@ class Strip():
         
         self.brightness = brightness
         self.update_config('brightness', self.brightness)
+
+        config = self.fetch_config()
+        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
+                                        config['dma'], config['led_invert'], config['brightness'], 
+                                        config['channel'])
+        
         return True
 
     def set_led_count(self, led_count: int) -> bool:
@@ -63,9 +78,28 @@ class Strip():
             return False
         
         self.led_count = led_count
-        self.update_config('brightness', self.led_count)
+        self.update_config('led_count', self.led_count)
+        
+        config = self.fetch_config()
+        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
+                                        config['dma'], config['led_invert'], config['brightness'], 
+                                        config['channel'])
+        return True
+
+    def set_bpm(self, bpm: int) -> bool:
+        if bpm < 1:
+            return False
+        
+        self.bpm = bpm
+        self.update_config('bpm', bpm.value)
+
+        config = self.fetch_config()
+        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
+                                        config['dma'], config['led_invert'], config['brightness'], 
+                                        config['channel'])
         return True
     
+    # Sections
     def add_section(self, name: str, start_led: int, end_led: int) -> bool:
         if fetch_section(name):
             return False
@@ -82,7 +116,7 @@ class Strip():
     def remove_section(self, name: str) -> bool:
         for section in self.sections:
             if section.name == name:
-                section.remove_section(name)
+                remove_section(name)
                 self.sections.remove(section)
                 
                 return True
@@ -99,7 +133,45 @@ class Strip():
                 return True
             
         return False
+    
+    # Color Sequences
+    def add_color_sequence(name: str, description: str, selection: int, color_amount: int) -> bool:
+        if fetch_color_sequence(name):
+            return False
+        
+        color_sequence = ColorSequence(name, description, selection, color_amount)
 
+        if not color_sequence.sync_changes_to_db(new=True):
+            return False
+        
+        self.color_sequences.append(color_sequence)
+
+        return True
+    
+    def remove_color_sequence(self, name: str) -> bool:
+        for color_sequence in self.color_sequences:
+            if color_sequence.name == name:
+                remove_color_sequence(name)
+                self.color_sequences.remove(color_sequence)
+                
+                return True
+            
+        return False
+
+    def update_color_sequence(self, old_name: str, name: str, description: str, 
+                              selection: int, color_amount: int) -> bool:
+        for color_sequence in self.color_sequences:
+            if color_sequence.name == old_name:
+                color_sequence.set_name(name)
+                color_sequence.set_description(description)
+                color_sequence.set_selection(selection)
+                color_sequence.set_color_amount(color_amount)
+
+                return True
+            
+        return False
+
+    # Animations
     @property
     def sleep_time(self):
         return 60 / self.bpm
