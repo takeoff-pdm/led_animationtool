@@ -4,19 +4,12 @@ from section import Section
 
 class Animation():
     def __init__(self, name: str, description: str= None, variation: int= None, 
-                 direction: int= None, color_sequence_name: str = None):
-        if not description or not variation or not direction or not color_sequence_name:
+                 direction: int= None):
+        if not description or not variation or not direction:
             self.name = name
             self.description = description
             self.variation = variation
             self.direction = direction
-
-            self.color_sequence = ColorSequence(color_sequence_name)
-            self.bpm = 1
-            self.start_led = 0
-            self.end_led = 0
-
-            self.animate = False
         
         else:
             animation_data = fetch_animation(name)
@@ -25,8 +18,13 @@ class Animation():
             self.description = animation_data['description']
             self.variation = animation_data['variation']
             self.direction = animation_data['direction']
+        
+        
+        self.bpm = 1
+        self.start_led = 0
+        self.end_led = 0
 
-            self.color_sequence = ColorSequence(animation_data['color_sequence'])
+        self.animate = False
     
     @property
     def sleep_time(self):
@@ -35,10 +33,10 @@ class Animation():
     def sync_changes_to_db(self, new: bool=False) -> bool:
         if new:
             return add_animation(self.name, self.description, self.variation, 
-                                 self.direction, self.color_sequence.name)
+                                 self.direction)
         
         return update_animation(self.name, self.description, self.variation, 
-                                self.direction, self.color_sequence.name)
+                                self.direction)
 
     # def set_name(self, name) -> bool:
     #     # Check if section with this name already exists
@@ -51,7 +49,7 @@ class Animation():
     #     self.name = name
 
     #     if not add_animation(self.name, self.description, self.variation, 
-    #                          self.direction, self.color_sequence.name):
+    #                          self.direction):
     #         return False
         
     #     return True
@@ -71,10 +69,5 @@ class Animation():
         
         self.sync_changes_to_db()
 
-    def set_color_sequence(self, color_sequence: str):
-        self.color_sequence = color_sequence
-        
-        self.sync_changes_to_db()
-
-    async def animate(self, bpm: int, section: Section):
+    async def animate(self, bpm: int, section: Section, color_sequence: ColorSequence):
         pass
