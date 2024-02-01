@@ -34,7 +34,7 @@ const ITEMS_NAVBAR: NavBarItem[] = [
   },
   {
     display_name: "Colors",
-    href: "/about",
+    href: "/colors",
   },
   {
     display_name: "Setup",

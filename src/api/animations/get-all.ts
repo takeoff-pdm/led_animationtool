@@ -23,6 +23,6 @@ export const getAllAnimations = async (): Promise<Animation[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(getMockData());
-    }, 1000); // Delay of 1 second
+    }, 300); // Delay of 0.3 second
   });
 };

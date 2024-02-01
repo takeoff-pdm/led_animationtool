@@ -87,7 +87,7 @@ const BPMController: React.FC = () => {
   };
 
   return (
-    <div className="sm:flex items-center sm:space-x-2 space-y-2">
+    <div className="sm:flex items-center sm:space-x-2 space-y-2 md:space-y-0">
       <Button className="w-full sm:w-40">BPM Tapper</Button>
       <div className="flex items-center space-x-2">
         <Input
