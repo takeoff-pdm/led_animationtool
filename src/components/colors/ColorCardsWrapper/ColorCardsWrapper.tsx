@@ -7,7 +7,7 @@ export const ColorCardsWrapper: React.FC<{}> = ({}) => {
   return (
     <div className="sm:px-14 px-4">
       <MenuBar />
-      <div className="gap-2 flex  transition-all flex-col md:flex-row py-0 sm:py-2">
+      <div className="gap-2 flex w-screen h-screen transition-all flex-col md:flex-row py-0 sm:py-2">
         {colorSequences.map((a) => (
           <ColorCard colorSequence={a} />
         ))}
