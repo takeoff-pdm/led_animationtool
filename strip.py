@@ -30,21 +30,23 @@ class Strip():
         
         self.strip.begin() # Start the strip
 
-        # Init sections
+        # Initialize sections
         self.sections =  []
         sections_data = fetch_sections()
 
         for section_data in sections_data:
-            self.sections.append(Section(section_data['name'], section_data['start_led'], section_data['end_led']))
+            self.sections.append(Section(section_data['id'], section_data['name'], 
+                                         section_data['start_led'], section_data['end_led']))
         
-        self.running_animations = []
-
-        # Init color sequences
+        # Initialize color sequences
         self.color_sequences =  []
         color_sequences_data = fetch_color_sequences()
 
         for color_sequence_data in color_sequences_data:
-            self.color_sequences.append(Section(color_sequence_data['name'], color_sequence_data['start_led'], color_sequence_data['end_led']))
+            self.color_sequences.append(ColorSequence(color_sequence_data['id'], color_sequence_data['name'], 
+                                                      color_sequence_data['start_led'], color_sequence_data['end_led']))
+            
+        self.running_animations = []
 
     @staticmethod
     def fetch_config() -> dict:
@@ -113,22 +115,24 @@ class Strip():
 
         return True
     
-    def remove_section(self, name: str) -> bool:
+    def remove_section(self, id: int) -> bool:
         for section in self.sections:
-            if section.name == name:
-                remove_section(name)
+            if section.id == id:
+                remove_section(id)
                 self.sections.remove(section)
                 
                 return True
             
         return False
 
-    def update_section(self, old_name: str, name: str, start_led: int, end_led: int) -> bool:
+    def update_section(self, id: int, name: str, start_led: int, end_led: int) -> bool:
         for section in self.sections:
-            if section.name == old_name:
-                section.set_name(name)
-                section.set_start_led(start_led)
-                section.set_end_led(end_led)
+            if section.id == id:
+                section.name = name
+                section.start_led = start_led
+                section.end_led = end_led
+                
+                section.sync_changes_to_db()
                 
                 return True
             
@@ -148,24 +152,24 @@ class Strip():
 
         return True
     
-    def remove_color_sequence(self, name: str) -> bool:
+    def remove_color_sequence(self, id: int) -> bool:
         for color_sequence in self.color_sequences:
-            if color_sequence.name == name:
-                remove_color_sequence(name)
+            if color_sequence.id == id:
+                remove_color_sequence(id)
                 self.color_sequences.remove(color_sequence)
                 
                 return True
             
         return False
 
-    def update_color_sequence(self, old_name: str, name: str, description: str, 
+    def update_color_sequence(self, id: int, name: str, description: str, 
                               selection: int, color_amount: int) -> bool:
         for color_sequence in self.color_sequences:
-            if color_sequence.name == old_name:
-                color_sequence.set_name(name)
-                color_sequence.set_description(description)
-                color_sequence.set_selection(selection)
-                color_sequence.set_color_amount(color_amount)
+            if color_sequence.id == id:
+                color_sequence.name = name
+                color_sequence.description = description
+                color_sequence.selection = selection
+                color_sequence.color_amount = color_amount
 
                 return True
             
@@ -211,3 +215,5 @@ class Strip():
                     section = possible_section
 
         animation.animate(self.bpm, section)
+        
+        self.running_animations.append(animation)
