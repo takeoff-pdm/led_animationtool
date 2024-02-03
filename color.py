@@ -2,50 +2,48 @@ from util.database.color import add_color, remove_color, update_color, fetch_col
 
 
 class Color():
-    def __init__(self, color_sequence: str, position: int, red: int, green: int, blue: int):
-        self.color_sequence = color_sequence
-        self.position = position
-        self.red = red
-        self.green = green
-        self.blue = blue
+    def __init__(self, id, color_sequence: str = None, position: int = None,
+                 red: int = None, green: int = None, blue: int = None):
+        self.id = id
+        
+        if color_sequence and position and red and green and blue:
+            self.color_sequence = color_sequence
+            self.position = position
+            self.red = red
+            self.green = green
+            self.blue = blue
+        
+        else:
+            color_data = fetch_color(id)
+            
+            self.color_sequence = color_data['color_sequence']
+            self.position = color_data['position']
+            self.red = color_data['red']
+            self.green = color_data['green']
+            self.blue = color_data['blue']
 
-    def sync_changes_to_db(self, new: bool=False) -> bool:
+    def sync_changes_to_db(self, new: bool = False) -> bool:
         if new:
             return add_color(self.color_sequence, self.position, self.red, self.green, self.blue)
         
-        return update_color(self.color_sequence, self.position, self.red, self.green, self.blue)
-
-    def set_color_sequence(self, color_sequence: str) -> bool:
-        # Check if sequence with this name already exists
-        if fetch_color(color_sequence, self.position) != None:
-            return False
-
-        if not remove_color(self.color_sequence):
-            return False
-
-        self.color_sequence = color_sequence
-
-        if not add_color(self.color_sequence, self.position, self.red, self.green, self.blue):
-            return False
-        
-        return True
+        return update_color(self.id, self.position, self.red, self.green, self.blue)
     
-    def set_position(self, position: int):
-        self.position = position
+    # def set_position(self, position: int):
+    #     self.position = position
 
-        self.sync_changes_to_db()
+    #     return self.sync_changes_to_db()
             
-    def set_red(self, red: int):
-        self.red = red
+    # def set_red(self, red: int):
+    #     self.red = red
 
-        self.sync_changes_to_db()
+    #     return self.sync_changes_to_db()
             
-    def set_position(self, green: int):
-        self.green = green
+    # def set_green(self, green: int):
+    #     self.green = green
 
-        self.sync_changes_to_db()
+    #     return self.sync_changes_to_db()
             
-    def set_position(self, blue: int):
-        self.blue = blue
+    # def set_blue(self, blue: int):
+    #     self.blue = blue
 
-        self.sync_changes_to_db()
+    #     return self.sync_changes_to_db()
