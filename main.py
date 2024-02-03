@@ -2,7 +2,7 @@ from uvicorn import run as run_api
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 
-from util.api.models import Name, Section, ColorSequence, Color, Animation, FullAnimation, Value
+from util.api.models import Id, Section, ColorSequence, Color, Animation, FullAnimation, Value
 
 from util.database.database import Database
 from util.database.section import fetch_sections, fetch_section
@@ -26,8 +26,8 @@ async def get_sections():
     return { 'sections': fetch_sections()}
 
 @app.get('/api/get/section', response_class=JSONResponse)
-async def get_section(name: Name):
-    return { 'section': fetch_section(name.name)}
+async def get_section(id: Id):
+    return { 'section': fetch_section(id.id)}
 
 @app.post('/api/add/section', response_class=JSONResponse)
 async def add_section(section: Section):
@@ -37,15 +37,15 @@ async def add_section(section: Section):
     return { 'success': True }
 
 @app.post('/api/remove/section', response_class=JSONResponse)
-async def remove_section(name: Name):
-    if not strip.remove_section(name.name):
+async def remove_section(id: IdId):
+    if not strip.remove_section(id.id):
         return { 'success': False }
     
     return { 'success': True }
 
 @app.post('/api/update/section', response_class=JSONResponse)
 async def update_section(section: Section):
-    if not strip.update_section(section.old_name, section.name, section.start_led, section.end_led):
+    if not strip.update_section(section.id, section.name, section.start_led, section.end_led):
         return { 'success': False }
     
     return { 'success': True }
@@ -56,8 +56,8 @@ async def get_color_sequences():
     return fetch_color_sequence()
 
 @app.get('/api/get/color_sequence', response_class=JSONResponse)
-async def get_color_sequence(name: Name):
-    return fetch_color_sequence(name.name)
+async def get_color_sequence(id: Id):
+    return fetch_color_sequence(id.id)
 
 @app.post('/api/add/color_sequence', response_class=JSONResponse)
 async def add_color_sequence(color_sequence: ColorSequence):
@@ -68,15 +68,15 @@ async def add_color_sequence(color_sequence: ColorSequence):
     return { 'success': True }
 
 @app.post('/api/remove/color_sequence', response_class=JSONResponse)
-async def remove_color_sequence(name: Name):
-    if not strip.remove_color_sequence(name.name):
+async def remove_color_sequence(id: Id):
+    if not strip.remove_color_sequence(id.id):
         return { 'success': False }
     
     return { 'success': True }
 
 @app.post('/api/update/color_sequence', response_class=JSONResponse)
 async def update_color_sequence(color_sequence: ColorSequence):
-    if not strip.update_color_sequence(color_sequence.old_name, color_sequence.name, 
+    if not strip.update_color_sequence(color_sequence.id, color_sequence.name, 
                                        color_sequence.description, color_sequence.selection, 
                                        color_sequence.color_amount):
         return { 'success': False }
@@ -89,12 +89,12 @@ async def get_colors():
     return fetch_colors()
 
 @app.get('/api/get/colors_from_sequence', response_class=JSONResponse)
-async def get_colors_from_sequence(name: Name):  # name is color-sequence
-    return fetch_colors_from_sequence(name.name)
+async def get_colors_from_sequence(id: Id): # Id from color_sequence
+    return fetch_colors_from_sequence(id.id)
 
 @app.get('/api/get/color', response_class=JSONResponse)
 async def get_color(color: Color):
-    return fetch_color(color.color_sequence, color.position)
+    return fetch_color(id)
 
 # Animation
 @app.get('/api/get/animations', response_class=JSONResponse)
@@ -102,11 +102,11 @@ async def get_animations():
     return fetch_animations()
 
 @app.get('/api/get/animation', response_class=JSONResponse)
-async def get_animation(name: Name):
-    return fetch_animation(name.name)
+async def get_animation(id: Id):
+    return fetch_animation(id.id)
 
 @app.post('/api/update/animation', response_class=JSONResponse)
-async def update_animation(animation: Animation):
+async def update_anim(animation: Animation):
     if not fetch_animation(animation.name):
         return { 'success': False }
     
@@ -121,10 +121,8 @@ async def update_full_animation(full_animation: FullAnimation):
     
     remove_animation(full_animation.old_name)
 
-    add_animation(full_animation.name, full_animation.description, 
-                  full_animation.variation, full_animation.direction)
-
-    return { 'success': True }
+    return { 'success': add_animation(full_animation.name, full_animation.description, 
+                        full_animation.variation, full_animation.direction) }
 
 # Settings
 @app.get('/api/get/settings', response_class=JSONResponse)

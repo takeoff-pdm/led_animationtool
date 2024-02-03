@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from typing import Union
 
-class Name(BaseModel):
-    name: str
+class Id(BaseModel):
+    id: int
 
 class Section(BaseModel):
     old_name: Union[str, None]
