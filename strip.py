@@ -1,4 +1,5 @@
 from json import load, dump
+from time import time_ns
 from rpi_ws281x import Adafruit_NeoPixel
 
 from __init__ import CONFIG_FILE
@@ -47,6 +48,8 @@ class Strip():
                                                       color_sequence_data['start_led'], color_sequence_data['end_led']))
             
         self.running_animations = []
+        
+        self.animate()
 
     @staticmethod
     def fetch_config() -> dict:
@@ -187,14 +190,57 @@ class Strip():
             self.strip.setPixelColor(i, color)
 
         self.strip.show()
+    
+    def add_animation(animation: Animation, section: Section, color_sequence: ColorSequence):
+        animation.bpm = self.bpm
+        animation.start_led = section.start_led
+        animation.end_led = section.end_led
+        
+        animation.color_sequence = color_sequence
+        
+        animation.strip = self.strip
+        
+        self.running_animations.append(animation)
+        
+    async def animate(self):
+        while True:
+            starting_time = time_ns() // 1_000_000
+            
+            for animation in self.running_animations:
+                animation.animate()
+            
+            sleep(sleep_time() - (time_ns() // 1_000_000 - starting_time))
+    
+    def stop_animate(self, section_id: int) -> bool:
+        # Fetch section
+        for possible_section in self.sections:
+                if possible_section.id == section_id:
+                    section = possible_section
+        
+        if not section:
+            return False
+        
+        # Find running animation and stop it
+        for animation in self.running_animations:
+            if animation.start_led == section.start_led:
+                self.running_animations.remove(animation)
+                
+                return True
+            
+        return False
 
-    def animate(self, color_sequence_id: int, animation: Animation = None, animation_name: str = None, 
-                section: Section = None, section_id: int = None) -> bool:
+    def start_animate(self, color_sequence_id: int, animation: Animation = None, animation_name: str = None, 
+                      section: Section = None, section_id: int = None) -> bool:
         if not section:
             # Find out which section is meant
             for possible_section in self.sections:
                 if possible_section.id == section_id:
                     section = possible_section
+                    
+        if not section:
+            return False
+        
+        stop_animate(section.id)  # Stop current animation if there is one
         
         # Find out which color sequence is meant
         color_sequence = None
@@ -209,24 +255,17 @@ class Strip():
         if not animation:
             # Find out which animation is meant
             if animation_name == 'Flow':
-                animation = Flow('Flow')
                 
-                animation.animate(strip, self.bpm, section, color_sequence)
-                self.running_animations.append(animation)
                 
                 return True
                 
             elif animation_name == 'Shooter':
-                animation = Shooter('Shooter')
                 
-                animation.animate(strip, self.bpm, section, color_sequence)
-                self.running_animations.append(animation)
                 
                 return True
             
             # Add more ...
 
-        animation.animate(self.bpm, section)
-        self.running_animations.append(animation)
-
+        self.add_animation(animation, section, color_sequence)
+        
         return True

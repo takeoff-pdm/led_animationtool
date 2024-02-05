@@ -1,6 +1,8 @@
 from util.database.animation import fetch_animation, add_animation, remove_animation, update_animation
+
 from color_sequence import ColorSequence
 from section import Section
+from colro import Color
 
 class Animation():
     def __init__(self, name: str, description: str= None, variation: int= None, 
@@ -26,12 +28,6 @@ class Animation():
         self.strip = None
         self.color_sequence = None
 
-        self.animate = False
-    
-    @property
-    def sleep_time(self):
-        return 60 / self.bpm
-
     def sync_changes_to_db(self, new: bool=False) -> bool:
         if new:
             return add_animation(self.name, self.description, self.variation, 
@@ -39,6 +35,9 @@ class Animation():
         
         return update_animation(self.name, self.description, self.variation, 
                                 self.direction)
+        
+    def select_color() -> Color:
+        pass
 
     # def set_name(self, name) -> bool:
     #     # Check if section with this name already exists
