@@ -124,10 +124,14 @@ async def update_full_animation(full_animation: FullAnimation):
     return { 'success': add_animation(full_animation.name, full_animation.description, 
                         full_animation.variation, full_animation.direction) }
 
-@app.post('/api/animate/', response_class=JSONResponse)
+@app.post('/api/animate/start', response_class=JSONResponse)
 async def animate_section(animate: Animate):
-    return { 'success': strip.animate(color_sequence_id=animate.color_sequence_id, 
-                                      animation_name=animate.name, section_id=animate.section_id) }
+    return { 'success': strip.start_animate(color_sequence_id=animate.color_sequence_id, 
+                                            animation_name=animate.name, section_id=animate.section_id) }
+    
+@app.post('/api/animate/stop', response_class=JSONResponse)
+async def animate_section(id: Id):
+    return { 'success': strip.stop_animate(id.id) }
 
 # Settings
 @app.get('/api/get/settings', response_class=JSONResponse)
