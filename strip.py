@@ -25,9 +25,7 @@ class Strip():
 
         self.bpm = config['bpm']                # Animation speed (Beats per minute)
 
-        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
-                                        config['dma'], config['led_invert'], config['brightness'], 
-                                        config['channel'])
+        init_strip()  # Initialize strip
         
         self.strip.begin() # Start the strip
 
@@ -63,6 +61,16 @@ class Strip():
 
         with open(CONFIG_FILE, 'w') as f:
             dump(config, f)
+            
+    def init_strip(self):
+        config = self.fetch_config()
+        
+        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
+                                        config['dma'], config['led_invert'], config['brightness'], 
+                                        config['channel'])
+        
+        for animation in self.running_animations:
+            animation.strip = self.strip
     
     def set_brightness(self, brightness: int) -> bool:
         if brightness < 0 or brightness > 255:
@@ -71,10 +79,7 @@ class Strip():
         self.brightness = brightness
         self.update_config('brightness', self.brightness)
 
-        config = self.fetch_config()
-        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
-                                        config['dma'], config['led_invert'], config['brightness'], 
-                                        config['channel'])
+        init_strip()  # Update strip
         
         return True
 
@@ -85,10 +90,8 @@ class Strip():
         self.led_count = led_count
         self.update_config('led_count', self.led_count)
         
-        config = self.fetch_config()
-        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
-                                        config['dma'], config['led_invert'], config['brightness'], 
-                                        config['channel'])
+        init_strip()  # Update strip
+        
         return True
 
     def set_bpm(self, bpm: int) -> bool:
@@ -98,10 +101,8 @@ class Strip():
         self.bpm = bpm
         self.update_config('bpm', bpm.value)
 
-        config = self.fetch_config()
-        self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'], 
-                                        config['dma'], config['led_invert'], config['brightness'], 
-                                        config['channel'])
+        init_strip()  # Update strip
+        
         return True
     
     # Sections
@@ -123,6 +124,14 @@ class Strip():
             if section.id == id:
                 remove_section(id)
                 self.sections.remove(section)
+                
+                for animation in self.running_animations:
+                    if animation.start_led == section.start_led and \
+                       animation.end_led == section.end_led:
+                        self.running_animations.remove(animation)
+                        
+                        # No break, because it is (currently) possible to have 
+                        # a part of the strip listed twice in sections list
                 
                 return True
             
@@ -206,6 +215,13 @@ class Strip():
         while True:
             starting_time = time_ns() // 1_000_000
             
+            # Check if bpm of animations is off
+            if len(self.running_animations) > 0:
+                if self.running_animations[0].bpm != self.bpm:
+                    # Rearange beats
+                    for animation in self.running_animations:
+                        animation.bpm = self.bpm
+            
             for animation in self.running_animations:
                 animation.animate()
             
@@ -255,12 +271,12 @@ class Strip():
         if not animation:
             # Find out which animation is meant
             if animation_name == 'Flow':
-                
+                self.add_animation(Flow('Flow'), section, color_sequence)
                 
                 return True
                 
             elif animation_name == 'Shooter':
-                
+                self.add_animation(Shooter('Shooter'), section, color_sequence)
                 
                 return True
             
