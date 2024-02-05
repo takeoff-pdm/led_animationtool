@@ -31,6 +31,11 @@ class FullAnimation(BaseModel):
     description: str
     variation: int
     direction: int
+    
+class Animate(BaseModel):
+    name: str
+    color_sequence_id: int
+    section_id: int
 
 class Value(BaseModel):
     value: int

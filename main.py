@@ -124,6 +124,11 @@ async def update_full_animation(full_animation: FullAnimation):
     return { 'success': add_animation(full_animation.name, full_animation.description, 
                         full_animation.variation, full_animation.direction) }
 
+@app.post('/api/animate/', response_class=JSONResponse)
+async def animate_section(animate: Animate):
+    return { 'success': strip.animate(color_sequence_id=animate.color_sequence_id, 
+                                      animation_name=animate.name, section_id=animate.section_id) }
+
 # Settings
 @app.get('/api/get/settings', response_class=JSONResponse)
 async def get_settings():
