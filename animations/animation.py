@@ -19,10 +19,12 @@ class Animation():
             self.variation = animation_data['variation']
             self.direction = animation_data['direction']
         
-        
         self.bpm = 1
         self.start_led = 0
         self.end_led = 0
+        
+        self.strip = None
+        self.color_sequence = None
 
         self.animate = False
     
@@ -54,20 +56,20 @@ class Animation():
         
     #     return True
 
-    def set_description(self, description: str):
-        self.description = description
+    # def set_description(self, description: str):
+    #     self.description = description
 
-        self.sync_changes_to_db()
+    #     self.sync_changes_to_db()
 
-    def set_variation(self, variation: int):
-        self.variation = variation
+    # def set_variation(self, variation: int):
+    #     self.variation = variation
         
-        self.sync_changes_to_db()
+    #     self.sync_changes_to_db()
 
-    def set_direction(self, direction: int):
-        self.direction = direction
+    # def set_direction(self, direction: int):
+    #     self.direction = direction
         
-        self.sync_changes_to_db()
+    #     self.sync_changes_to_db()
 
-    async def animate(self, bpm: int, section: Section, color_sequence: ColorSequence):
+    async def animate(self, strip, bpm: int, section: Section, color_sequence: ColorSequence):
         pass

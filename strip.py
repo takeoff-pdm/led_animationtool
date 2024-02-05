@@ -188,32 +188,45 @@ class Strip():
 
         self.strip.show()
 
-    def animate(self, animation: Animation = None, animation_name: str = None, 
-                section: Section = None, section_name: str = None):
+    def animate(self, color_sequence_id: int, animation: Animation = None, animation_name: str = None, 
+                section: Section = None, section_id: int = None) -> bool:
+        if not section:
+            # Find out which section is meant
+            for possible_section in self.sections:
+                if possible_section.id == section_id:
+                    section = possible_section
+        
+        # Find out which color sequence is meant
+        color_sequence = None
+        
+        for possible_sequence in self.color_sequences:
+            if possible_sequence.id == color_sequence_id:
+                color_sequence = possible_sequence
+                
+        if not color_sequence:
+            return False
+        
         if not animation:
             # Find out which animation is meant
             if animation_name == 'Flow':
                 animation = Flow('Flow')
-                animation.animate(self.bpm, section)
-
+                
+                animation.animate(strip, self.bpm, section, color_sequence)
                 self.running_animations.append(animation)
-                return
+                
+                return True
                 
             elif animation_name == 'Shooter':
                 animation = Shooter('Shooter')
-                animation.animate(self.bpm, section)
-
+                
+                animation.animate(strip, self.bpm, section, color_sequence)
                 self.running_animations.append(animation)
-                return
+                
+                return True
             
             # Add more ...
-        
-        if not section:
-            # Find out which section is meant
-            for possible_section in self.sections:
-                if possible_section.name == section_name:
-                    section = possible_section
 
         animation.animate(self.bpm, section)
-        
         self.running_animations.append(animation)
+
+        return True
