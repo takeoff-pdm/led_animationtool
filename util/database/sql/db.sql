@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS colors (
 );
 
 CREATE TABLE IF NOT EXISTS animations (
-    name VARCHAR(32) PRIMARY KEY NOT NULL,
+    id INT(32) PRIMARY KEY NOT NULL,
+    name VARCHAR(32) NOT NULL,
     description VARCHAR(128) NOT NULL,
     variation INT(32) NOT NULL DEFAULT 0, -- If multiple variations are possible
     direction INT(32) NOT NULL DEFAULT 0  -- 0: normal, 1: reverse, 2: inner to outer, 3: outer to inner, 

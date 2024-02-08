@@ -22,11 +22,7 @@ class Color(BaseModel):
     position: int
 
 class Animation(BaseModel):
-    name: str
-    variation: int
-    direction: int
-
-class FullAnimation(BaseModel):
+    id: int
     name: str
     description: str
     variation: int

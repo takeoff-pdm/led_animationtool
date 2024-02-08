@@ -31,98 +31,70 @@ async def get_section(id: Id):
 
 @app.post('/api/add/section', response_class=JSONResponse)
 async def add_section(section: Section):
-    if not strip.add_section(section.name, section.start_led, section.end_led):
-        return { 'success': False }
-    
-    return { 'success': True }
+    return { 'success': strip.add_section(section.name, section.start_led, section.end_led) }
 
 @app.post('/api/remove/section', response_class=JSONResponse)
-async def remove_section(id: IdId):
-    if not strip.remove_section(id.id):
-        return { 'success': False }
-    
-    return { 'success': True }
+async def remove_section(id: Id):
+    return { 'success': strip.remove_section(id.id) }
 
 @app.post('/api/update/section', response_class=JSONResponse)
 async def update_section(section: Section):
-    if not strip.update_section(section.id, section.name, section.start_led, section.end_led):
-        return { 'success': False }
-    
-    return { 'success': True }
+    return { 'success': strip.update_section(section.id, section.name, 
+                                             section.start_led, section.end_led) }
 
 # Color Sequence
 @app.get('/api/get/color_sequences', response_class=JSONResponse)
 async def get_color_sequences():
-    return fetch_color_sequence()
+    return { 'color_sequences': fetch_color_sequences() }
 
 @app.get('/api/get/color_sequence', response_class=JSONResponse)
 async def get_color_sequence(id: Id):
-    return fetch_color_sequence(id.id)
+    return { 'color_sequence': fetch_color_sequence(id.id) }
 
 @app.post('/api/add/color_sequence', response_class=JSONResponse)
 async def add_color_sequence(color_sequence: ColorSequence):
-    if not strip.add_color_sequence(color_sequence.name, color_sequence.description, 
-                                    color_sequence.selection, color_sequence.color_amount):
-        return { 'success': False }
-    
-    return { 'success': True }
+    return { 'success': strip.add_color_sequence(color_sequence.name, color_sequence.description, 
+                                                 color_sequence.selection, color_sequence.color_amount) }
 
 @app.post('/api/remove/color_sequence', response_class=JSONResponse)
 async def remove_color_sequence(id: Id):
-    if not strip.remove_color_sequence(id.id):
-        return { 'success': False }
-    
-    return { 'success': True }
+    return { 'success': strip.remove_color_sequence(id.id) }
 
 @app.post('/api/update/color_sequence', response_class=JSONResponse)
 async def update_color_sequence(color_sequence: ColorSequence):
-    if not strip.update_color_sequence(color_sequence.id, color_sequence.name, 
-                                       color_sequence.description, color_sequence.selection, 
-                                       color_sequence.color_amount):
-        return { 'success': False }
-    
-    return { 'success': True }
+    return { 'success': strip.update_color_sequence(color_sequence.id, color_sequence.name, 
+                                                    color_sequence.description, color_sequence.selection, 
+                                                    color_sequence.color_amount) }
 
 # Color
 @app.get('/api/get/colors', response_class=JSONResponse)
 async def get_colors():
-    return fetch_colors()
+    return { 'colors': fetch_colors() }
 
 @app.get('/api/get/colors_from_sequence', response_class=JSONResponse)
 async def get_colors_from_sequence(id: Id): # Id from color_sequence
-    return fetch_colors_from_sequence(id.id)
+    return { 'colors': fetch_colors_from_sequence(id.id) }
 
 @app.get('/api/get/color', response_class=JSONResponse)
 async def get_color(color: Color):
-    return fetch_color(id)
+    return { 'color': fetch_color(id) }
 
 # Animation
 @app.get('/api/get/animations', response_class=JSONResponse)
 async def get_animations():
-    return fetch_animations()
+    return { 'animations': fetch_animations() }
 
 @app.get('/api/get/animation', response_class=JSONResponse)
 async def get_animation(id: Id):
-    return fetch_animation(id.id)
+    return { 'animation': fetch_animation(id.id) }
 
 @app.post('/api/update/animation', response_class=JSONResponse)
 async def update_anim(animation: Animation):
-    if not fetch_animation(animation.name):
+    if not fetch_animation(animation.id):
         return { 'success': False }
     
-    update_animation(animation.name, animation.variation, animation.direction)
-
-    return { 'success': True }
-
-@app.post('/api/update/full-animation', response_class=JSONResponse)
-async def update_full_animation(full_animation: FullAnimation):
-    if not fetch_animation(full_animation.name):
-        return { 'success': False }
-    
-    remove_animation(full_animation.old_name)
-
-    return { 'success': add_animation(full_animation.name, full_animation.description, 
-                        full_animation.variation, full_animation.direction) }
+    return { 'success': update_animation(animation.id, animation.name, animation.description, 
+                                         animation.variation, animation.direction) }
 
 @app.post('/api/animate/start', response_class=JSONResponse)
 async def animate_section(animate: Animate):
