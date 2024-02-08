@@ -5,21 +5,21 @@ class Id(BaseModel):
     id: int
 
 class Section(BaseModel):
-    old_name: Union[str, None]
+    id: Union[int, None]
     name: str
     start_led: int
     end_led: int
 
 class ColorSequence(BaseModel):
-    old_name: Union[str, None]
+    id: Union[int, None]
     name: str
     description: str
     selection: int
     color_amount: int
 
 class Color(BaseModel):
-    id: int
-    color_sequence: int
+    id: Union[int, None]
+    color_sequence_id: int
     position: Union[int, None]
     red: int
     green: int

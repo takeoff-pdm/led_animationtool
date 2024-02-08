@@ -190,10 +190,10 @@ class Strip():
         return False
     
     # Colors
-    def add_color(self, id: int, color_sequence: int, red: int, green: int, blue: int) -> bool:
-        for possible_color_sequence in self.color_sequences:
-            if possible_color_sequence.id == color_sequence:
-                possible_color_sequence.add_color(Color(id, color_sequence, None, red, green, blue))
+    def add_color(self, id: int, color_sequence_id: int, red: int, green: int, blue: int) -> bool:
+        for color_sequence in self.color_sequences:
+            if color_sequence.id == color_sequence_id:
+                color_sequence.add_color(Color(id, color_sequence_id, None, red, green, blue))
                 
                 return True
             

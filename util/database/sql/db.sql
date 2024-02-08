@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS color_sequences (
 
 CREATE TABLE IF NOT EXISTS colors (
     id INT(32) PRIMARY KEY NOT NULL,
-    color_sequence VARCHAR(32) NOT NULL, -- Name of the sequence
+    color_sequence_id VARCHAR(32) NOT NULL,
     position INT(32) NOT NULL, -- Position in sequence
     red INT(32) NOT NULL DEFAULT 0,
     green INT(32) NOT NULL DEFAULT 0,

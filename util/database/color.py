@@ -3,18 +3,19 @@ from color import Color
 
 def recreate_color(color_data) -> dict:
     return {
-        'color_sequence': color_data[0],
-        'position': color_data[1],
-        'red': color_data[2],
-        'green': color_data[3],
-        'blue': color_data[4]
+        'id': color_data[0],
+        'color_sequence_id': color_data[1],
+        'position': color_data[2],
+        'red': color_data[3],
+        'green': color_data[4],
+        'blue': color_data[5]
     }
 
-def add_color(color_sequence: int, position: int, red: int, green: int, blue: int) -> bool:
+def add_color(color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
     if not Database.push_to_db('INSERT INTO colors VALUES(:id, :color_sequence, :position, :red, :green, :blue)', 
                                   {
                                       'id': Database.fetchone_from_db('SELECT MAX(id) FROM colors', {}) if not None else 0 + 1,
-                                      'color_sequence': color_sequence,
+                                      'color_sequence_id': color_sequence_id,
                                       'position': position,
                                       'red': red, 
                                       'green': green,
@@ -33,11 +34,11 @@ def remove_color(id: int) -> bool:
 def update_color(id: int, color_sequence: int, position: int, red: int, green: int, blue: int) -> bool:
     """Update color by id.
     """
-    if not Database.push_to_db('UPDATE colors SET color_sequence = :color_sequence, position = :position, \
+    if not Database.push_to_db('UPDATE colors SET color_sequence_id = :color_sequence_id, position = :position, \
                                 red = :red, green = :green, blue = :blue WHERE id = :id', 
                                 {
                                     'id': id, 
-                                    'color_sequence': color_sequence,
+                                    'color_sequence_id': color_sequence_id,
                                     'position': position, 
                                     'red': red, 
                                     'green': green, 
@@ -48,7 +49,7 @@ def update_color(id: int, color_sequence: int, position: int, red: int, green: i
     return True
 
 def fetch_colors() -> list | bool:
-    colors_data = Database.fetchall_from_db('SELECT id, color_sequence, position, red, green, blue FROM colors', {})
+    colors_data = Database.fetchall_from_db('SELECT id, color_sequence_id, position, red, green, blue FROM colors', {})
 
     if colors_data == None:
         return False
@@ -67,8 +68,8 @@ def fetch_colors() -> list | bool:
         return [ recreate_color(colors_data) ]
 
 def fetch_colors_from_sequence(id: int) -> list | bool:
-    colors_data = Database.fetchall_from_db('SELECT id, color_sequence, position, red, green, blue FROM colors \
-                                             WHERE color_sequence = :color_sequence', {'id': id})
+    colors_data = Database.fetchall_from_db('SELECT id, color_sequence_id, position, red, green, \
+                                             blue FROM colors WHERE color_sequence_id = :color_sequence_id', {'id': id})
 
     if not color_data:
         return False
@@ -87,8 +88,8 @@ def fetch_colors_from_sequence(id: int) -> list | bool:
         return [ recreate_color(colors_data) ]
 
 def fetch_color(id: int) -> dict | bool:
-    color_data = Database.fetchone_from_db('SELECT id, color_sequence, position, red, green, blue FROM colors \
-                                            WHERE id = :id', {'id': id})
+    color_data = Database.fetchone_from_db('SELECT id, color_sequence_id, position, red, green, \
+                                            blue FROM colors WHERE id = :id', {'id': id})
 
     if not color_data:
         return False

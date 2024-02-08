@@ -83,7 +83,7 @@ async def get_color(id: Id):
 
 @app.get('/api/add/color', response_class=JSONResponse)
 async def add_color(color: Color):
-    return { 'success': strip.add_color(color.id, color.color_sequence, color.red, color.green, color.blue) }
+    return { 'success': strip.add_color(color.id, color.color_sequence_id, color.red, color.green, color.blue) }
 
 @app.get('/api/remove/color', response_class=JSONResponse)
 async def remove_color(id: Id):
