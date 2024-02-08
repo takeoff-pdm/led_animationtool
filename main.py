@@ -58,6 +58,8 @@ async def add_color_sequence(color_sequence: ColorSequence):
 
 @app.post('/api/remove/color_sequence', response_class=JSONResponse)
 async def remove_color_sequence(id: Id):
+    # TODO: Remove all colors of given sequence
+    
     return { 'success': strip.remove_color_sequence(id.id) }
 
 @app.post('/api/update/color_sequence', response_class=JSONResponse)
@@ -76,8 +78,18 @@ async def get_colors_from_sequence(id: Id): # Id from color_sequence
     return { 'colors': fetch_colors_from_sequence(id.id) }
 
 @app.get('/api/get/color', response_class=JSONResponse)
-async def get_color(color: Color):
-    return { 'color': fetch_color(id) }
+async def get_color(id: Id):
+    return { 'color': fetch_color(id.id) }
+
+@app.get('/api/add/color', response_class=JSONResponse)
+async def add_color(color: Color):
+    return { 'success': strip.add_color(color.id, color.color_sequence, color.red, color.green, color.blue) }
+
+@app.get('/api/remove/color', response_class=JSONResponse)
+async def remove_color(id: Id):
+    return { 'success': strip.remove_color(id.id) }
+
+# TODO: Update color
 
 # Animation
 @app.get('/api/get/animations', response_class=JSONResponse)
@@ -99,10 +111,10 @@ async def update_anim(animation: Animation):
 @app.post('/api/animate/start', response_class=JSONResponse)
 async def animate_section(animate: Animate):
     return { 'success': strip.start_animate(color_sequence_id=animate.color_sequence_id, 
-                                            animation_name=animate.name, section_id=animate.section_id) }
+                                            animation_name=animate.id, section_id=animate.section_id) }
     
 @app.post('/api/animate/stop', response_class=JSONResponse)
-async def animate_section(id: Id):
+async def stop_animate_section(id: Id):
     return { 'success': strip.stop_animate(id.id) }
 
 # Settings

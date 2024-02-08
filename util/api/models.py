@@ -18,8 +18,12 @@ class ColorSequence(BaseModel):
     color_amount: int
 
 class Color(BaseModel):
-    color_sequence: str
-    position: int
+    id: int
+    color_sequence: int
+    position: Union[int, None]
+    red: int
+    green: int
+    blue: int
 
 class Animation(BaseModel):
     id: int
@@ -29,8 +33,8 @@ class Animation(BaseModel):
     direction: int
     
 class Animate(BaseModel):
-    name: str
     color_sequence_id: int
+    animation_id: int
     section_id: int
 
 class Value(BaseModel):

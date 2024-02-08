@@ -2,12 +2,12 @@ from util.database.color import add_color, remove_color, update_color, fetch_col
 
 
 class Color():
-    def __init__(self, id, color_sequence: str = None, position: int = None,
+    def __init__(self, id, color_sequence: int = None, position: int = None,
                  red: int = None, green: int = None, blue: int = None):
         self.id = id
         
         if color_sequence and position and red and green and blue:
-            self.color_sequence = color_sequence
+            self.color_sequence = color_sequence  # Id of sequence
             self.position = position
             self.red = red
             self.green = green
@@ -16,7 +16,7 @@ class Color():
         else:
             color_data = fetch_color(id)
             
-            self.color_sequence = color_data['color_sequence']
+            self.color_sequence = color_data['color_sequence']  # Id of sequence
             self.position = color_data['position']
             self.red = color_data['red']
             self.green = color_data['green']
@@ -26,7 +26,7 @@ class Color():
         if new:
             return add_color(self.color_sequence, self.position, self.red, self.green, self.blue)
         
-        return update_color(self.id, self.position, self.red, self.green, self.blue)
+        return update_color(self.id, self.color_sequence, self.position, self.red, self.green, self.blue)
     
     # def set_position(self, position: int):
     #     self.position = position

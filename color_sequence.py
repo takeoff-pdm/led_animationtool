@@ -66,3 +66,9 @@ class ColorSequence():
     #     self.color_amount = color_amount
         
     #     return self.sync_changes_to_db()
+    
+    def add_color(self, color: Color):
+        color.position = len(self.color_list)  # Set new position
+        color.sync_changes_to_db(new=True)  # Add to database
+        
+        self.color_list.append(color)

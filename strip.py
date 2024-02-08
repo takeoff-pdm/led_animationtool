@@ -6,9 +6,11 @@ from __init__ import CONFIG_FILE
 
 from util.database.section import fetch_sections, fetch_section, remove_section
 from util.database.color_sequence import fetch_color_sequences, fetch_color_sequence, remove_color_sequence
+from util.database.color import fetch_color, remove_color
 
 from section import Section
 from color_sequence import ColorSequence
+from color import Color
 
 from animations.animation import Animation
 from animations.flow import Flow
@@ -186,6 +188,32 @@ class Strip():
                 return True
             
         return False
+    
+    # Colors
+    def add_color(self, id: int, color_sequence: int, red: int, green: int, blue: int) -> bool:
+        for possible_color_sequence in self.color_sequences:
+            if possible_color_sequence.id == color_sequence:
+                possible_color_sequence.add_color(Color(id, color_sequence, None, red, green, blue))
+                
+                return True
+            
+        return False
+    
+    def remove_color(self, id: int) -> bool:
+        color = Color(id)
+        
+        if not color:
+            return False
+        
+        if not remove_color(id):
+            return False
+        
+        # Also remove from color_sequence cache
+        for color_sequence in self.color_sequences:
+            if color_sequence.id == color.color_sequence:
+                color_sequence.color_list.pop(color.position)
+                
+    # TODO: Update color method
 
     # Animations
     @property
