@@ -32,7 +32,7 @@ class Database:
             self.db_thread.start()
 
     @classmethod
-    def push_to_db(cls, sql_command: str, sql_data: dict):
+    def push_to_db(cls, sql_command: str, sql_data: dict) -> bool:
         """Executes the input to the database.
 
         :param sql_command: Command to execute.

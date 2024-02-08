@@ -52,7 +52,7 @@ class Strip():
     @staticmethod
     def fetch_config() -> dict:
         with open(CONFIG_FILE, 'r') as f:
-            return load(f)
+            return load(f)  # Loads config in json-format
     
     @staticmethod
     def update_config(value_name: str, value):
