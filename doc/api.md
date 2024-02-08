@@ -74,8 +74,8 @@ Animations:
 
 Settings:
 - ``/api/get/settings``
-    - Values: ``{ value: Integer }``
-    - Returns: ``{ success: boolean }``
+    - Values: ``{ }``
+    - Returns: [Config](/config.json)
 - ``/api/update/brightness``
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
