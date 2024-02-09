@@ -1,26 +1,25 @@
 from pydantic import BaseModel
-from typing import Union
 
 class Id(BaseModel):
     id: int
 
 class Section(BaseModel):
-    id: Union[int, None]
+    id: int | None = None
     name: str
     start_led: int
     end_led: int
 
 class ColorSequence(BaseModel):
-    id: Union[int, None]
+    id: int | None = None
     name: str
     description: str
     selection: int
     color_amount: int
 
 class Color(BaseModel):
-    id: Union[int, None]
+    id: int | None = None
     color_sequence_id: int
-    position: Union[int, None]
+    position: int | None = None
     red: int
     green: int
     blue: int
