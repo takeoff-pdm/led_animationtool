@@ -8,11 +8,14 @@ def recreate_section(section_data) -> dict:
         'end_led': section_data[3]
     }
 
-def add_section(name: str, start_led: int, end_led: int) -> bool:
-    if not Database.push_to_db('INSERT INTO sections VALUES(:name, :start_led, :end_led)', 
+def add_section(id: int, name: str, start_led: int, end_led: int) -> bool:
+    # print((Database.fetchone_from_db('SELECT MAX(id) FROM sections', {}) 
+    #                                       if not None and not (None,) else -1) + 1)
+    print(Database.fetchone_from_db('SELECT MAX(id) FROM sections', {})[0])
+    
+    if not Database.push_to_db('INSERT INTO sections VALUES(:id, :name, :start_led, :end_led)', 
                                   { 
-                                    'id': Database.fetchone_from_db('SELECT MAX(id) FROM sections', {}) 
-                                          if not None else 0 + 1,
+                                    'id': id,
                                     'name': name, 
                                     'start_led': start_led, 
                                     'end_led': end_led

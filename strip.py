@@ -115,19 +115,24 @@ class Strip():
         if fetch_section(name):
             return False
         
-        section = Section(name, start_led, end_led)
-
+        section = Section(name=name, start_led=start_led, end_led=end_led)
+        
         if not section.sync_changes_to_db(new=True):
             return False
         
         self.sections.append(section)
+        print(self.sections)
 
         return True
     
     def remove_section(self, id: int) -> bool:
         for section in self.sections:
+            print(section.id)
+            
             if section.id == id:
-                remove_section(id)
+                if not remove_section(id):
+                    return False
+                
                 self.sections.remove(section)
                 
                 for animation in self.running_animations:
@@ -160,10 +165,8 @@ class Strip():
         if fetch_color_sequence(name):
             return False
         
-        color_sequence = ColorSequence(name, description, selection, color_amount)
-
-        if not color_sequence.sync_changes_to_db(new=True):
-            return False
+        color_sequence = ColorSequence(name=name, description=description, 
+                                       selection=selection, color_amount=color_amount)
         
         self.color_sequences.append(color_sequence)
 
@@ -193,10 +196,11 @@ class Strip():
         return False
     
     # Colors
-    def add_color(self, id: int, color_sequence_id: int, red: int, green: int, blue: int) -> bool:
+    def add_color(self, color_sequence_id: int, red: int, green: int, blue: int) -> bool:
         for color_sequence in self.color_sequences:
             if color_sequence.id == color_sequence_id:
-                color_sequence.add_color(Color(id, color_sequence_id, None, red, green, blue))
+                color_sequence.add_color(Color(color_sequence_id=color_sequence_id, position=None, 
+                                               red=red, green=green, blue=blue))
                 
                 return True
             
@@ -235,14 +239,16 @@ class Strip():
         return 60 / self.bpm
     
     def color_wipe(self, color):
-        """Change color of all pixels.
-        """
+        '''Change color of all pixels.
+        '''
         for i in range(self.strip.numPixels()):
             self.strip.setPixelColor(i, color)
 
         self.strip.show()
     
     def add_animation(animation: Animation, section: Section, color_sequence: ColorSequence):
+        '''Adds animation to animate (not a new animation).
+        '''
         animation.bpm = self.bpm
         animation.start_led = section.start_led
         animation.end_led = section.end_led

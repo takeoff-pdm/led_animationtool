@@ -1,16 +1,18 @@
+from util.database.database import Database
 from util.database.section import fetch_section, add_section, remove_section, update_section
 
 
 class Section():
-    def __init__(self, id: int, name: str = None, start_led: int = None, end_led: int = None):
+    def __init__(self, id: int = None, name: str = None, start_led: int = None, end_led: int = None):
         self.id = id
+        print(name, start_led, end_led)
         
-        if name and start_led and end_led:
+        if name != None and start_led != None and end_led != None:
             self.name = name
             self.start_led = start_led
             self.end_led = end_led
         
-        else:
+        elif self.id != None:
             section_data = fetch_section(id)
 
             self.name = section_data['name']
@@ -19,7 +21,10 @@ class Section():
 
     def sync_changes_to_db(self, new: bool=False) -> bool:
         if new:
-            return add_section(self.name, self.start_led, self.end_led)
+            self.id = (Database.fetchone_from_db('SELECT MAX(id) FROM sections', {})[0] 
+                       if not None else -1) + 1
+            
+            return add_section(self.id, self.name, self.start_led, self.end_led)
         
         return update_section(self.id, self.name, self.start_led, self.end_led)
 
