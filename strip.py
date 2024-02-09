@@ -6,7 +6,9 @@ from __init__ import CONFIG_FILE
 
 from util.database.section import fetch_sections, fetch_section, remove_section
 from util.database.color_sequence import fetch_color_sequences, fetch_color_sequence, remove_color_sequence
-from util.database.color import fetch_color, remove_color
+from util.database.color import fetch_color, remove_color, update_color
+
+from util.api.models import Color as ApiColor
 
 from section import Section
 from color_sequence import ColorSequence
@@ -27,10 +29,6 @@ class Strip():
 
         self.bpm = config['bpm']                # Animation speed (Beats per minute)
 
-        init_strip()  # Initialize strip
-        
-        self.strip.begin() # Start the strip
-
         # Initialize sections
         self.sections =  []
         sections_data = fetch_sections()
@@ -48,6 +46,11 @@ class Strip():
                                                       color_sequence_data['start_led'], color_sequence_data['end_led']))
             
         self.running_animations = []
+        
+        self.init_strip()  # Initialize strip
+        
+        # TODO: Uncomment strip.begin
+        # self.strip.begin() # Start the strip
         
         self.animate()
 
@@ -213,7 +216,18 @@ class Strip():
             if color_sequence.id == color.color_sequence:
                 color_sequence.color_list.pop(color.position)
                 
-    # TODO: Update color method
+    def update_color(self, color: ApiColor) -> bool:
+        success = update_color(color.id, color.color_sequence_id, color.position, 
+                               color.red, color.green, color.blue)
+        
+        # Update color in sequence
+        for color_sequence in self.color_sequences:
+            if color_sequence.id == color.color_sequence_id:
+                color_sequence.colors(update=True)
+                
+                return success
+            
+        return False
 
     # Animations
     @property

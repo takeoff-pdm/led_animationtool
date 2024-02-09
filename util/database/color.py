@@ -1,5 +1,4 @@
 from util.database.database import Database
-from color import Color
 
 def recreate_color(color_data) -> dict:
     return {
@@ -12,7 +11,7 @@ def recreate_color(color_data) -> dict:
     }
 
 def add_color(color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
-    if not Database.push_to_db('INSERT INTO colors VALUES(:id, :color_sequence, :position, :red, :green, :blue)', 
+    if not Database.push_to_db('INSERT INTO colors VALUES(:id, :color_sequence_id, :position, :red, :green, :blue)', 
                                   {
                                       'id': Database.fetchone_from_db('SELECT MAX(id) FROM colors', {}) if not None else 0 + 1,
                                       'color_sequence_id': color_sequence_id,
@@ -31,7 +30,7 @@ def remove_color(id: int) -> bool:
     
     return True
 
-def update_color(id: int, color_sequence: int, position: int, red: int, green: int, blue: int) -> bool:
+def update_color(id: int, color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
     """Update color by id.
     """
     if not Database.push_to_db('UPDATE colors SET color_sequence_id = :color_sequence_id, position = :position, \

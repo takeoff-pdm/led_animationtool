@@ -54,6 +54,7 @@ Colors:
 - ``/api/update/color``
     - Values: ``{ id: Integer, color_sequence_id: Integer, position: Integer, red: Integer, green: Integer, blue: Integer }``
     - Returns: ``{ success: boolean }``
+    - Does not update color-sequence-id!
 
 Animations:
 - ``/api/get/animations``

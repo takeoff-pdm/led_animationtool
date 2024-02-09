@@ -2,7 +2,7 @@ from uvicorn import run as run_api
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 
-from util.api.models import Id, Section, ColorSequence, Color, Animation, FullAnimation, Value
+from util.api.models import Id, Section, ColorSequence, Color, Animation, Value
 
 from util.database.database import Database
 from util.database.section import fetch_sections, fetch_section
@@ -12,7 +12,6 @@ from util.database.animation import fetch_animations, fetch_animation, update_an
 
 from section import Section
 from color_sequence import ColorSequence
-from color import Color
 from strip import Strip
 
 app = FastAPI()
@@ -58,7 +57,10 @@ async def add_color_sequence(color_sequence: ColorSequence):
 
 @app.post('/api/remove/color_sequence', response_class=JSONResponse)
 async def remove_color_sequence(id: Id):
-    # TODO: Remove all colors of given sequence
+    # Remove all colors of given sequence
+    for color in fetch_colors_from_sequence(id.id):
+        if not strip.remove_color(color['id']):
+            return { 'success': False }
     
     return { 'success': strip.remove_color_sequence(id.id) }
 
@@ -89,7 +91,9 @@ async def add_color(color: Color):
 async def remove_color(id: Id):
     return { 'success': strip.remove_color(id.id) }
 
-# TODO: Update color
+@app.get('/api/update/color', response_class=JSONResponse)
+async def update_color(color: Color):
+    return { 'success': strip.update_color(color) } 
 
 # Animation
 @app.get('/api/get/animations', response_class=JSONResponse)
