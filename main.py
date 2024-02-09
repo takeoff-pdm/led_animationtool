@@ -57,9 +57,12 @@ async def add_color_sequence(color_sequence: ColorSequence):
 @app.post('/api/remove/color_sequence')
 async def remove_color_sequence(id: Id):
     # Remove all colors of given sequence
-    for color in fetch_colors_from_sequence(id.id):
-        if not strip.remove_color(color['id']):
-            return JSONResponse(content={ 'success': False })
+    colors = fetch_colors_from_sequence(id.id)
+    
+    if colors:
+        for color in colors:
+            if not strip.remove_color(color['id']):
+                return JSONResponse(content={ 'success': False })
     
     return JSONResponse(content={ 'success': strip.remove_color_sequence(id.id) })
 

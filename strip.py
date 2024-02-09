@@ -43,7 +43,8 @@ class Strip():
 
         for color_sequence_data in color_sequences_data:
             self.color_sequences.append(ColorSequence(color_sequence_data['id'], color_sequence_data['name'], 
-                                                      color_sequence_data['start_led'], color_sequence_data['end_led']))
+                                                      color_sequence_data['description'], color_sequence_data['selection'], 
+                                                      color_sequence_data['color_amount']))
             
         self.running_animations = []
         
@@ -154,19 +155,20 @@ class Strip():
                 section.start_led = start_led
                 section.end_led = end_led
                 
-                section.sync_changes_to_db()
-                
-                return True
+                return section.sync_changes_to_db()
             
         return False
     
     # Color Sequences
-    def add_color_sequence(name: str, description: str, selection: int, color_amount: int) -> bool:
+    def add_color_sequence(self, name: str, description: str, selection: int, color_amount: int) -> bool:
         if fetch_color_sequence(name):
             return False
         
         color_sequence = ColorSequence(name=name, description=description, 
                                        selection=selection, color_amount=color_amount)
+        
+        if not color_sequence.sync_changes_to_db(new=True):
+            return False
         
         self.color_sequences.append(color_sequence)
 
@@ -190,8 +192,8 @@ class Strip():
                 color_sequence.description = description
                 color_sequence.selection = selection
                 color_sequence.color_amount = color_amount
-
-                return True
+                
+                return color_sequence.sync_changes_to_db()
             
         return False
     
@@ -199,10 +201,8 @@ class Strip():
     def add_color(self, color_sequence_id: int, red: int, green: int, blue: int) -> bool:
         for color_sequence in self.color_sequences:
             if color_sequence.id == color_sequence_id:
-                color_sequence.add_color(Color(color_sequence_id=color_sequence_id, position=None, 
+                return color_sequence.add_color(Color(color_sequence_id=color_sequence_id, position=None, 
                                                red=red, green=green, blue=blue))
-                
-                return True
             
         return False
     
