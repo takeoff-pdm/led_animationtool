@@ -28,8 +28,8 @@ def remove_section(id: int) -> bool:
     return True
 
 def update_section(id: int, name: str, start_led: int, end_led: int) -> bool:
-    """Update section by name.
-    """
+    '''Update section by name.
+    '''
     if not Database.push_to_db('UPDATE sections SET name = :name, start_led = :start_led, end_led = :end_led \
                                 WHERE id = :id', 
                                   {'id': id, 'name': name, 'start_led': start_led, 'end_led': end_led}):

@@ -31,8 +31,8 @@ def remove_color(id: int) -> bool:
     return True
 
 def update_color(id: int, color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
-    """Update color by id.
-    """
+    '''Update color by id.
+    '''
     if not Database.push_to_db('UPDATE colors SET color_sequence_id = :color_sequence_id, position = :position, \
                                 red = :red, green = :green, blue = :blue WHERE id = :id', 
                                 {

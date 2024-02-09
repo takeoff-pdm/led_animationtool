@@ -29,8 +29,8 @@ def remove_animation(id: int) -> bool:
     return True
 
 def update_animation(id: int, name: str, description: str, variation: int, direction: int) -> bool:
-    """Update animation by name.
-    """
+    '''Update animation by name.
+    '''
     if not Database.push_to_db('UPDATE animations SET name = :name, description = :description, \
                                 variation = :variation, direction = :direction WHERE id = :id', 
                                   {

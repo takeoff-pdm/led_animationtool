@@ -12,14 +12,14 @@ from __init__ import DATABASE_FILE
 
 
 def create_tables(cursor):
-    """Create tables from sql file
+    '''Create tables from sql file
 
     :param cursor: Cursor of sqlite-connection
     :type cursor: :py:class:`sqlite3.Cursor`
 
     :return: Status code whether cursor-execution was successful
     :rtype: bool
-    """
+    '''
 
     # Read the sql-script
     with open(join(dirname(abspath(__file__)), 'sql', 'db.sql')) as sql_file:
@@ -30,14 +30,14 @@ def create_tables(cursor):
 
 
 def create_database(overwrite=False):
-    """Create the database-file and add the required tables
+    '''Create the database-file and add the required tables
 
     :param overwrite: Says if file should be overwritten or not.
     :param overwrite: bool
 
     :return: Status code whether creation was successful
     :rtype: bool
-    """
+    '''
     # Check if the database already exists
     if exists(DATABASE_FILE) and not overwrite:
         print('Database already exists, not overwriting')

@@ -13,9 +13,9 @@ DATABASE_FILE = 'db.db'
 
 class Database:
     def __init__(self, manual=False):
-        """Sets up the database connection values.
+        '''Sets up the database connection values.
 
-        """
+        '''
         # Queue for the asynchronous handling of the database
         self.db_q = Queue()
 
@@ -33,7 +33,7 @@ class Database:
 
     @classmethod
     def push_to_db(cls, sql_command: str, sql_data: dict) -> bool:
-        """Executes the input to the database.
+        '''Executes the input to the database.
 
         :param sql_command: Command to execute.
         :type sql_command: str
@@ -41,7 +41,7 @@ class Database:
         :type sql_data: dict
 
         :return: Status whether the execution was successful or not.
-        """
+        '''
         # Set the database connection up
         connection = connect(DATABASE_FILE)
 
@@ -59,7 +59,7 @@ class Database:
 
     @classmethod
     def fetchone_from_db(cls, sql_command: str, sql_data: dict):
-        """Fetches one response from the database.
+        '''Fetches one response from the database.
 
         :param sql_command: Command to execute.
         :type sql_command: str
@@ -67,7 +67,7 @@ class Database:
         :type sql_data: dict
 
         :return: Response of the database.
-        """
+        '''
 
         # Set the database connection up
         connection = connect(DATABASE_FILE)
@@ -79,7 +79,7 @@ class Database:
 
     @classmethod
     def fetchall_from_db(cls, sql_command: str, sql_data: dict):
-        """Fetches the full response from the database.
+        '''Fetches the full response from the database.
 
         :param sql_command: Command to execute.
         :type sql_command: str
@@ -87,7 +87,7 @@ class Database:
         :type sql_data: dict
 
         :return: Response of the database.
-        """
+        '''
 
         # Set the database connection up
         connection = connect(DATABASE_FILE)
@@ -99,7 +99,7 @@ class Database:
 
     @staticmethod
     def execute_sql(connection: Connection, sql_command: str, executing_args: dict = None, fetch=None):
-        """Execute the given sql.
+        '''Execute the given sql.
 
         :param connection: Connection to the database.
         :type connection: :py:class:`sqlite3.Connection`
@@ -111,7 +111,7 @@ class Database:
         :type fetch: str ('one', 'all' or None)
 
         :return: If fetch is not none, return the response of the database.
-        """
+        '''
 
         # Execute the command with its arguments
         cursor = connection.cursor()
@@ -133,9 +133,9 @@ class Database:
         return response
 
     def database_handler(self):
-        """Handle incoming database-tasks from the queue.
+        '''Handle incoming database-tasks from the queue.
 
-        """
+        '''
 
         # Set the database connection up
         connection = connect(DATABASE_FILE)
@@ -162,7 +162,7 @@ class Database:
                 sql_data[3].put(response)
 
     def fetchone(self, sql_command: str, sql_data: dict):
-        """Fetches one response from the database.
+        '''Fetches one response from the database.
 
         :param sql_command: Command to execute.
         :type sql_command: str
@@ -170,7 +170,7 @@ class Database:
         :type sql_data: dict
 
         :return: Response of the database.
-        """
+        '''
 
         # Set the queue up
         query_queue = Queue()
@@ -186,7 +186,7 @@ class Database:
         return query_queue.get()
 
     def fetchall(self, sql_command: str, sql_data: dict):
-        """Fetches the full response from the database.
+        '''Fetches the full response from the database.
 
         :param sql_command: Command to execute.
         :type sql_command: str
@@ -194,7 +194,7 @@ class Database:
         :type sql_data: dict
 
         :return: Response of the database.
-        """
+        '''
 
         # Set the queue up
         query_queue = Queue()
@@ -210,11 +210,11 @@ class Database:
         return query_queue.get()
 
     def start(self):
-        """Starts the database-thread manually.
+        '''Starts the database-thread manually.
 
         :return: Status if database start was successful.
         :rtype: bool
-        """
+        '''
 
         # Check if database is already running
         if self.db_thread.is_alive():
@@ -231,11 +231,11 @@ class Database:
         return True
 
     def stop(self):
-        """Stops the database-thread manually.
+        '''Stops the database-thread manually.
 
         :return: Status if database stop was successful.
         :rtype: bool
-        """
+        '''
         # Check if database is not running
         if not self.db_thread.is_alive():
             return False
@@ -250,11 +250,11 @@ class Database:
         return True
 
     def restart(self):
-        """Restarts the database-thread manually.
+        '''Restarts the database-thread manually.
 
         :return: Status if database restart was successful.
         :rtype: bool
-        """
+        '''
 
         # Check whether the database-thread is running or not
         if not self.db_thread.is_alive():
