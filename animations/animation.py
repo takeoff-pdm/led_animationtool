@@ -1,19 +1,25 @@
 from util.database.animation import fetch_animation, add_animation, remove_animation, update_animation
+from util.database.database import Database
 
 from color_sequence import ColorSequence
 from section import Section
 from color import Color
 
 class Animation():
-    def __init__(self, name: str, description: str= None, variation: int= None, 
-                 direction: int= None):
-        if not description or not variation or not direction:
+    def __init__(self, id: int = None, name: str = None, description: str = None, variation: int = None, 
+                 direction: int = None):
+        self.id = id
+        
+        if description != None and variation != None and direction != None:
             self.name = name
             self.description = description
             self.variation = variation
             self.direction = direction
+                    
+            if self.id == None:  # Seems to be new
+                self.sync_changes_to_db(new=True)
         
-        else:
+        elif self.id:
             animation_data = fetch_animation(name)
 
             self.name = animation_data['name']
@@ -30,7 +36,13 @@ class Animation():
 
     def sync_changes_to_db(self, new: bool=False) -> bool:
         if new:
-            return add_animation(self.name, self.description, self.variation, 
+            max_id = Database.fetchone_from_db('SELECT MAX(id) FROM animations', {})[0]
+            
+            self.id = 0
+            if max_id != None:
+                self.id = max_id + 1
+            
+            return add_animation(self.id, self.name, self.description, self.variation, 
                                  self.direction)
         
         return update_animation(self.name, self.description, self.variation, 
