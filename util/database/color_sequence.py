@@ -9,10 +9,10 @@ def recreate_color_sequence(color_sequence_data):
         'color_amount': color_sequence_data[4]
     }
 
-def add_color_sequence(name: str, description: str, selection: int, color_amount: int) -> bool:
+def add_color_sequence(id: int, name: str, description: str, selection: int, color_amount: int) -> bool:
     if not Database.push_to_db('INSERT INTO color_sequences VALUES(:id, :name, :description, :selection, :color_amount)', 
                                {
-                                   'id': Database.fetchone_from_db('SELECT MAX(id) FROM color_sequences', {}) if not None else 0 + 1,
+                                   'id': id,
                                    'name': name, 
                                    'description': description, 
                                    'selection': selection, 
@@ -31,9 +31,15 @@ def remove_color_sequence(id: int):
 def update_color_sequence(id: int, name: str, description: str, selection: int, color_amount: int) -> bool:
     '''Update color_sequence by id.
     '''
-    if not Database.push_to_db('UPDATE color_sequences SET name = :name, description = :description, selection = :selection, color_amount = :color_amount \
-                                WHERE id = :id', 
-                                  {'name': name, 'description': description, 'selection': selection, 'color_amount': color_amount}):
+    if not Database.push_to_db('UPDATE color_sequences SET name = :name, description = :description, \
+                                selection = :selection, color_amount = :color_amount WHERE id = :id', 
+                               {
+                                      'id': id, 
+                                      'name': name, 
+                                      'description': description, 
+                                      'selection': selection, 
+                                      'color_amount': color_amount
+                               }):
         return False
     
     return True

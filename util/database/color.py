@@ -10,10 +10,10 @@ def recreate_color(color_data) -> dict:
         'blue': color_data[5]
     }
 
-def add_color(color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
+def add_color(id: int, color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
     if not Database.push_to_db('INSERT INTO colors VALUES(:id, :color_sequence_id, :position, :red, :green, :blue)', 
                                   {
-                                      'id': Database.fetchone_from_db('SELECT MAX(id) FROM colors', {}) if not None else 0 + 1,
+                                      'id': id,
                                       'color_sequence_id': color_sequence_id,
                                       'position': position,
                                       'red': red, 
@@ -68,9 +68,10 @@ def fetch_colors() -> list | bool:
 
 def fetch_colors_from_sequence(id: int) -> list | bool:
     colors_data = Database.fetchall_from_db('SELECT id, color_sequence_id, position, red, green, \
-                                             blue FROM colors WHERE color_sequence_id = :color_sequence_id', {'id': id})
+                                             blue FROM colors WHERE color_sequence_id = :color_sequence_id', 
+                                             {'color_sequence_id': id})
 
-    if not color_data:
+    if not colors_data:
         return False
 
     # Check if multiple colors were fetched
