@@ -2,7 +2,7 @@ from util.database.animation import fetch_animation, add_animation, remove_anima
 
 from color_sequence import ColorSequence
 from section import Section
-from colro import Color
+from color import Color
 
 class Animation():
     def __init__(self, name: str, description: str= None, variation: int= None, 
