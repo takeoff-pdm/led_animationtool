@@ -21,8 +21,11 @@ class Section():
 
     def sync_changes_to_db(self, new: bool=False) -> bool:
         if new:
-            self.id = (Database.fetchone_from_db('SELECT MAX(id) FROM sections', {})[0] 
-                       if not None else -1) + 1
+            max_id = Database.fetchone_from_db('SELECT MAX(id) FROM sections', {})[0]
+            
+            self.id = 0
+            if max_id != None:
+                self.id = max_id + 1
             
             return add_section(self.id, self.name, self.start_led, self.end_led)
         
