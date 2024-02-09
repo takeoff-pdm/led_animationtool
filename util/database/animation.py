@@ -9,10 +9,11 @@ def recreate_animation(animation_data) -> dict:
         'direction': animation_data[4]
     }
 
-def add_animation(name: str, description: str, variation: int, direction: int, color_sequence: str) -> bool:
+def add_animation(id: int, name: str, description: str, variation: int, 
+                  direction: int, color_sequence: str) -> bool:
     if not Database.push_to_db('INSERT INTO animations VALUES(:id, :name, :description, :variation)', 
                                   {
-                                      'id': Database.fetchone_from_db('SELECT MAX(id) FROM animations', {}) if not None else 0 + 1,
+                                      'id': id,
                                       'name': name, 
                                       'description': description, 
                                       'variation': variation, 
