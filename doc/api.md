@@ -2,16 +2,16 @@
 
 ## Urls
 Sections:
-- ``/api/get/sections/``
+- ``/api/get/sections``
     - Values: ``{}``
     - Returns: ``{ sections: List }``
-- ``/api/get/section/``
+- ``/api/get/section``
     - Values: ``{ id: Integer }``
     - Returns: ``{ section: Section | null }``
 - ``/api/add/section``
     - Values: ``{ name: String, start_led: Integer, end_led: Integer }``
     - Returns: ``{ success: boolean }``
-- ``/api/remove/section/``
+- ``/api/remove/section``
     - Values: ``{ id: Integer }``
     - Returns: ``{ success: boolean }``
 - ``/api/update/section``
@@ -19,16 +19,16 @@ Sections:
     - Returns: ``{ success: boolean }``
 
 Color Sequence:
-- ``/api/get/color_sequences/``
+- ``/api/get/color_sequences``
     - Values: ``{}``
     - Returns: ``{ color_sequences: List }``
-- ``/api/get/color_sequence/``
+- ``/api/get/color_sequence``
     - Values: ``{ id: Integer }``
     - Returns: ``{ color_sequence: ColorSequence | null }``
 - ``/api/add/color_sequence``
     - Values: ``{ name: String, description: String, selection: Integer, color_amount: Integer }``
     - Returns: ``{ success: boolean }``
-- ``/api/remove/color_sequence/``
+- ``/api/remove/color_sequence``
     - Values: ``{ id: Integer }``
     - Returns: ``{ success: boolean }``
 - ``/api/update/color_sequence``
