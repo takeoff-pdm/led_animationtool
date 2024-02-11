@@ -1,4 +1,4 @@
-from time import sleep
+from time import time_ns, sleep
 from rpi_ws281x import Color
 
 from animations.animation import Animation
@@ -6,7 +6,7 @@ from color_sequence import ColorSequence
 from section import Section
 
 class Flow(Animation):
-    def wheel(pos):
+    def wheel(self, pos):
         """Generate rainbow colors across 0-255 positions.
         """
         if pos < 85:
@@ -18,7 +18,7 @@ class Flow(Animation):
             pos -= 170
             return Color(0, pos * 3, 255 - pos * 3)
     
-    async def animate(self, strip, bpm: int, section: Section, color_sequence: ColorSequence):
+    def animate(self):
         print('whoooooohw de floooohw')
 
         first_led = int((self.end_led - self.start_led) / 2)
@@ -55,4 +55,4 @@ class Flow(Animation):
             first_led -= 1
             second_led += 1
 
-            sleep(self.sleep_time / int((self.end_led - self.start_led) / 2) - (time_ns() // 1_000_000 - starting_time))
+            sleep(self.sleep_time / int((self.end_led - self.start_led) / 2) - ((time_ns() // 1_000_000 - starting_time) // 1_000))

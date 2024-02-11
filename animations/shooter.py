@@ -1,9 +1,11 @@
+from time import sleep
+
 from animations.animation import Animation
 from color_sequence import ColorSequence
 from section import Section
 
 class Shooter(Animation):
-    async def animate(self, bpm: int, section: Section):
+    def animate(self):
         print('shooot')
 
         # color = Color(255, 255, 255)
@@ -12,16 +14,16 @@ class Shooter(Animation):
         # if random_color:
         #     color = wheel((randint(0, 256)) & 255)
 
-        # for x in range(int(LED_COUNT)):
-        #     for i in range(strip.numPixels()):
-        #         if i in range(x - int(LED_COUNT * .2), x + 1):
-        #             if i < 0:
-        #                 continue
+        for x in range(self.start_led, self.end_led):
+            for i in range(self.start_led, self.end_led):
+                if i in range(x - int((self.end_led - self.start_led) * .2), x + 1):
+                    if i < 0:
+                        continue
                     
-        #             strip.setPixelColor(i, color)
+                    self.strip.setPixelColor(i, 255)
                 
-        #         else:
-        #             strip.setPixelColor(i, 0)
+                else:
+                    self.strip.setPixelColor(i, 0)
 
-        #     strip.show()
-        #     sleep(sleep_time / int(LED_COUNT))
+            self.strip.show()
+            sleep(self.sleep_time / int(self.end_led - self.start_led))

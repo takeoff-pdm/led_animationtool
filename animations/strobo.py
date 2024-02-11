@@ -3,7 +3,7 @@ from color_sequence import ColorSequence
 from section import Section
 
 class Strobo(Animation):
-    async def animate(self, bpm: int, section: Section):
+    def animate(self):
         print('Flacka flacka flacka')
 
         # color = Color(255, 255, 255)
