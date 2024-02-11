@@ -66,7 +66,7 @@ def fetch_animations() -> list:
         return [ recreate_animation(animations_data) ]
 
 def fetch_animation(id: int) -> dict:
-    animation_data = Database.fetchone_from_db('SELECT id, name, description, variation, direction, \
+    animation_data = Database.fetchone_from_db('SELECT id, name, description, variation, direction \
                                                 FROM animations WHERE id = :id', {'id': id})
 
     if animation_data == None:
