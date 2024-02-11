@@ -13,7 +13,7 @@ class Section():
             self.end_led = end_led
         
         elif self.id != None:
-            section_data = fetch_section(id)
+            section_data = fetch_section(self.id)
 
             self.name = section_data['name']
             self.start_led = section_data['start_led']

@@ -14,8 +14,8 @@ class Color():
             self.green = green
             self.blue = blue
         
-        elif not self.id:
-            color_data = fetch_color(id)
+        elif not self.id != None:
+            color_data = fetch_color(self.id)
             
             self.color_sequence_id = color_data['color_sequence_id']
             self.position = color_data['position']

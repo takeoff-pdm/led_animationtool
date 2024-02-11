@@ -15,17 +15,15 @@ class Animation():
             self.description = description
             self.variation = variation
             self.direction = direction
-                    
-            if self.id == None:  # Seems to be new
-                self.sync_changes_to_db(new=True)
         
-        elif self.id:
-            animation_data = fetch_animation(name)
+        elif self.id != None:
+            animation_data = fetch_animation(self.id)
 
-            self.name = animation_data['name']
-            self.description = animation_data['description']
-            self.variation = animation_data['variation']
-            self.direction = animation_data['direction']
+            if animation_data:  # Check if animation exists
+                self.name = animation_data['name']
+                self.description = animation_data['description']
+                self.variation = animation_data['variation']
+                self.direction = animation_data['direction']
         
         self.bpm = 1
         self.start_led = 0
@@ -48,6 +46,10 @@ class Animation():
         return update_animation(self.name, self.description, self.variation, 
                                 self.direction)
         
+    @property
+    def sleep_time(self):
+        return 60 / self.bpm
+    
     def select_color() -> Color:
         pass
 
@@ -82,5 +84,5 @@ class Animation():
         
     #     self.sync_changes_to_db()
 
-    async def animate(self, strip, bpm: int, section: Section, color_sequence: ColorSequence):
+    def animate(self):
         pass

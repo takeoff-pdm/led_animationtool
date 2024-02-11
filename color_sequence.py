@@ -17,8 +17,8 @@ class ColorSequence():
             self.selection = selection
             self.color_amount = color_amount
         
-        elif self.id:
-            color_sequence_data = fetch_color_sequence(id)
+        elif self.id != None:
+            color_sequence_data = fetch_color_sequence(self.id)
 
             self.name = color_sequence_data['name']
             self.description = color_sequence_data['description']
