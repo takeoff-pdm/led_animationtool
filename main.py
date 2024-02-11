@@ -117,7 +117,7 @@ async def update_anim(animation: Animation):
 @app.post('/api/animate/start')
 async def animate_section(animate: Animate):
     return JSONResponse(content={ 'success': strip.start_animate(color_sequence_id=animate.color_sequence_id, 
-                                            animation_name=animate.id, section_id=animate.section_id) })
+                                            animation_id=animate.animation_id, section_id=animate.section_id) })
     
 @app.post('/api/animate/stop')
 async def stop_animate_section(id: Id):
