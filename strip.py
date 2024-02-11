@@ -1,12 +1,15 @@
 from json import load, dump
-from time import time_ns
+from time import time_ns, sleep
 from rpi_ws281x import Adafruit_NeoPixel
+from threading import Thread
 
-from __init__ import CONFIG_FILE
+from __init__ import CONFIG_FILE, ANIMATION_DATA
 
+from util.database.database import Database
 from util.database.section import fetch_sections, fetch_section, remove_section
 from util.database.color_sequence import fetch_color_sequences, fetch_color_sequence, remove_color_sequence
 from util.database.color import fetch_color, remove_color, update_color
+from util.database.animation import fetch_animations
 
 from util.api.models import Color as ApiColor
 
@@ -17,6 +20,7 @@ from color import Color
 from animations.animation import Animation
 from animations.flow import Flow
 from animations.shooter import Shooter
+# Add more...
 
 
 class Strip():
@@ -45,14 +49,16 @@ class Strip():
             self.color_sequences.append(ColorSequence(color_sequence_data['id'], color_sequence_data['name'], 
                                                       color_sequence_data['description'], color_sequence_data['selection'], 
                                                       color_sequence_data['color_amount']))
-            
+
         self.running_animations = []
+
+        self.init_animations()
         
         self.init_strip()  # Initialize strip
         
         self.strip.begin() # Start the strip
         
-        self.animate()
+        self.animating = None
 
     @staticmethod
     def fetch_config() -> dict:
@@ -76,6 +82,45 @@ class Strip():
         
         for animation in self.running_animations:
             animation.strip = self.strip
+
+    def create_animations(self):
+        for x in range(len(ANIMATION_DATA)):
+            try:
+                Database.push_to_db('INSERT INTO animations VALUES(:id, :name, :description, :variation, :direction)',
+                                    {
+                                        'id': x,
+                                        'name': ANIMATION_DATA[x]['name'],
+                                        'description': ANIMATION_DATA[x]['description'],
+                                        'variation': ANIMATION_DATA[x]['variation'],
+                                        'direction': ANIMATION_DATA[x]['direction']
+                                    })
+            except:
+                pass
+
+    
+    def init_animations(self):
+        animations = fetch_animations()
+
+        if not animations:
+            self.create_animations()
+
+        check = 0
+        
+        for animation in animations:
+            if animation['name'] == 'Flow':
+                check += 1
+            
+            elif animation['name'] == 'Shooter':
+                check += 1
+            
+            elif animation['name'] == 'Strobo':
+                check += 1
+            
+            # Add more...
+        
+        if check == len(ANIMATION_DATA):
+            self.create_animations()
+
     
     def set_brightness(self, brightness: int) -> bool:
         if brightness < 0 or brightness > 255:
@@ -84,7 +129,7 @@ class Strip():
         self.brightness = brightness
         self.update_config('brightness', self.brightness)
 
-        init_strip()  # Update strip
+        self.init_strip()  # Update strip
         
         return True
 
@@ -95,7 +140,7 @@ class Strip():
         self.led_count = led_count
         self.update_config('led_count', self.led_count)
         
-        init_strip()  # Update strip
+        self.init_strip()  # Update strip
         
         return True
 
@@ -106,7 +151,7 @@ class Strip():
         self.bpm = bpm
         self.update_config('bpm', bpm.value)
 
-        init_strip()  # Update strip
+        self.init_strip()  # Update strip
         
         return True
     
@@ -121,14 +166,11 @@ class Strip():
             return False
         
         self.sections.append(section)
-        print(self.sections)
 
         return True
     
     def remove_section(self, id: int) -> bool:
         for section in self.sections:
-            print(section.id)
-            
             if section.id == id:
                 if not remove_section(id):
                     return False
@@ -245,7 +287,7 @@ class Strip():
 
         self.strip.show()
     
-    def add_animation(animation: Animation, section: Section, color_sequence: ColorSequence):
+    def add_animation(self, animation: Animation, section: Section, color_sequence: ColorSequence):
         '''Adds animation to animate (not a new animation).
         '''
         animation.bpm = self.bpm
@@ -258,21 +300,29 @@ class Strip():
         
         self.running_animations.append(animation)
         
-    async def animate(self):
-        while True:
-            starting_time = time_ns() // 1_000_000
-            
-            # Check if bpm of animations is off
-            if len(self.running_animations) > 0:
-                if self.running_animations[0].bpm != self.bpm:
-                    # Rearange beats
-                    for animation in self.running_animations:
-                        animation.bpm = self.bpm
-            
-            for animation in self.running_animations:
-                animation.animate()
-            
-            sleep(sleep_time() - (time_ns() // 1_000_000 - starting_time))
+    def animate(self):
+        try:
+            while True:
+                starting_time = time_ns() // 1_000_000
+                
+                # Check if bpm of animations is off
+                if len(self.running_animations) > 0:
+                    if self.running_animations[0].bpm != self.bpm:
+                        # Rearange beats
+                        for animation in self.running_animations:
+                            animation.bpm = self.bpm
+                
+                for animation in self.running_animations:
+                    Thread(target=animation.animate).start()
+                
+                if self.sleep_time - (((time_ns() // 1_000_000) - starting_time) // 1_000) > 0:
+                    sleep(self.sleep_time - (((time_ns() // 1_000_000) - starting_time) // 1_000))
+                
+                else:
+                    print('Code too slow!')
+        
+        except:
+            self.color_wipe(0)
     
     def stop_animate(self, section_id: int) -> bool:
         # Fetch section
@@ -292,7 +342,7 @@ class Strip():
             
         return False
 
-    def start_animate(self, color_sequence_id: int, animation: Animation = None, animation_name: str = None, 
+    def start_animate(self, color_sequence_id: int, animation: Animation = None, animation_id: int = None, 
                       section: Section = None, section_id: int = None) -> bool:
         if not section:
             # Find out which section is meant
@@ -303,7 +353,7 @@ class Strip():
         if not section:
             return False
         
-        stop_animate(section.id)  # Stop current animation if there is one
+        self.stop_animate(section.id)  # Stop current animation if there is one
         
         # Find out which color sequence is meant
         color_sequence = None
@@ -317,18 +367,18 @@ class Strip():
         
         if not animation:
             # Find out which animation is meant
-            if animation_name == 'Flow':
-                self.add_animation(Flow('Flow'), section, color_sequence)
+            if animation_id == 0:
+                self.add_animation(Flow(id=0), section, color_sequence)
                 
-                return True
-                
-            elif animation_name == 'Shooter':
-                self.add_animation(Shooter('Shooter'), section, color_sequence)
-                
-                return True
+            elif animation_id == 1:
+                self.add_animation(Shooter(id=1), section, color_sequence)
             
             # Add more ...
+        else:
+            self.add_animation(animation, section, color_sequence)
 
-        self.add_animation(animation, section, color_sequence)
+        if self.animating == None:
+            self.animating = Thread(target=self.animate)
+            self.animating.start()
         
         return True
