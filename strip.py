@@ -50,8 +50,7 @@ class Strip():
         
         self.init_strip()  # Initialize strip
         
-        # TODO: Uncomment strip.begin
-        # self.strip.begin() # Start the strip
+        self.strip.begin() # Start the strip
         
         self.animate()
 
