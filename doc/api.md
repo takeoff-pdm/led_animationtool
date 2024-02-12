@@ -52,7 +52,7 @@ Colors:
     - Values: ``{ id: Integer }`` (Id of color)
     - Returns: ``{ success: boolean }``
 - ``/api/update/color``
-    - Values: ``{ id: Integer, color_sequence_id: Integer, position: Integer, red: Integer, green: Integer, blue: Integer }``
+    - Values: ``{ id: Integer, color_sequence_id: Integer, red: Integer, green: Integer, blue: Integer }``
     - Returns: ``{ success: boolean }``
     - Does not update color-sequence-id!
 
