@@ -78,7 +78,6 @@ export const ColorSequenceBuilder: React.FC = () => {
     if (over && active.id !== over?.id) {
       const activeIndex = colors.findIndex(({ id }) => id === active.id);
       const overIndex = colors.findIndex(({ id }) => id === over.id);
-
       setColors(arrayMove(colors, activeIndex, overIndex));
     }
   };
