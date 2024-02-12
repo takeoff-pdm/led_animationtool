@@ -96,7 +96,6 @@ class Strip():
                                     })
             except:
                 pass
-
     
     def init_animations(self):
         animations = fetch_animations()
@@ -149,9 +148,7 @@ class Strip():
             return False
         
         self.bpm = bpm
-        self.update_config('bpm', bpm.value)
-
-        self.init_strip()  # Update strip
+        self.update_config('bpm', bpm)
         
         return True
     
@@ -336,6 +333,10 @@ class Strip():
         for animation in self.running_animations:
             if animation.start_led == section.start_led:
                 self.running_animations.remove(animation)
+
+                sleep(self.sleep_time * 1.1)
+
+                animation.color_wipe(0)  # Turn part of strip off
                 
                 return True
             

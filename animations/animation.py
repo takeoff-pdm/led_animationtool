@@ -50,6 +50,14 @@ class Animation():
     def sleep_time(self):
         return 60 / self.bpm
     
+    def color_wipe(self, color):
+        '''Change color of all pixels of selected section.
+        '''
+        for i in range(self.start_led, self.end_led):
+            self.strip.setPixelColor(i, color)
+
+        self.strip.show()
+    
     def select_color() -> Color:
         pass
 
