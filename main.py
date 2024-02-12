@@ -85,15 +85,15 @@ async def get_colors_from_sequence(id: Id): # Id from color_sequence
 async def get_color(id: Id):
     return JSONResponse(content={ 'color': fetch_color(id.id) })
 
-@app.get('/api/add/color')
+@app.post('/api/add/color')
 async def add_color(color: Color):
     return JSONResponse(content={ 'success': strip.add_color(color.color_sequence_id, color.red, color.green, color.blue) })
 
-@app.get('/api/remove/color')
+@app.post('/api/remove/color')
 async def remove_color(id: Id):
     return JSONResponse(content={ 'success': strip.remove_color(id.id) })
 
-@app.get('/api/update/color')
+@app.post('/api/update/color')
 async def update_color(color: Color):
     return JSONResponse(content={ 'success': strip.update_color(color) } )
 

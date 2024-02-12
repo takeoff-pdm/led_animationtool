@@ -3,7 +3,7 @@ from util.database.database import Database
 
 
 class Color():
-    def __init__(self, id, color_sequence_id: int = None, position: int = None,
+    def __init__(self, id: int = None, color_sequence_id: int = None, position: int = None,
                  red: int = None, green: int = None, blue: int = None):
         self.id = id
         
@@ -14,7 +14,7 @@ class Color():
             self.green = green
             self.blue = blue
         
-        elif not self.id != None:
+        elif self.id != None:
             color_data = fetch_color(self.id)
             
             self.color_sequence_id = color_data['color_sequence_id']

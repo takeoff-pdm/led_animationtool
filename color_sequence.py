@@ -42,16 +42,20 @@ class ColorSequence():
         if len(self.color_list) > 0 and not update:
             return self.color_list
         
-        colors_data = fetch_colors_from_sequence()
+        colors_data = fetch_colors_from_sequence(self.id)
 
         colors = []
 
         for color_data in colors_data:
-            colors.add(Color(color_data['id'], self.name, color_data['position'], color_data['red'], 
+            colors.append(Color(color_data['id'], self.name, color_data['position'], color_data['red'], 
                              color_data['green'], color_data['blue']))
         
         self.color_list = colors
         return colors
+    
+    def update_colors(self):
+        self.color_list = []
+        self.colors
 
     # def set_name(self, name) -> bool:
     #     self.name = name

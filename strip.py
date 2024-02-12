@@ -242,24 +242,23 @@ class Strip():
     def add_color(self, color_sequence_id: int, red: int, green: int, blue: int) -> bool:
         for color_sequence in self.color_sequences:
             if color_sequence.id == color_sequence_id:
-                return color_sequence.add_color(Color(color_sequence_id=color_sequence_id, position=None, 
-                                               red=red, green=green, blue=blue))
+                return color_sequence.add_color(Color(color_sequence_id=color_sequence_id, 
+                                                      position=None, red=red, green=green, blue=blue))
             
         return False
     
     def remove_color(self, id: int) -> bool:
-        color = Color(id)
-        
-        if not color:
-            return False
+        color = Color(id=id)
         
         if not remove_color(id):
             return False
         
         # Also remove from color_sequence cache
         for color_sequence in self.color_sequences:
-            if color_sequence.id == color.color_sequence:
+            if color_sequence.id == color.color_sequence_id:
                 color_sequence.color_list.pop(color.position)
+                
+        return True
                 
     def update_color(self, color: ApiColor) -> bool:
         success = update_color(color.id, color.color_sequence_id, color.position, 
@@ -268,7 +267,7 @@ class Strip():
         # Update color in sequence
         for color_sequence in self.color_sequences:
             if color_sequence.id == color.color_sequence_id:
-                color_sequence.colors(update=True)
+                color_sequence.update_colors()
                 
                 return success
             
