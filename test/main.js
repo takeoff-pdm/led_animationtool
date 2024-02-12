@@ -125,6 +125,56 @@ function startAnimation(data) {
     }).then(json => console.log("Request complete! response:", json));
 }
 
+function stopAnimation(data) {    
+    fetch(url + "/api/animate/stop", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
+// Settings
+function getSettings() {    
+    fetch(url + "/api/get/settings", {
+        method: "GET",
+        headers: {'Content-Type': 'application/json'}
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
+function updateBrightness(data) {    
+    fetch(url + "/api/update/brightness", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
+function updateLedCount(data) {    
+    fetch(url + "/api/update/led-count", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
+function updateBpm(data) {    
+    fetch(url + "/api/update/bpm", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
 // Section
 // addSection({name: "Sektion 1", start_led: 60, end_led: 119})
 // updateSection({id: 0, name: "Banana", start_led: 2, end_led: 112})
@@ -138,8 +188,16 @@ function startAnimation(data) {
 // Color
 // addColor({ color_sequence_id: 0, red: 255, green: 255, blue: 0 })
 // removeColor({ id: 2 })
-updateColor({ id: 1, color_sequence_id: 0, position: 1, red: 0, green: 255, blue: 255 })
+// updateColor({ id: 1, color_sequence_id: 0, position: 1, red: 0, green: 255, blue: 255 })
 
 // Animation
 // startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 0})
 // startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 2})
+// stopAnimation({ id: 0 })
+
+// Settings
+// getSettings()
+// updateBrightness({ value: 80 })
+// updateLedCount({ value: 100 })
+// updateBpm({ value: 60 })
+// getSettings()
