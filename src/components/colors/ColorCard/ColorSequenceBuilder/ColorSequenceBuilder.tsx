@@ -66,14 +66,13 @@ export const ColorSequenceBuilder: React.FC = () => {
           colors[activeIndex].position = overIndex;
           colors[overIndex].position = activeIndex;
 
-          setColors(arrayMove(colors, activeIndex, overIndex));
+          setColors(colors.sort((a, b) => a.position - b.position));
         }
         setActive(null);
       }}
       onDragCancel={() => {
         setActive(null);
       }}
-      collisionDetection={closestCenter}
     >
       <SortableContext items={colors}>
         <div className="grid gap-2 grid-cols-5">
