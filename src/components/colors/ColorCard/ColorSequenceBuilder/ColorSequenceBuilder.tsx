@@ -2,9 +2,6 @@ import {
   DndContext,
   useSensor,
   useSensors,
-  MouseSensor,
-  TouchSensor,
-  closestCenter,
   Active,
   PointerSensor,
   KeyboardSensor,
@@ -13,7 +10,6 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import ColorItem from "./ColorItem";
 import { useMemo, useState } from "react";
@@ -21,25 +17,50 @@ import SortableColorItem from "./SortableColorItem";
 import SortableColorItemOverlay from "./SortableColorItemOverlay";
 
 export const ColorSequenceBuilder: React.FC = () => {
-  const [colors, setColors] = useState([
-    {
-      id: 123,
-      blue: 250,
-      color_sequence_id: "",
-      green: 150,
-      position: 0,
-      red: 200,
-    },
-    {
-      id: 1244,
-      blue: 120,
-      color_sequence_id: "",
-      green: 150,
-      position: 1,
-      red: 200,
-    },
-    // Weitere Farben hier...
-  ]);
+  const [colors, setColors] = useState(
+    [
+      {
+        id: 123,
+        blue: 250,
+        color_sequence_id: "",
+        green: 150,
+        position: 0,
+        red: 200,
+      },
+      {
+        id: 1244,
+        blue: 120,
+        color_sequence_id: "",
+        green: 150,
+        position: 1,
+        red: 200,
+      },
+      {
+        id: 1245,
+        blue: 50,
+        color_sequence_id: "",
+        green: 100,
+        position: 2,
+        red: 150,
+      },
+      {
+        id: 1246,
+        blue: 200,
+        color_sequence_id: "",
+        green: 50,
+        position: 3,
+        red: 100,
+      },
+      {
+        id: 1247,
+        blue: 100,
+        color_sequence_id: "",
+        green: 200,
+        position: 4,
+        red: 50,
+      },
+    ].sort((a, b) => a.position - b.position)
+  );
   const [active, setActive] = useState<Active | null>(null);
   const activeItem = useMemo(
     () => colors.find((item) => item.id === active?.id),
@@ -52,24 +73,23 @@ export const ColorSequenceBuilder: React.FC = () => {
     })
   );
 
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (over && active.id !== over?.id) {
+      const activeIndex = colors.findIndex(({ id }) => id === active.id);
+      const overIndex = colors.findIndex(({ id }) => id === over.id);
+
+      setColors(arrayMove(colors, activeIndex, overIndex));
+    }
+  };
+
   return (
     <DndContext
       sensors={sensors}
       onDragStart={({ active }) => {
         setActive(active);
       }}
-      onDragEnd={({ active, over }) => {
-        if (over && active.id !== over?.id) {
-          const activeIndex = colors.findIndex(({ id }) => id === active.id);
-          const overIndex = colors.findIndex(({ id }) => id === over.id);
-
-          colors[activeIndex].position = overIndex;
-          colors[overIndex].position = activeIndex;
-
-          setColors(colors.sort((a, b) => a.position - b.position));
-        }
-        setActive(null);
-      }}
+      onDragEnd={handleDragEnd}
       onDragCancel={() => {
         setActive(null);
       }}
@@ -77,7 +97,7 @@ export const ColorSequenceBuilder: React.FC = () => {
       <SortableContext items={colors}>
         <div className="grid gap-2 grid-cols-5">
           {colors.map((color, index) => (
-            <SortableColorItem color={color} />
+            <SortableColorItem key={color.id} color={color} />
           ))}
         </div>
       </SortableContext>
