@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-let url = "http://192.168.178.178:8000"
+let url = "http://0.0.0.0:8000"
 
 // Section
 function addSection(data) {
@@ -64,6 +64,56 @@ function removeColorSequence(data) {
     }).then(json => console.log("Request complete! response:", json));
 }
 
+// Color
+function getColor(data) {    
+    fetch(url + "/api/get/color", {
+        method: "GET",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+function getColorsFromSequence(data) {    
+    fetch(url + "/api/get/colors_from_sequence", {
+        method: "GET",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
+function addColor(data) {    
+    fetch(url + "/api/add/color", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
+function updateColor(data) {
+    fetch(url + "/api/update/color", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data)
+    }).then(res => {
+    return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
+function removeColor(data) {
+    fetch(url + "/api/remove/color", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data)
+    }).then(res => {
+    return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
 // Animation
 function startAnimation(data) {    
     fetch(url + "/api/animate/start", {
@@ -84,6 +134,11 @@ function startAnimation(data) {
 // addColorSequence({name: "WeißRotWeiß", description: "Viel weiß wenig rot", selection: 0, color_amount: 1})
 // updateColorSequence({id: 0, name: "RotWeißRot", description: "Viel rot wenig weiß", selection: 2, color_amount: 2})
 // removeColorSequence({id: 1})
+
+// Color
+// addColor({ color_sequence_id: 0, red: 255, green: 255, blue: 0 })
+// removeColor({ id: 2 })
+updateColor({ id: 1, color_sequence_id: 0, position: 1, red: 0, green: 255, blue: 255 })
 
 // Animation
 // startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 0})
