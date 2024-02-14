@@ -38,8 +38,8 @@ class ColorSequence():
         return update_color_sequence(self.id, self.name, self.description, self.selection, self.color_amount)
 
     @property
-    def colors(self, update: bool = False):
-        if len(self.color_list) > 0 and not update:
+    def colors(self):
+        if len(self.color_list) > 0:
             return self.color_list
         
         colors_data = fetch_colors_from_sequence(self.id)
