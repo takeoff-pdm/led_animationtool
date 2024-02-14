@@ -115,8 +115,18 @@ function removeColor(data) {
 }
 
 // Animation
+function updateAnimation(data) {    
+    fetch(url + "/api/update/animation", {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify(data)
+    }).then(res => {
+        return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
 function startAnimation(data) {    
-    fetch(url + "/api/animate/start", {
+    fetch(url + "/api/start/animate", {
         method: "POST",
         headers: {'Content-Type': 'application/json'}, 
         body: JSON.stringify(data)
@@ -126,7 +136,7 @@ function startAnimation(data) {
 }
 
 function stopAnimation(data) {    
-    fetch(url + "/api/animate/stop", {
+    fetch(url + "/api/stop/animate", {
         method: "POST",
         headers: {'Content-Type': 'application/json'}, 
         body: JSON.stringify(data)
@@ -176,28 +186,29 @@ function updateBpm(data) {
 }
 
 // Section
-// addSection({name: "Sektion 1", start_led: 60, end_led: 119})
-// updateSection({id: 0, name: "Banana", start_led: 2, end_led: 112})
+// addSection({name: "Sektion 1", start_led: 0, end_led: 60})
+// updateSection({id: 0, name: "Banana", start_led: 0, end_led: 60})
 // removeSection({id: 0})
 
 // Color Sequence
-// addColorSequence({name: "WeißRotWeiß", description: "Viel weiß wenig rot", selection: 0, color_amount: 1})
-// updateColorSequence({id: 0, name: "RotWeißRot", description: "Viel rot wenig weiß", selection: 2, color_amount: 2})
+// addColorSequence({name: "Marlene", description: "halt Marlene", selection: 0, color_amount: 1})
+// updateColorSequence({id: 1, name: "Strob", description: "halt Strobo", selection: 0, color_amount: 7})
 // removeColorSequence({id: 1})
 
 // Color
-// addColor({ color_sequence_id: 0, red: 255, green: 255, blue: 0 })
-// removeColor({ id: 2 })
-// updateColor({ id: 1, color_sequence_id: 0, position: 1, red: 0, green: 255, blue: 255 })
+// addColor({ color_sequence_id: 2, red: 255, green: 0, blue: 255 })
+// removeColor({ id: 15 })
+// updateColor({ id: 1, color_sequence_id: 0, position: 1, red: 0, green: 0, blue: 255 })
 
 // Animation
+// updateAnimation({ id: 0, name: 'MonoColor', description: 'Monochromatic color switching (different sections possible)', variation: 1, direction: 0 })
 // startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 0})
-// startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 2})
-// stopAnimation({ id: 0 })
+// startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 0})
+// stopAnimation({ id: 0 }) // Id is section_id
 
 // Settings
 // getSettings()
 // updateBrightness({ value: 80 })
 // updateLedCount({ value: 100 })
-// updateBpm({ value: 60 })
+// updateBpm({ value: 145 })
 // getSettings()
