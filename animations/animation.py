@@ -1,3 +1,5 @@
+from rpi_ws281x import Color as StripColor
+
 from util.database.animation import fetch_animation, add_animation, remove_animation, update_animation
 from util.database.database import Database
 
@@ -26,6 +28,7 @@ class Animation():
                 self.direction = animation_data['direction']
         
         self.bpm = 1
+        self.section_id = 0
         self.start_led = 0
         self.end_led = 0
         
@@ -58,8 +61,31 @@ class Animation():
 
         self.strip.show()
     
-    def select_color() -> Color:
-        pass
+    def wheel(self, pos):
+        """Generate rainbow colors across 0-255 positions.
+        """
+        if pos < 85:
+            return StripColor(pos * 3, 255 - pos * 3, 0)
+        elif pos < 170:
+            pos -= 85
+            return StripColor(255 - pos * 3, 0, pos * 3)
+        else:
+            pos -= 170
+            return StripColor(0, pos * 3, 255 - pos * 3)
+    
+    def select_colors(self, beat: int) -> list:
+        if len(self.color_sequence.colors) == 0:  # Make sure, there are colors
+            return []
+
+        colors = []
+
+        for x in range(self.color_sequence.color_amount):  # Select the required colors
+            color = self.color_sequence.colors[(x + beat * self.color_sequence.color_amount) 
+                                               % len(self.color_sequence.colors)]
+                
+            colors.append(StripColor(color.red, color.green, color.blue))
+        
+        return colors
 
     # def set_name(self, name) -> bool:
     #     # Check if section with this name already exists
@@ -92,5 +118,5 @@ class Animation():
         
     #     self.sync_changes_to_db()
 
-    def animate(self):
+    def animate(self, beat: int):
         pass

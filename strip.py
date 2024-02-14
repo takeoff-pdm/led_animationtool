@@ -17,6 +17,7 @@ from section import Section
 from color_sequence import ColorSequence
 from color import Color
 
+from animations.mono_color import MonoColor
 from animations.animation import Animation
 from animations.flow import Flow
 from animations.shooter import Shooter
@@ -51,6 +52,7 @@ class Strip():
                                                       color_sequence_data['color_amount']))
 
         self.running_animations = []
+        self.beat = 0
 
         self.init_animations()
         
@@ -192,6 +194,14 @@ class Strip():
                 section.name = name
                 section.start_led = start_led
                 section.end_led = end_led
+
+                # Check if any animation is running on the section
+                for animation in self.running_animations:
+                    if animation.section_id == section.id:
+                        animation.color_wipe(0)
+
+                        animation.start_led = start_led
+                        animation.end_led = end_led
                 
                 return section.sync_changes_to_db()
             
@@ -253,7 +263,9 @@ class Strip():
         # Also remove from color_sequence cache
         for color_sequence in self.color_sequences:
             if color_sequence.id == color.color_sequence_id:
-                color_sequence.color_list.pop(color.position)
+                for color_in_list in color_sequence.color_list:
+                    if color_in_list.id == color.id:
+                        color_sequence.color_list.remove(color_in_list)
                 
         return True
                 
@@ -287,6 +299,7 @@ class Strip():
         '''Adds animation to animate (not a new animation).
         '''
         animation.bpm = self.bpm
+        animation.section_id = section.id
         animation.start_led = section.start_led
         animation.end_led = section.end_led
         
@@ -309,13 +322,17 @@ class Strip():
                             animation.bpm = self.bpm
                 
                 for animation in self.running_animations:
-                    Thread(target=animation.animate).start()
+                    Thread(target=animation.animate, args=(self.beat,)).start()
                 
                 if self.sleep_time - (((time_ns() // 1_000_000) - starting_time) // 1_000) > 0:
                     sleep(self.sleep_time - (((time_ns() // 1_000_000) - starting_time) // 1_000))
                 
                 else:
                     print('Code too slow!')
+                
+                self.beat += 1
+                if self.beat == 16:
+                    self.beat = 0
         
         except:
             self.color_wipe(0)
@@ -331,7 +348,7 @@ class Strip():
         
         # Find running animation and stop it
         for animation in self.running_animations:
-            if animation.start_led == section.start_led:
+            if animation.section_id == section.id:
                 self.running_animations.remove(animation)
 
                 sleep(self.sleep_time * 1.1)
@@ -368,10 +385,13 @@ class Strip():
         if not animation:
             # Find out which animation is meant
             if animation_id == 0:
-                self.add_animation(Flow(id=0), section, color_sequence)
-                
+                self.add_animation(MonoColor(id=0), section, color_sequence)
+
             elif animation_id == 1:
-                self.add_animation(Shooter(id=1), section, color_sequence)
+                self.add_animation(Flow(id=1), section, color_sequence)
+                
+            elif animation_id == 2:
+                self.add_animation(Shooter(id=2), section, color_sequence)
             
             # Add more ...
         else:
