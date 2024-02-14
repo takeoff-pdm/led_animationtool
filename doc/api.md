@@ -64,7 +64,7 @@ Animations:
     - Values: ``{ id: Integer }``
     - Returns: ``{ animation: Animation | null }``
 - ``/api/update/animation``
-    - Values: ``{ id: Integer, name: String, description: String, animation.variation, animation.direction }``
+    - Values: ``{ id: Integer, name: String, description: String, variation: Integer, direction: Integer }``
     - Returns: ``{ success: boolean }``
 - ``/api/start/animate``
     - Values: ``{ color_sequence_id: Integer, animation_id: Integer, section_id: Integer }``
