@@ -66,10 +66,10 @@ Animations:
 - ``/api/update/animation``
     - Values: ``{ id: Integer, name: String, description: String, animation.variation, animation.direction }``
     - Returns: ``{ success: boolean }``
-- ``/api/animate/start``
+- ``/api/start/animate``
     - Values: ``{ color_sequence_id: Integer, animation_id: Integer, section_id: Integer }``
     - Returns: ``{ success: boolean }``
-- ``/api/animate/stop``
+- ``/api/stop/animate``
     - Values: ``{ id: Integer }`` (Id of section)
     - Returns: ``{ success: boolean }``
 

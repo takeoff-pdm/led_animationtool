@@ -114,12 +114,12 @@ async def update_anim(animation: Animation):
     return JSONResponse(content={ 'success': update_animation(animation.id, animation.name, animation.description, 
                                          animation.variation, animation.direction) })
 
-@app.post('/api/animate/start')
+@app.post('/api/start/animate')
 async def animate_section(animate: Animate):
     return JSONResponse(content={ 'success': strip.start_animate(color_sequence_id=animate.color_sequence_id, 
                                             animation_id=animate.animation_id, section_id=animate.section_id) })
     
-@app.post('/api/animate/stop')
+@app.post('/api/stop/animate')
 async def stop_animate_section(id: Id):
     return JSONResponse(content={ 'success': strip.stop_animate(id.id) })
 
