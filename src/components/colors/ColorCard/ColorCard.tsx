@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ColorSequenceBuilder from "./ColorSequenceBuilder";
+import { useColorsContext } from "../ColorsContext/ColorsContext";
 
 export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   colorSequence,
@@ -25,8 +26,55 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   const [colorSequenceTemp, setColorSequenceTemp] =
     useState<ColorSequence>(colorSequence);
 
+  const { colorSequences, setColorSequences } = useColorsContext();
+
   const [tab, setTab] = useState<"settings" | "preview">("preview");
   const [editMode, setEditMode] = useState<boolean>(false);
+
+  const [colors, setColors] = useState(
+    [
+      {
+        id: 123,
+        blue: 250,
+        color_sequence_id: "",
+        green: 150,
+        position: 0,
+        red: 200,
+      },
+      {
+        id: 1244,
+        blue: 120,
+        color_sequence_id: "",
+        green: 150,
+        position: 1,
+        red: 200,
+      },
+      {
+        id: 1245,
+        blue: 50,
+        color_sequence_id: "",
+        green: 100,
+        position: 2,
+        red: 150,
+      },
+      {
+        id: 1246,
+        blue: 200,
+        color_sequence_id: "",
+        green: 50,
+        position: 3,
+        red: 100,
+      },
+      {
+        id: 1247,
+        blue: 100,
+        color_sequence_id: "",
+        green: 200,
+        position: 4,
+        red: 50,
+      },
+    ].sort((a, b) => a.position - b.position)
+  );
 
   useEffect(() => {
     if (!editMode) {
@@ -91,11 +139,13 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
                 </SelectContent>
               </Select>
             </div>
-            <ColorSequenceBuilder />
+            <ColorSequenceBuilder colors={colors} setColors={setColors} />
           </div>
         )}
       </CardContent>
-      <CardFooter className={`flex ${editMode && "mt-8"} justify-between space-x-3`}>
+      <CardFooter
+        className={`flex ${editMode && "mt-8"} justify-between space-x-3`}
+      >
         <Button
           onClick={() => {
             setEditMode(!editMode);
@@ -106,7 +156,21 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
           {tab === "preview" ? "Settings" : "Preview"}
         </Button>
         {editMode && (
-          <Button className="" variant={"default"}>
+          <Button
+            onClick={() => {
+              setColorSequences([
+                ...colorSequences.filter(
+                  (item) => item.id !== colorSequenceTemp.id
+                ),
+                {
+                  ...colorSequenceTemp,
+                  
+                },
+              ]);
+            }}
+            className=""
+            variant={"default"}
+          >
             Update
           </Button>
         )}

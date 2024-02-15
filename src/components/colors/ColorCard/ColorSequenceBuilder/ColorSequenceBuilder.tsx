@@ -16,52 +16,14 @@ import { useMemo, useState } from "react";
 import SortableColorItem from "./SortableColorItem";
 import SortableColorItemOverlay from "./SortableColorItemOverlay";
 import AddColorButton from "../../AddColorButton";
+import { Color } from "@/api/types";
 
-export const ColorSequenceBuilder: React.FC = () => {
-  const [colors, setColors] = useState(
-    [
-      {
-        id: 123,
-        blue: 250,
-        color_sequence_id: "",
-        green: 150,
-        position: 0,
-        red: 200,
-      },
-      {
-        id: 1244,
-        blue: 120,
-        color_sequence_id: "",
-        green: 150,
-        position: 1,
-        red: 200,
-      },
-      {
-        id: 1245,
-        blue: 50,
-        color_sequence_id: "",
-        green: 100,
-        position: 2,
-        red: 150,
-      },
-      {
-        id: 1246,
-        blue: 200,
-        color_sequence_id: "",
-        green: 50,
-        position: 3,
-        red: 100,
-      },
-      {
-        id: 1247,
-        blue: 100,
-        color_sequence_id: "",
-        green: 200,
-        position: 4,
-        red: 50,
-      },
-    ].sort((a, b) => a.position - b.position)
-  );
+export const ColorSequenceBuilder: React.FC<{
+  colors: Color[];
+  setColors: (colors: Color[]) => void;
+}> = ({
+  colors, setColors
+}) => {
   const [active, setActive] = useState<Active | null>(null);
   const activeItem = useMemo(
     () => colors.find((item) => item.id === active?.id),
