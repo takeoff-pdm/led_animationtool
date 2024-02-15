@@ -9,7 +9,7 @@ from util.database.database import Database
 from util.database.section import fetch_sections, fetch_section
 from util.database.color_sequence import fetch_color_sequences, fetch_color_sequence
 from util.database.color import fetch_colors, fetch_colors_from_sequence, fetch_color
-from util.database.animation import fetch_animations, fetch_animation, update_animation, add_animation, remove_animation
+from util.database.animation import fetch_animations, fetch_animation, add_animation, remove_animation
 
 from strip import Strip
 
@@ -111,8 +111,11 @@ async def update_anim(animation: Animation):
     if not fetch_animation(animation.id):
         return JSONResponse(content={ 'success': False })
     
-    return JSONResponse(content={ 'success': update_animation(animation.id, animation.name, animation.description, 
-                                         animation.variation, animation.direction) })
+    return JSONResponse(content={ 
+                        'success': strip.update_animation(animation.id, animation.name, 
+                                                          animation.description, 
+                                                          animation.variation, animation.direction) 
+                                })
 
 @app.post('/api/start/animate')
 async def animate_section(animate: Animate):

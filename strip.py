@@ -295,6 +295,19 @@ class Strip():
 
         self.strip.show()
     
+    def update_animation(self, id: int, name: str, description: str, variation: int, direction: int):
+        animation = Animation(id, name, description, variation, direction)
+
+        # Update running animations
+        for anim in self.running_animations:
+            if anim.id == animation.id:
+                anim.name = animation.name
+                anim.description = animation.description
+                anim.variation = animation.variation
+                anim.direction = animation.direction
+
+        return animation.sync_changes_to_db()
+    
     def add_animation(self, animation: Animation, section: Section, color_sequence: ColorSequence):
         '''Adds animation to animate (not a new animation).
         '''
@@ -337,7 +350,7 @@ class Strip():
         except:
             self.color_wipe(0)
     
-    def stop_animate(self, section_id: int) -> bool:
+    def stop_animate(self, section_id: int, start_new: bool=False) -> bool:
         # Fetch section
         for possible_section in self.sections:
                 if possible_section.id == section_id:
@@ -353,7 +366,8 @@ class Strip():
 
                 sleep(self.sleep_time * 1.1)
 
-                animation.color_wipe(0)  # Turn part of strip off
+                if not start_new:
+                    animation.color_wipe(0)  # Turn part of strip off
                 
                 return True
             
@@ -370,7 +384,7 @@ class Strip():
         if not section:
             return False
         
-        self.stop_animate(section.id)  # Stop current animation if there is one
+        self.stop_animate(section.id, start_new=True)  # Stop current animation if there is one
         
         # Find out which color sequence is meant
         color_sequence = None

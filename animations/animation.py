@@ -46,7 +46,7 @@ class Animation():
             return add_animation(self.id, self.name, self.description, self.variation, 
                                  self.direction)
         
-        return update_animation(self.name, self.description, self.variation, 
+        return update_animation(self.id, self.name, self.description, self.variation, 
                                 self.direction)
         
     @property
