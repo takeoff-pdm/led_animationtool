@@ -1,6 +1,6 @@
 import { Animation, Color, ColorSequence, Section } from "./types";
 
-let RECEIVER_HOST: string = process.env.RECEIVER_HOST || "";
+let RECEIVER_HOST: string = process.env.RECEIVER_HOSTNAME || "";
 
 interface RequestData {
   [key: string]: any;
@@ -10,7 +10,7 @@ async function sendRequest(
   endpoint: string,
   method: "GET" | "POST",
   data?: RequestData
-): Promise<void> {
+): Promise<any> {
   const url = `${RECEIVER_HOST}/api/${endpoint}`;
   const options: RequestInit = {
     method: method,
@@ -22,7 +22,7 @@ async function sendRequest(
   }
   const response = await fetch(url, options);
   const json = await response.json();
-  console.log("Request complete! response:", json);
+  return json;
 }
 
 // Section
@@ -33,6 +33,7 @@ const removeSection = (data: Section) =>
   sendRequest("remove/section", "POST", data);
 
 // ColorSequence
+const getColorSequences = () => sendRequest("/get/color_sequences", "GET");
 const addColorSequence = (data: ColorSequence) =>
   sendRequest("add/color_sequence", "POST", data);
 const updateColorSequence = (data: ColorSequence) =>
@@ -72,6 +73,7 @@ export {
   addSection,
   updateSection,
   removeSection,
+  getColorSequences,
   addColorSequence,
   updateColorSequence,
   removeColorSequence,
@@ -88,4 +90,3 @@ export {
   updateLedCount,
   updateBpm,
 };
-
