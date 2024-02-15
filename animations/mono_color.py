@@ -14,41 +14,63 @@ class MonoColor(Animation):
 
             for index, color in enumerate(colors):
                 # Split strip up into slices for the different colors
-                if self.direction == 0:
-                    for i in range(int(self.start_led + 1/len(colors) 
-                                        * (self.end_led - self.start_led) * index), 
-                                   int(self.end_led - 1/len(colors) * (self.end_led - self.start_led)
-                                        * (len(colors) - index - 1))):
-                        self.strip.setPixelColor(i, color)
-                
-                elif self.direction == 1:
-                    for i in range(int(self.start_led + 1/len(colors) 
-                                   * (self.end_led - self.start_led) 
-                                   * (len(colors) - index - 1)),
-                                   int(self.end_led - 1/len(colors) 
-                                   * (self.end_led - self.start_led)
-                                   * index)):
-                        self.strip.setPixelColor(i, color)
-                
-                elif self.direction == 3:  # Outer to inner
-                    for i in range(int(self.start_led + 1/len(colors) 
-                                   * ((self.end_led - self.start_led) / 2)
-                                   * (len(colors) - index - 1)), 
-                                   int(self.end_led
-                                   - 1/len(colors) 
-                                   * ((self.end_led - self.start_led) / 2)
-                                   * index 
-                                   - (self.end_led - self.start_led) / 2)):
-                        self.strip.setPixelColor(i, color)
-                
-                    for i in range(int(self.start_led 
-                                        + 1/len(colors) 
+                match self.direction:
+                    case 0:
+                        for i in range(int(self.start_led + 1/len(colors) 
+                                            * (self.end_led - self.start_led) * index), 
+                                    int(self.end_led - 1/len(colors) * (self.end_led - self.start_led)
+                                            * (len(colors) - index - 1))):
+                            self.strip.setPixelColor(i, color)
+                    
+                    case 1:
+                        for i in range(int(self.start_led + 1/len(colors) 
+                                        * (self.end_led - self.start_led) 
+                                        * (len(colors) - index - 1)),
+                                    int(self.end_led - 1/len(colors) 
+                                        * (self.end_led - self.start_led)
+                                        * index)):
+                            self.strip.setPixelColor(i, color)
+                    
+                    case 2:  # Inner to outer
+                        for i in range(int(self.start_led + 1/len(colors) 
                                         * ((self.end_led - self.start_led) / 2)
-                                        * index
-                                        + (self.end_led - self.start_led) / 2 + 1), 
-                                   int(self.end_led - 1/len(colors) * ((self.end_led - self.start_led) / 2)
-                                        * (len(colors) - index - 1))):
-                        self.strip.setPixelColor(i, color)
+                                        * index), 
+                                    int(self.end_led
+                                        - 1/len(colors) 
+                                        * ((self.end_led - self.start_led) / 2)
+                                        * (len(colors) - index - 1)
+                                        - (self.end_led - self.start_led) / 2)):
+                            self.strip.setPixelColor(i, color)
+                    
+                        for i in range(int(self.start_led 
+                                            + 1/len(colors) 
+                                            * ((self.end_led - self.start_led) / 2)
+                                            * (len(colors) - index - 1)
+                                            + (self.end_led - self.start_led) / 2 + 1), 
+                                    int(self.end_led - 1/len(colors) 
+                                            * ((self.end_led - self.start_led) / 2)
+                                            * index)):
+                            self.strip.setPixelColor(i, color)
+                    
+                    case 3:  # Outer to inner
+                        for i in range(int(self.start_led + 1/len(colors) 
+                                        * ((self.end_led - self.start_led) / 2)
+                                        * (len(colors) - index - 1)), 
+                                    int(self.end_led
+                                        - 1/len(colors) 
+                                        * ((self.end_led - self.start_led) / 2)
+                                        * index 
+                                        - (self.end_led - self.start_led) / 2)):
+                            self.strip.setPixelColor(i, color)
+                    
+                        for i in range(int(self.start_led 
+                                            + 1/len(colors) 
+                                            * ((self.end_led - self.start_led) / 2)
+                                            * index
+                                            + (self.end_led - self.start_led) / 2 + 1), 
+                                    int(self.end_led - 1/len(colors) * ((self.end_led - self.start_led) / 2)
+                                            * (len(colors) - index - 1))):
+                            self.strip.setPixelColor(i, color)
                 
             self.strip.show()
 
@@ -132,3 +154,51 @@ class MonoColor(Animation):
             
                 sleep(self.sleep_time / (ANIMATION_STEPS * 2) - ((time_ns() // 1_000_000 - starting_time) // 1_000))
                 starting_time = time_ns() // 1_000_000
+        
+        if self.direction == 4:
+            match(beat % 2):
+                case 0:
+                    self.direction = 0
+                    self.animate(beat)
+                    self.direction = 4
+                
+                case 1:
+                    self.direction = 1
+                    self.animate(beat)
+                    self.direction = 4
+        
+        elif self.direction == 5:
+            match(beat % 4):
+                case 0 | 1:
+                    self.direction = 0
+                    self.animate(beat)
+                    self.direction = 5
+                
+                case 2 | 3:
+                    self.direction = 1
+                    self.animate(beat)
+                    self.direction = 5
+        
+        elif self.direction == 6:
+            match(beat % 8):
+                case 0 | 1 | 2 | 3:
+                    self.direction = 0
+                    self.animate(beat)
+                    self.direction = 6
+                
+                case 4 | 5 | 6 | 7:
+                    self.direction = 1
+                    self.animate(beat)
+                    self.direction = 6
+        
+        elif self.direction == 7:
+            match(beat):
+                case 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7:
+                    self.direction = 0
+                    self.animate(beat)
+                    self.direction = 7
+                
+                case 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15:
+                    self.direction = 1
+                    self.animate(beat)
+                    self.direction = 7

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS color_sequences (
     id INT(32) PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
     description VARCHAR(128) NOT NULL,
-    selection INT(32) NOT NULL, -- 0 regular, 1 switching every fourth time, 2 random
+    selection INT(32) NOT NULL, -- 0 skip all selected colors, 1, 2, 3, 4... move on one, two, three, four... color(s)
     color_amount INT(32) NOT NULL DEFAULT 1 -- How many colors should be selected at once 
                                         -- (also skips given amount of colors to next color-set)
 );
