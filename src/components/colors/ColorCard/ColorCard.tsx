@@ -30,14 +30,12 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
 
   useEffect(() => {
     if (!editMode) {
-      console.log(editMode);
-      console.log(colorSequence);
       setColorSequenceTemp(colorSequence);
     }
   }, [editMode]);
 
   return (
-    <Card className="max-w-sm min-w-[384px] h-[330px] w-full">
+    <Card className="max-w-sm min-w-[384px] overflow-scroll h-[330px] w-full">
       <CardHeader className="">
         <CardTitle
           contentEditable={editMode}
@@ -69,7 +67,7 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
             <Skeleton className="w-full h-full" />
           </div>
         ) : (
-          <div className="w-full h-32 space-y-3">
+          <div className="w-full min-h-32 space-y-3">
             <div className="w-full flex space-x-1 justify-between">
               <Select>
                 <SelectTrigger className="w-1/2">

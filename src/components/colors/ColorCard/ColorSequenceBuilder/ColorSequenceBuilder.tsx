@@ -15,6 +15,7 @@ import ColorItem from "./ColorItem";
 import { useMemo, useState } from "react";
 import SortableColorItem from "./SortableColorItem";
 import SortableColorItemOverlay from "./SortableColorItemOverlay";
+import AddColorButton from "../../AddColorButton";
 
 export const ColorSequenceBuilder: React.FC = () => {
   const [colors, setColors] = useState(
@@ -98,6 +99,21 @@ export const ColorSequenceBuilder: React.FC = () => {
           {colors.map((color, index) => (
             <SortableColorItem key={color.id} color={color} />
           ))}
+          <AddColorButton
+            addColor={() => {
+              setColors([
+                ...colors,
+                {
+                  id: Math.random(),
+                  blue: 0,
+                  color_sequence_id: "",
+                  green: 0,
+                  position: colors.length,
+                  red: 0,
+                },
+              ]);
+            }}
+          />
         </div>
       </SortableContext>
       <SortableColorItemOverlay>
