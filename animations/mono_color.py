@@ -14,10 +14,41 @@ class MonoColor(Animation):
 
             for index, color in enumerate(colors):
                 # Split strip up into slices for the different colors
-                for i in range(int(self.start_led + 1/len(colors) * (self.end_led - self.start_led) * index), 
-                            int(self.end_led - 1/len(colors) * (self.end_led - self.start_led)
-                                * (len(colors) - index - 1))):
-                    self.strip.setPixelColor(i, color)
+                if self.direction == 0:
+                    for i in range(int(self.start_led + 1/len(colors) 
+                                        * (self.end_led - self.start_led) * index), 
+                                   int(self.end_led - 1/len(colors) * (self.end_led - self.start_led)
+                                        * (len(colors) - index - 1))):
+                        self.strip.setPixelColor(i, color)
+                
+                elif self.direction == 1:
+                    for i in range(int(self.start_led + 1/len(colors) 
+                                   * (self.end_led - self.start_led) 
+                                   * (len(colors) - index - 1)),
+                                   int(self.end_led - 1/len(colors) 
+                                   * (self.end_led - self.start_led)
+                                   * index)):
+                        self.strip.setPixelColor(i, color)
+                
+                elif self.direction == 3:  # Outer to inner
+                    for i in range(int(self.start_led + 1/len(colors) 
+                                   * ((self.end_led - self.start_led) / 2)
+                                   * (len(colors) - index - 1)), 
+                                   int(self.end_led
+                                   - 1/len(colors) 
+                                   * ((self.end_led - self.start_led) / 2)
+                                   * index 
+                                   - (self.end_led - self.start_led) / 2)):
+                        self.strip.setPixelColor(i, color)
+                
+                    for i in range(int(self.start_led 
+                                        + 1/len(colors) 
+                                        * ((self.end_led - self.start_led) / 2)
+                                        * index
+                                        + (self.end_led - self.start_led) / 2 + 1), 
+                                   int(self.end_led - 1/len(colors) * ((self.end_led - self.start_led) / 2)
+                                        * (len(colors) - index - 1))):
+                        self.strip.setPixelColor(i, color)
                 
             self.strip.show()
 
@@ -77,14 +108,25 @@ class MonoColor(Animation):
                 for index, (red_transition, green_transition, blue_transition) \
                     in enumerate(zip(red_transitions, green_transitions, blue_transitions)):
                     # Split strip up into slices for the different colors
-                    for i in range(int(self.start_led + 1/len(colors) * (self.end_led - self.start_led) * index), 
-                                int(self.end_led - 1/len(colors) * (self.end_led - self.start_led)
-                                    * (len(colors) - index - 1))):
-                        red = red_transition[x - ANIMATION_STEPS] if len(red_transition) > x - ANIMATION_STEPS else red_transition[len(red_transition) - 1] if len(red_transition) > 0 else colors[index].r
-                        green = green_transition[x - ANIMATION_STEPS] if len(green_transition) > x - ANIMATION_STEPS else green_transition[len(green_transition) - 1] if len(green_transition) > 0 else colors[index].g
-                        blue = blue_transition[x - ANIMATION_STEPS] if len(blue_transition) > x - ANIMATION_STEPS else blue_transition[len(blue_transition) - 1] if len(blue_transition) > 0 else colors[index].b
+                    if self.direction == 0:
+                        for i in range(int(self.start_led + 1/len(colors) * (self.end_led - self.start_led) * index), 
+                                    int(self.end_led - 1/len(colors) * (self.end_led - self.start_led)
+                                        * (len(colors) - index - 1))):
+                            red = red_transition[x - ANIMATION_STEPS] if len(red_transition) > x - ANIMATION_STEPS else red_transition[len(red_transition) - 1] if len(red_transition) > 0 else colors[index].r
+                            green = green_transition[x - ANIMATION_STEPS] if len(green_transition) > x - ANIMATION_STEPS else green_transition[len(green_transition) - 1] if len(green_transition) > 0 else colors[index].g
+                            blue = blue_transition[x - ANIMATION_STEPS] if len(blue_transition) > x - ANIMATION_STEPS else blue_transition[len(blue_transition) - 1] if len(blue_transition) > 0 else colors[index].b
 
-                        self.strip.setPixelColor(i, StripColor(red, green, blue))
+                            self.strip.setPixelColor(i, StripColor(red, green, blue))
+                    
+                    elif self.direction == 1:
+                        for i in reversed(range(int(self.start_led + 1/len(colors) * (self.end_led - self.start_led) * index), 
+                                    int(self.end_led - 1/len(colors) * (self.end_led - self.start_led)
+                                        * (len(colors) - index - 1)))):
+                            red = red_transition[x - ANIMATION_STEPS] if len(red_transition) > x - ANIMATION_STEPS else red_transition[len(red_transition) - 1] if len(red_transition) > 0 else colors[index].r
+                            green = green_transition[x - ANIMATION_STEPS] if len(green_transition) > x - ANIMATION_STEPS else green_transition[len(green_transition) - 1] if len(green_transition) > 0 else colors[index].g
+                            blue = blue_transition[x - ANIMATION_STEPS] if len(blue_transition) > x - ANIMATION_STEPS else blue_transition[len(blue_transition) - 1] if len(blue_transition) > 0 else colors[index].b
+
+                            self.strip.setPixelColor(i, StripColor(red, green, blue))
                     
                 self.strip.show()
             
