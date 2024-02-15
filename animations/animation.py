@@ -73,19 +73,27 @@ class Animation():
             pos -= 170
             return StripColor(0, pos * 3, 255 - pos * 3)
     
-    def select_colors(self, beat: int) -> list:
+    def select_colors(self, beat: int, reverse=False) -> list: # TODO: Bring an option to reverse color selection
         if len(self.color_sequence.colors) == 0:  # Make sure, there are colors
             return []
 
         colors = []
 
         for x in range(self.color_sequence.color_amount):  # Select the required colors
-            color = self.color_sequence.colors[(x + beat * self.color_sequence.color_amount) 
-                                               % len(self.color_sequence.colors)]
+            color = None
+            if self.color_sequence.selection == 0:
+                color = self.color_sequence.colors[(x + beat * self.color_sequence.color_amount) 
+                                                   % len(self.color_sequence.colors)]
+            
+            else:
+                color = self.color_sequence.colors[(x + beat * self.color_sequence.selection) 
+                                                   % len(self.color_sequence.colors)]
                 
             colors.append(StripColor(color.red, color.green, color.blue))
-        
+    
         return colors
+            
+        
 
     # def set_name(self, name) -> bool:
     #     # Check if section with this name already exists
