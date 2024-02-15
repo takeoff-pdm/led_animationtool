@@ -1,3 +1,5 @@
+import { Animation, Color, ColorSequence, Section } from "./types";
+
 let RECEIVER_HOST: string = process.env.RECEIVER_HOST || "";
 
 interface RequestData {
@@ -24,45 +26,45 @@ async function sendRequest(
 }
 
 // Section
-const addSection = (data: RequestData) =>
-  sendRequest("add/section", "POST", data);
-const updateSection = (data: RequestData) =>
+const addSection = (data: Section) => sendRequest("add/section", "POST", data);
+const updateSection = (data: Section) =>
   sendRequest("update/section", "POST", data);
-const removeSection = (data: RequestData) =>
+const removeSection = (data: Section) =>
   sendRequest("remove/section", "POST", data);
 
 // ColorSequence
-const addColorSequence = (data: RequestData) =>
+const addColorSequence = (data: ColorSequence) =>
   sendRequest("add/color_sequence", "POST", data);
-const updateColorSequence = (data: RequestData) =>
+const updateColorSequence = (data: ColorSequence) =>
   sendRequest("update/color_sequence", "POST", data);
-const removeColorSequence = (data: RequestData) =>
+const removeColorSequence = (data: ColorSequence) =>
   sendRequest("remove/color_sequence", "POST", data);
 
 // Color
-const getColor = (data: RequestData) => sendRequest("get/color", "GET", data);
-const getColorsFromSequence = (data: RequestData) =>
+const getColor = (data: Color) => sendRequest("get/color", "GET", data);
+const getColorsFromSequence = (data: ColorSequence) =>
   sendRequest("get/colors_from_sequence", "GET", data);
-const addColor = (data: RequestData) => sendRequest("add/color", "POST", data);
-const updateColor = (data: RequestData) =>
-  sendRequest("update/color", "POST", data);
-const removeColor = (data: RequestData) =>
-  sendRequest("remove/color", "POST", data);
+const addColor = (data: Color) => sendRequest("add/color", "POST", data);
+const updateColor = (data: Color) => sendRequest("update/color", "POST", data);
+const removeColor = (data: Color) => sendRequest("remove/color", "POST", data);
 
 // Animation
-const updateAnimation = (data: RequestData) =>
+const updateAnimation = (data: Animation) =>
   sendRequest("update/animation", "POST", data);
-const startAnimation = (data: RequestData) =>
+const startAnimation = (data: Animation) =>
   sendRequest("start/animate", "POST", data);
-const stopAnimation = (data: RequestData) =>
+const stopAnimation = (data: Animation) =>
   sendRequest("stop/animate", "POST", data);
 
 // Settings
 const getSettings = () => sendRequest("get/settings", "GET");
+// { value: 80 }
 const updateBrightness = (data: RequestData) =>
   sendRequest("update/brightness", "POST", data);
+// { value: 80 }
 const updateLedCount = (data: RequestData) =>
   sendRequest("update/led-count", "POST", data);
+// { value: 145 }
 const updateBpm = (data: RequestData) =>
   sendRequest("update/bpm", "POST", data);
 
@@ -86,3 +88,4 @@ export {
   updateLedCount,
   updateBpm,
 };
+
