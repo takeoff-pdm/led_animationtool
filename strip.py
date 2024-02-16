@@ -267,6 +267,12 @@ class Strip():
                     if color_in_list.id == color.id:
                         color_sequence.color_list.remove(color_in_list)
                 
+                # TODO: Update positions of colors in sequence
+        
+                for animation in self.running_animations:
+                    if animation.color_sequence.id == color_sequence.id:
+                        animation.color_sequence = color_sequence
+
         return True
                 
     def update_color(self, color: ApiColor) -> bool:
