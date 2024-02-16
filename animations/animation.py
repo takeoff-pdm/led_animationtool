@@ -73,7 +73,7 @@ class Animation():
             pos -= 170
             return StripColor(0, pos * 3, 255 - pos * 3)
     
-    def select_colors(self, beat: int, reverse=False) -> list: # TODO: Bring an option to reverse color selection
+    def select_colors(self, beat: int) -> list:
         if len(self.color_sequence.colors) == 0:  # Make sure, there are colors
             return []
 
