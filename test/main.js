@@ -187,22 +187,23 @@ function updateBpm(data) {
 
 // Section
 // addSection({name: "Sektion 1", start_led: 0, end_led: 60})
-// updateSection({id: 0, name: "Banana", start_led: 0, end_led: 60})
+// updateSection({id: 0, name: "Banana", start_led: 0, end_led: 59})
 // removeSection({id: 0})
 
 // Color Sequence
 // addColorSequence({name: "Marlene", description: "halt Marlene", selection: 0, color_amount: 1})
-// updateColorSequence({id: 1, name: "Strob", description: "halt Strobo", selection: 0, color_amount: 7})
+// updateColorSequence({id: 2, name: "Random", description: "halt random", selection: 0, color_amount: 3})
 // removeColorSequence({id: 1})
 
 // Color
-// addColor({ color_sequence_id: 2, red: 255, green: 0, blue: 255 })
-// removeColor({ id: 15 })
+// addColor({ color_sequence_id: 2, red: 10, green: 120, blue: 255 })
+// removeColor({ id: 16 })
 // updateColor({ id: 1, color_sequence_id: 0, position: 1, red: 0, green: 0, blue: 255 })
 
 // Animation
 // updateAnimation({ id: 0, name: 'MonoColor', description: 'Monochromatic color switching (different sections possible)', variation: 1, direction: 0 })
-// startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 0})
+// updateAnimation({ id: 1, name: 'Flow', description: 'Flow gliding through the pixels', variation: 0, direction: 0 })
+// startAnimation({color_sequence_id: 2, animation_id: 1, section_id: 0})
 // startAnimation({color_sequence_id: 0, animation_id: 0, section_id: 0})
 // stopAnimation({ id: 0 }) // Id is section_id
 
@@ -210,5 +211,5 @@ function updateBpm(data) {
 // getSettings()
 // updateBrightness({ value: 80 })
 // updateLedCount({ value: 100 })
-// updateBpm({ value: 145 })
+// updateBpm({ value: 10 })
 // getSettings()
