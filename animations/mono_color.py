@@ -6,7 +6,7 @@ from __init__ import ANIMATION_STEPS
 from animations.animation import Animation
 
 class MonoColor(Animation):
-    def select_range(self, index, colors) -> list:
+    def select_range(self, index: int, colors: list) -> list:
         animation_range = []
 
         match self.direction:
@@ -14,7 +14,8 @@ class MonoColor(Animation):
                 animation_range.append(range(int(self.start_led + 1/len(colors) 
                                                  * (self.end_led - self.start_led) 
                                                  * index), 
-                                             int(self.end_led - 1/len(colors) 
+                                             int(self.end_led + 1
+                                                 - 1/len(colors) 
                                                  * (self.end_led - self.start_led)
                                                  * (len(colors) - index - 1))))
         
@@ -22,7 +23,8 @@ class MonoColor(Animation):
                 animation_range.append(range(int(self.start_led + 1/len(colors) 
                                                  * (self.end_led - self.start_led) 
                                                  * (len(colors) - index - 1)), 
-                                             int(self.end_led - 1/len(colors) 
+                                             int(self.end_led + 1 
+                                                 - 1/len(colors) 
                                                  * (self.end_led - self.start_led)
                                                  * index)))
             
@@ -30,7 +32,7 @@ class MonoColor(Animation):
                 animation_range.append(range(int(self.start_led + 1/len(colors) 
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * index), 
-                                             int(self.end_led
+                                             int(self.end_led + 1
                                                  - 1/len(colors) 
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * (len(colors) - index - 1)
@@ -41,7 +43,8 @@ class MonoColor(Animation):
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * (len(colors) - index - 1)
                                                  + (self.end_led - self.start_led) / 2), 
-                                             int(self.end_led - 1/len(colors) 
+                                             int(self.end_led + 1
+                                                 - 1/len(colors) 
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * index)))
             
@@ -49,7 +52,7 @@ class MonoColor(Animation):
                 animation_range.append(range(int(self.start_led + 1/len(colors) 
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * (len(colors) - index - 1)), 
-                                             int(self.end_led
+                                             int(self.end_led + 1
                                                  - 1/len(colors) 
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * index 
@@ -60,7 +63,8 @@ class MonoColor(Animation):
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * index
                                                  + (self.end_led - self.start_led) / 2), 
-                                             int(self.end_led - 1/len(colors) 
+                                             int(self.end_led + 1
+                                                 - 1/len(colors) 
                                                  * ((self.end_led - self.start_led) / 2)
                                                  * (len(colors) - index - 1))))
             
@@ -272,9 +276,20 @@ class MonoColor(Animation):
 
                     for i in animation_range:
                         for j in i:
-                            red = red_transition[x - ANIMATION_STEPS] if len(red_transition) > x - ANIMATION_STEPS else red_transition[len(red_transition) - 1] if len(red_transition) > 0 else colors[index].r
-                            green = green_transition[x - ANIMATION_STEPS] if len(green_transition) > x - ANIMATION_STEPS else green_transition[len(green_transition) - 1] if len(green_transition) > 0 else colors[index].g
-                            blue = blue_transition[x - ANIMATION_STEPS] if len(blue_transition) > x - ANIMATION_STEPS else blue_transition[len(blue_transition) - 1] if len(blue_transition) > 0 else colors[index].b
+                            red = red_transition[x - ANIMATION_STEPS] \
+                                  if len(red_transition) > x - ANIMATION_STEPS \
+                                  else red_transition[len(red_transition) - 1] \
+                                  if len(red_transition) > 0 else colors[index].r
+                            
+                            green = green_transition[x - ANIMATION_STEPS] \
+                                    if len(green_transition) > x - ANIMATION_STEPS \
+                                    else green_transition[len(green_transition) - 1] \
+                                    if len(green_transition) > 0 else colors[index].g
+                            
+                            blue = blue_transition[x - ANIMATION_STEPS] \
+                                   if len(blue_transition) > x - ANIMATION_STEPS \
+                                   else blue_transition[len(blue_transition) - 1] \
+                                   if len(blue_transition) > 0 else colors[index].b
 
                             self.strip.setPixelColor(j, StripColor(red, green, blue))
                 
