@@ -90,6 +90,9 @@ class Animation():
                                                    % len(self.color_sequence.colors)]
                 
             colors.append(StripColor(color.red, color.green, color.blue))
+        
+        if len(colors) == 0:
+            return [ StripColor(0, 0, 0) ]
     
         return colors
             
