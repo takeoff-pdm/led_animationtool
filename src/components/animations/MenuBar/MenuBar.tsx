@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
+import { useAnimationsContext } from "../Context/Context";
 
 export const MenuBar: React.FC = () => {
   return (
@@ -21,6 +22,58 @@ export const MenuBar: React.FC = () => {
         <ColorSequenceSelector />
       </div>
       <BPMController />
+    </div>
+  );
+};
+
+interface SectionsResponse {
+  sections?: Section[];
+}
+
+const SectionSelector: React.FC = () => {
+  const [sections, setSections] = useState<Section[]>([]);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const data: SectionsResponse = await getSections();
+        // Check if 'data' is not null and 'color_sequences' is present
+        if (data && data.sections) {
+          // Directly use 'data.color_sequences' to ensure type correctness
+          setSections(data.sections);
+        }
+      } catch (error) {
+        console.error("Failed to fetch sections:", error);
+        // Handle error (e.g., setting state, showing a message to the user)
+      }
+    };
+
+    fetchSections();
+  }, []);
+
+  const { selectedSection, setSelectedSection } = useAnimationsContext();
+
+  const onSelect = (section_name: string) => {
+    const section = sections.find((s) => s.name === section_name);
+    if (!section) {
+      throw new Error("section not found");
+    }
+    setSelectedSection(section);
+  };
+
+  return (
+    <div className="grid gap-1.5">
+      <Label>Sections</Label>
+      <Select value={selectedSection?.name} onValueChange={onSelect}>
+        <SelectTrigger className="sm:w-56 w-1/2">
+          <SelectValue placeholder="Select Section"></SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {sections.map((section) => (
+            <SelectItem value={section.name}>{section.name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };
@@ -72,60 +125,6 @@ const ColorSequenceSelector: React.FC = () => {
         <SelectContent>
           {sequences.map((sequence) => (
             <SelectItem value={sequence.name}>{sequence.name}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-};
-
-interface SectionsResponse {
-  sections?: Section[];
-}
-
-const SectionSelector: React.FC = () => {
-  const [sections, setSections] = useState<Section[]>([]);
-
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        const data: SectionsResponse = await getSections();
-        // Check if 'data' is not null and 'color_sequences' is present
-        if (data && data.sections) {
-          // Directly use 'data.color_sequences' to ensure type correctness
-          setSections(data.sections);
-        }
-      } catch (error) {
-        console.error("Failed to fetch sections:", error);
-        // Handle error (e.g., setting state, showing a message to the user)
-      }
-    };
-
-    fetchSections();
-  }, []);
-
-  const [selectedSelection, setSelectedSection] = useState<Section | null>(
-    null
-  );
-
-  const onSelect = (section_name: string) => {
-    const section = sections.find((s) => s.name === section_name);
-    if (!section) {
-      throw new Error("section not found");
-    }
-    setSelectedSection(section);
-  };
-
-  return (
-    <div className="grid gap-1.5">
-      <Label>Sections</Label>
-      <Select value={selectedSelection?.name} onValueChange={onSelect}>
-        <SelectTrigger className="sm:w-56 w-1/2">
-          <SelectValue placeholder="Select Section"></SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {sections.map((section) => (
-            <SelectItem value={section.name}>{section.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>

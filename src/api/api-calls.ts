@@ -55,6 +55,9 @@ const updateColor = (data: Color) => sendRequest("update/color", "POST", data);
 const removeColor = (data: Color) => sendRequest("remove/color", "POST", data);
 
 // Animation
+const getAnimations = () => sendRequest("get/animations", "GET");
+const getAnimation = (data: { id: number }) =>
+  sendRequest("get/animation", "POST", data);
 const updateAnimation = (data: Animation) =>
   sendRequest("update/animation", "POST", data);
 const startAnimation = (data: Animation) =>
@@ -88,6 +91,8 @@ export {
   addColor,
   updateColor,
   removeColor,
+  getAnimations,
+  getAnimation,
   updateAnimation,
   startAnimation,
   stopAnimation,

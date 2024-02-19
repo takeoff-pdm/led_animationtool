@@ -1,5 +1,6 @@
 import { getAllAnimations } from "@/api/animations/get-all";
-import { Animation } from "@/api/types";
+import { getAnimations } from "@/api/api-calls";
+import { Animation, Section } from "@/api/types";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AnimationsContextProps {
@@ -8,10 +9,14 @@ interface AnimationsContextProps {
   loaded: boolean;
   activeAnimation: Animation | null;
   setActiveAnimation: (animation: Animation) => void;
+  selectedSection: Section;
+  setSelectedSection: (section: Section) => void;
 }
 
 // Create the context with default values
 const AnimationsContext = createContext<AnimationsContextProps>({
+  selectedSection: {} as Section,
+  setSelectedSection: () => {},
   animations: [],
   setAnimations: () => {},
   loaded: false,
@@ -33,10 +38,15 @@ export const Context: React.FC<{ children: any }> = ({ children }) => {
   const [activeAnimation, setActiveAnimation] = useState<Animation | null>(
     null
   );
+  const [selectedSection, setSelectedSection] = useState<Section>(
+    {} as Section
+  );
 
   useEffect(() => {
-    getAllAnimations().then((a) => {
-      setAnimations(a);
+    getAnimations().then((d) => {
+      if (d.animations) {
+        setAnimations(d.animations);
+      }
       setLoaded(true);
     });
   }, []);
@@ -44,6 +54,8 @@ export const Context: React.FC<{ children: any }> = ({ children }) => {
   return (
     <AnimationsContext.Provider
       value={{
+        selectedSection,
+        setSelectedSection,
         animations,
         setAnimations,
         loaded,
