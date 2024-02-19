@@ -1,8 +1,9 @@
-import { getColorSequences } from "@/api/api-calls";
+import { getColorSequences, getSections, updateBpm } from "@/api/api-calls";
 import { getAllCollorSequences } from "@/api/colors/get-all";
 import { ColorSequence, Section } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -61,21 +62,48 @@ const ColorSequenceSelector: React.FC = () => {
   };
 
   return (
-    <Select value={selectedSequence?.name} onValueChange={onSelect}>
-      <SelectTrigger className="sm:w-56 w-1/2">
-        <SelectValue placeholder="Select Sequence"></SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        {sequences.map((sequence) => (
-          <SelectItem value={sequence.name}>{sequence.name}</SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="grid gap-1.5">
+      <Label>Sequence</Label>
+
+      <Select value={selectedSequence?.name} onValueChange={onSelect}>
+        <SelectTrigger className="sm:w-56 w-1/2">
+          <SelectValue placeholder="Select Sequence"></SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {sequences.map((sequence) => (
+            <SelectItem value={sequence.name}>{sequence.name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 
+interface SectionsResponse {
+  sections?: Section[];
+}
+
 const SectionSelector: React.FC = () => {
   const [sections, setSections] = useState<Section[]>([]);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const data: SectionsResponse = await getSections();
+        // Check if 'data' is not null and 'color_sequences' is present
+        if (data && data.sections) {
+          // Directly use 'data.color_sequences' to ensure type correctness
+          setSections(data.sections);
+        }
+      } catch (error) {
+        console.error("Failed to fetch sections:", error);
+        // Handle error (e.g., setting state, showing a message to the user)
+      }
+    };
+
+    fetchSections();
+  }, []);
+
   const [selectedSelection, setSelectedSection] = useState<Section | null>(
     null
   );
@@ -89,16 +117,19 @@ const SectionSelector: React.FC = () => {
   };
 
   return (
-    <Select value={selectedSelection?.name} onValueChange={onSelect}>
-      <SelectTrigger className="sm:w-56 w-1/2">
-        <SelectValue placeholder="Select Section"></SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        {sections.map((section) => (
-          <SelectItem value={section.name}>{section.name}</SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="grid gap-1.5">
+      <Label>Sections</Label>
+      <Select value={selectedSelection?.name} onValueChange={onSelect}>
+        <SelectTrigger className="sm:w-56 w-1/2">
+          <SelectValue placeholder="Select Section"></SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {sections.map((section) => (
+            <SelectItem value={section.name}>{section.name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };
 
@@ -108,11 +139,13 @@ const BPMController: React.FC = () => {
   const autoDetectBPM = () => {};
 
   const onSave = () => {
-    //setBPM to api
+    updateBpm({
+      value: bpmValue,
+    });
   };
 
   return (
-    <div className="sm:flex items-center sm:space-x-2 space-y-2 md:space-y-0">
+    <div className="sm:flex items-center sm:space-x-2 space-y-2 md:space-y-0 pt-3">
       <Button className="w-full sm:w-40">BPM Tapper</Button>
       <div className="flex items-center space-x-2">
         <Input
@@ -127,7 +160,13 @@ const BPMController: React.FC = () => {
         <Button onClick={autoDetectBPM} variant={"secondary"}>
           Auto Detect
         </Button>
-        <Button onClick={onSave}>Save</Button>
+        <Button
+          onClick={() => {
+            onSave();
+          }}
+        >
+          Save
+        </Button>
       </div>
     </div>
   );

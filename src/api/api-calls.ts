@@ -30,6 +30,7 @@ async function sendRequest(
 }
 
 // Section
+const getSections = () => sendRequest("get/sections", "GET");
 const addSection = (data: Section) => sendRequest("add/section", "POST", data);
 const updateSection = (data: Section) =>
   sendRequest("update/section", "POST", data);
@@ -37,7 +38,7 @@ const removeSection = (data: Section) =>
   sendRequest("remove/section", "POST", data);
 
 // ColorSequence
-const getColorSequences = () => sendRequest("/get/color_sequences", "GET");
+const getColorSequences = () => sendRequest("get/color_sequences", "GET");
 const addColorSequence = (data: ColorSequence) =>
   sendRequest("add/color_sequence", "POST", data);
 const updateColorSequence = (data: ColorSequence) =>
@@ -74,6 +75,7 @@ const updateBpm = (data: SettingsValueData) =>
   sendRequest("update/bpm", "POST", data);
 
 export {
+  getSections,
   addSection,
   updateSection,
   removeSection,
