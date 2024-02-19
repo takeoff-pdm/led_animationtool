@@ -1,3 +1,5 @@
+import { getColorSequences } from "@/api/api-calls";
+import { getAllCollorSequences } from "@/api/colors/get-all";
 import { ColorSequence, Section } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const MenuBar: React.FC = () => {
   return (
@@ -22,8 +24,31 @@ export const MenuBar: React.FC = () => {
   );
 };
 
+interface ColorSequencesResponse {
+  color_sequences?: ColorSequence[];
+}
+
 const ColorSequenceSelector: React.FC = () => {
   const [sequences, setSequences] = useState<ColorSequence[]>([]);
+
+  useEffect(() => {
+    const fetchColorSequences = async () => {
+      try {
+        const data: ColorSequencesResponse = await getColorSequences();
+        // Check if 'data' is not null and 'color_sequences' is present
+        if (data && data.color_sequences) {
+          // Directly use 'data.color_sequences' to ensure type correctness
+          setSequences(data.color_sequences);
+        }
+      } catch (error) {
+        console.error("Failed to fetch color sequences:", error);
+        // Handle error (e.g., setting state, showing a message to the user)
+      }
+    };
+
+    fetchColorSequences();
+  }, []);
+
   const [selectedSequence, setSelectedSequence] =
     useState<ColorSequence | null>(null);
 

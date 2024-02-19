@@ -4,14 +4,11 @@ import AnimationsContext from "@/components/animations/Context";
 import MenuBar from "@/components/animations/MenuBar";
 
 const AnimationsPage = () => {
-
   return (
-    <>
+    <AnimationsContext>
       <MenuBar />
-      <AnimationsContext>
-        <AnimationsCardWrapper />
-      </AnimationsContext>
-    </>
+      <AnimationsCardWrapper />
+    </AnimationsContext>
   );
 };
 

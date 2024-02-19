@@ -6,6 +6,10 @@ interface RequestData {
   [key: string]: any;
 }
 
+interface SettingsValueData {
+  value: number;
+}
+
 async function sendRequest(
   endpoint: string,
   method: "GET" | "POST",
@@ -60,13 +64,13 @@ const stopAnimation = (data: Animation) =>
 // Settings
 const getSettings = () => sendRequest("get/settings", "GET");
 // { value: 80 }
-const updateBrightness = (data: RequestData) =>
+const updateBrightness = (data: SettingsValueData) =>
   sendRequest("update/brightness", "POST", data);
 // { value: 80 }
-const updateLedCount = (data: RequestData) =>
+const updateLedCount = (data: SettingsValueData) =>
   sendRequest("update/led-count", "POST", data);
 // { value: 145 }
-const updateBpm = (data: RequestData) =>
+const updateBpm = (data: SettingsValueData) =>
   sendRequest("update/bpm", "POST", data);
 
 export {
