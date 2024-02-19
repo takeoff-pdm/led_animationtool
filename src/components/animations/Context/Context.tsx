@@ -1,6 +1,6 @@
 import { getAllAnimations } from "@/api/animations/get-all";
 import { getAnimations } from "@/api/api-calls";
-import { Animation, Section } from "@/api/types";
+import { Animation, Color, ColorSequence, Section } from "@/api/types";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AnimationsContextProps {
@@ -11,6 +11,8 @@ interface AnimationsContextProps {
   setActiveAnimation: (animation: Animation) => void;
   selectedSection: Section;
   setSelectedSection: (section: Section) => void;
+  selectedSequence: ColorSequence;
+  setSelectedSequence: (sequence: ColorSequence) => void;
 }
 
 // Create the context with default values
@@ -22,6 +24,8 @@ const AnimationsContext = createContext<AnimationsContextProps>({
   loaded: false,
   activeAnimation: null,
   setActiveAnimation: () => {},
+  selectedSequence: {} as ColorSequence,
+  setSelectedSequence: () => {},
 });
 
 export const useAnimationsContext = () => {
@@ -41,7 +45,9 @@ export const Context: React.FC<{ children: any }> = ({ children }) => {
   const [selectedSection, setSelectedSection] = useState<Section>(
     {} as Section
   );
-
+  const [selectedSequence, setSelectedSequence] = useState<ColorSequence>(
+    {} as ColorSequence
+  );
   useEffect(() => {
     getAnimations().then((d) => {
       if (d.animations) {
@@ -54,6 +60,8 @@ export const Context: React.FC<{ children: any }> = ({ children }) => {
   return (
     <AnimationsContext.Provider
       value={{
+        selectedSequence,
+        setSelectedSequence,
         selectedSection,
         setSelectedSection,
         animations,

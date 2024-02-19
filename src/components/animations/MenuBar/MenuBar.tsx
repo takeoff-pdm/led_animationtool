@@ -103,8 +103,8 @@ const ColorSequenceSelector: React.FC = () => {
     fetchColorSequences();
   }, []);
 
-  const [selectedSequence, setSelectedSequence] =
-    useState<ColorSequence | null>(null);
+
+  const { selectedSequence, setSelectedSequence } = useAnimationsContext();
 
   const onSelect = (section_name: string) => {
     const section = sequences.find((s) => s.name === section_name);

@@ -1,6 +1,4 @@
-import { Animation } from "@/api/types";
 import AnimationCard from "../AnimationCard";
-import { useContext } from "react";
 import { useAnimationsContext } from "../Context/Context";
 
 export const AnimationsCardWrapper: React.FC<{}> = ({}) => {
