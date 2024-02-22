@@ -1,5 +1,6 @@
 from uvicorn import run as run_api
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
@@ -14,6 +15,14 @@ from util.database.animation import fetch_animations, fetch_animation, add_anima
 from strip import Strip
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 database = Database()
 strip = Strip()
 
