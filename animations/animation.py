@@ -56,7 +56,7 @@ class Animation():
     def color_wipe(self, color):
         '''Change color of all pixels of selected section.
         '''
-        for i in range(self.start_led, self.end_led):
+        for i in range(self.start_led, self.end_led + 1):
             self.strip.setPixelColor(i, color)
 
         self.strip.show()
