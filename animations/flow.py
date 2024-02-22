@@ -20,6 +20,37 @@ class Flow(Animation):
                                                  + animation_stage
                                                  - (self.end_led - self.start_led))))  # TODO: Fix bug: Skips around 2-4 pixels (is quite fast) at beat change
         
+            case 1:
+                animation_range.append(range(int(self.start_led
+                                                 - animation_stage
+                                                 + (self.end_led - self.start_led)),
+                                             int(self.end_led + 1 
+                                                 - animation_stage 
+                                                 + 1/len(colors) 
+                                                 * (self.end_led - self.start_led) 
+                                                 * (len(colors) - index))))
+            
+            case 2:
+                animation_range.append(range(int(self.start_led + 1
+                                                 + animation_stage 
+                                                 + ((self.end_led - self.start_led) / 2)
+                                                 - 1/len(colors) 
+                                                 * ((self.end_led - self.start_led) / 2) 
+                                                 * (len(colors) - index)),
+                                             int(self.end_led + 1
+                                                 + animation_stage
+                                                 - (self.end_led - self.start_led))))
+                
+                animation_range.append(range(int(self.start_led
+                                                 - animation_stage
+                                                 + (self.end_led - self.start_led) / 2),
+                                             int(self.end_led + 1 
+                                                 - animation_stage 
+                                                 - ((self.end_led - self.start_led) / 2)
+                                                 + 1/len(colors) 
+                                                 * ((self.end_led - self.start_led) / 2)
+                                                 * (len(colors) - index))))
+        
         return animation_range
 
     def animate(self, beat: int):
@@ -37,10 +68,20 @@ class Flow(Animation):
                     
                     for i in animation_range:
                         for j in i:
-                            if j + (self.end_led + self.start_led) in range(self.start_led, self.end_led + 1):
+                            if j + (self.end_led + self.start_led) in range(self.start_led, self.end_led + 1) and self.direction == 0:
                                 self.strip.setPixelColor(j + (self.end_led + self.start_led), previous_color)
                             
-                            if j not in range(self.start_led, self.end_led + 1):
+                            elif j - (self.end_led + self.start_led) in range(self.start_led, self.end_led + 1) and self.direction == 1:
+                                self.strip.setPixelColor(j - (self.end_led + self.start_led), previous_color)
+                            
+                            if j not in range(self.start_led, self.end_led + 1) and self.direction == 0 | 1:
+                                continue
+                            
+                            elif j not in range(self.start_led, int(self.end_led / 2) + 1) and self.direction == 2 | 3 and i == 0:
+                                continue
+                            
+                            elif j not in range(self.start_led + int((self.end_led - self.start_led) / 2) + 1, self.end_led + 1) \
+                                 and self.direction == 2 | 3 and i == 1:
                                 continue
 
                             self.strip.setPixelColor(j, color)
@@ -49,7 +90,7 @@ class Flow(Animation):
                 self.strip.show()
 
                 sleep(self.sleep_time / (self.end_led - self.start_led) 
-                    - ((time_ns() // 1_000_000 - starting_time) // 1_000))
+                      - ((time_ns() // 1_000_000 - starting_time) // 1_000))
                 starting_time = time_ns() // 1_000_000
         
         elif self.variation == 1:
