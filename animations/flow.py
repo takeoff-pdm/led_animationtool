@@ -85,7 +85,6 @@ class Flow(Animation):
                                 continue
 
                             self.strip.setPixelColor(j, color)
-                            
                     
                 self.strip.show()
 
@@ -93,9 +92,8 @@ class Flow(Animation):
                       - ((time_ns() // 1_000_000 - starting_time) // 1_000))
                 starting_time = time_ns() // 1_000_000
         
-        elif self.variation == 1:
-            self.strip.setPixelColor(59, Color(255, 255, 255))
-            self.strip.show()
+        elif self.variation == 1:  # Smooth transition between colors
+            pass
 
         # print('whoooooohw de floooohw')
 
