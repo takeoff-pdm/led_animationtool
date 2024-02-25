@@ -3,9 +3,7 @@ from rpi_ws281x import Color as StripColor
 from util.database.animation import fetch_animation, add_animation, remove_animation, update_animation
 from util.database.database import Database
 
-from color_sequence import ColorSequence
-from section import Section
-from color import Color
+from __init__ import ANIMATION_STEPS
 
 class Animation():
     def __init__(self, id: int = None, name: str = None, description: str = None, variation: int = None, 
@@ -96,7 +94,19 @@ class Animation():
     
         return colors
             
+    def color_transition(self, color: int, next_color: int) -> list:
+        '''Make range of colors between two color parts (Only R, G or B).
+        '''
+        if color < next_color:
+                    return list(range(color, next_color, 
+                                      (next_color - color) // ANIMATION_STEPS 
+                                      if (next_color - color) // ANIMATION_STEPS != 0 
+                                      else 1))
         
+        return list(reversed(range(next_color, color,
+                                   (color - next_color) // ANIMATION_STEPS 
+                                   if (color - next_color) // ANIMATION_STEPS != 0 
+                                   else 1)))
 
     # def set_name(self, name) -> bool:
     #     # Check if section with this name already exists

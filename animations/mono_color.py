@@ -222,39 +222,9 @@ class MonoColor(Animation):
             blue_transitions = []
             
             for color, next_color in zip(colors, next_colors):
-                if color.r < next_color.r:
-                    red_transitions.append(list(range(color.r, next_color.r, 
-                                                    (next_color.r - color.r) // ANIMATION_STEPS 
-                                                    if (next_color.r - color.r) // ANIMATION_STEPS != 0 
-                                                    else 1)))
-                    
-                else:
-                    red_transitions.append(list(reversed(range(next_color.r, color.r,
-                                                    (color.r - next_color.r) // ANIMATION_STEPS 
-                                                    if (color.r - next_color.r) // ANIMATION_STEPS != 0 
-                                                    else 1))))
-                
-                if color.g < next_color.g:
-                    green_transitions.append(list(range(color.g, next_color.g, 
-                                                        (next_color.g - color.g) // ANIMATION_STEPS
-                                                        if (next_color.g - color.g) // ANIMATION_STEPS != 0 
-                                                        else 1)))
-                else:
-                    green_transitions.append(list(reversed(range(next_color.g, color.g, 
-                                                        (color.g - next_color.g) // ANIMATION_STEPS
-                                                        if (color.g - next_color.g) // ANIMATION_STEPS != 0 
-                                                        else 1))))
-
-                if color.b < next_color.b:
-                    blue_transitions.append(list(range(color.b, next_color.b, 
-                                                    (next_color.b - color.b) // ANIMATION_STEPS
-                                                        if (next_color.b - color.b) // ANIMATION_STEPS != 0 
-                                                        else 1)))
-                else:
-                    blue_transitions.append(list(reversed(range(next_color.b, color.b, 
-                                                    (color.b - next_color.b) // ANIMATION_STEPS
-                                                        if (color.b - next_color.b) // ANIMATION_STEPS != 0 
-                                                        else 1))))
+                red_transition.append(self.color_transition(color.r, next_color.r))
+                green_transition.append(self.color_transition(color.g, next_color.g))
+                blue_transition.append(self.color_transition(color.b, next_color.b))
 
             # The number of transitions until next color is reached 
             # (Wait half the time to still show this color)
