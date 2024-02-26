@@ -2,9 +2,9 @@ from util.database.color import add_color, remove_color, update_color, fetch_col
 from util.database.database import Database
 
 
-class Color():
-    def __init__(self, id: int = None, color_sequence_id: int = None, position: int = None,
-                 red: int = None, green: int = None, blue: int = None):
+class Color:
+    def __init__(self, id: int | None = None, color_sequence_id: int | None = None, position: int | None = None,
+                 red: int | None = None, green: int | None = None, blue: int | None = None):
         self.id = id
         
         if color_sequence_id != None and red != None and green != None and blue != None:  # Position not included, because it is often added later
