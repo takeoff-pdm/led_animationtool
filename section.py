@@ -6,7 +6,6 @@ class Section:
     def __init__(self, id: int | None = None, name: str | None = None, start_led: int | None = None,
                  end_led: int | None = None):
         self.id = id
-        print(name, start_led, end_led)
         
         if name != None and start_led != None and end_led != None:
             self.name = name
