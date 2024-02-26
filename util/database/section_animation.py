@@ -4,10 +4,11 @@ from util.database.animation import fetch_animations
 
 def recreate_section_animation(section_animation_data) -> dict:
     return {
-        'id': section_animation_data[0],
-        'variation': section_animation_data[1],
-        'direction': section_animation_data[2],
-        'offset': section_animation_data[3]
+        'section_id': section_animation_data[0],
+        'animation_id': section_animation_data[1],
+        'variation': section_animation_data[2],
+        'direction': section_animation_data[3],
+        'offset': section_animation_data[4]
     }
 
 
@@ -18,7 +19,7 @@ def add_section_animations(section_id: int) -> bool:
         return False
 
     for animation in animations:
-        if not add_section_animation(section_id, animation['id']):  # TODO: Fix key error id
+        if not add_section_animation(section_id, animation['id']):
             return False
 
     return True
@@ -64,7 +65,7 @@ def update_section_animation(section_id: int, animation_id: int, variation: int,
 
 def fetch_section_animation(section_id: int, animation_id: int) -> dict | bool:
     section_animation_data = Database.fetchone_from_db(
-        'SELECT animation_id, variation, direction, offset FROM section_animations \
+        'SELECT section_id, animation_id, variation, direction, offset FROM section_animations \
          WHERE section_id = :section_id AND animation_id = :animation_id',
         {
             'section_id': section_id,
@@ -79,7 +80,7 @@ def fetch_section_animation(section_id: int, animation_id: int) -> dict | bool:
 
 def fetch_section_animations(section_id: int) -> list | bool:
     section_animations_data = Database.fetchall_from_db(
-        'SELECT animation_id, variation, direction, offset FROM section_animations WHERE section_id = :section_id',
+        'SELECT section_id, animation_id, variation, direction, offset FROM section_animations WHERE section_id = :section_id',
         {
             'section_id': section_id
         })

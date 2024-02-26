@@ -101,12 +101,12 @@ async def get_colors():
     return JSONResponse(content={'colors': fetch_colors()})
 
 
-@app.get('/api/get/colors_from_sequence')
+@app.post('/api/get/colors_from_sequence')
 async def get_colors_from_sequence(id: Id):  # Id from color_sequence
     return JSONResponse(content={'colors': fetch_colors_from_sequence(id.id)})
 
 
-@app.get('/api/get/color')
+@app.post('/api/get/color')
 async def get_color(id: Id):
     return JSONResponse(content={'color': fetch_color(id.id)})
 
@@ -133,17 +133,17 @@ async def get_animations():
     return JSONResponse(content={'animations': fetch_animations()})
 
 
-@app.get('/api/get/animation')
+@app.post('/api/get/animation')
 async def get_animation(id: Id):
     return JSONResponse(content={'animation': fetch_animation(id.id)})
 
 
-@app.get('/api/get/section_animations')
+@app.post('/api/get/section_animations')
 async def get_section_animations(id: Id):
     return JSONResponse(content={'animations': fetch_section_animations(id.id)})
 
 
-@app.get('/api/get/section_animation')
+@app.post('/api/get/section_animation')
 async def get_section_animation(section_animation: SectionAnimation):
     return JSONResponse(
         content={'animation': fetch_section_animation(section_animation.section_id, section_animation.animation_id)})

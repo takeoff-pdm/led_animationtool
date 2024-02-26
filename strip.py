@@ -59,7 +59,7 @@ class Strip:
 
         self.init_strip()  # Initialize strip
 
-        # self.strip.begin()  # Start the strip
+        self.strip.begin()  # Start the strip
 
         self.animating = None
 
@@ -162,9 +162,10 @@ class Strip:
         if not section.sync_changes_to_db(new=True):
             return False
 
-        for animation in ANIMATION_DATA:
-            Database.push_to_db('INSERT INTO section_animations VALUES(:section_id, :animation_id)',
-                                {'section_id': section.id, 'animation_id': animation['id']})
+        # Duplicate
+        # for animation in ANIMATION_DATA:
+        #     Database.push_to_db('INSERT INTO section_animations VALUES(:section_id, :animation_id)',
+        #                         {'section_id': section.id, 'animation_id': animation['id']})
 
         self.sections.append(section)
 

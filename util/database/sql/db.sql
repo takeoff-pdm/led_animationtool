@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS section_animations (
     variation INT(32) NOT NULL DEFAULT 0, -- If multiple variations are possible
     direction INT(32) NOT NULL DEFAULT 0, -- 0: normal, 1: reverse, 2: inner to outer, 3: outer to inner, 
                                           -- 4, 5, 6, 7: switching every time, second, fourth, eighth time (between normal and reverse)
-    offset INT(32) NOT NULL DEFAULT 0,    -- Beats the color selection is ahead
+    off_set INT(32) NOT NULL DEFAULT 0,   -- Beats the color selection is ahead
 
     PRIMARY KEY (section_id, animation_id)
 );
