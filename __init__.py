@@ -10,26 +10,18 @@ ANIMATION_STEPS = 50 # The more steps, the more accurate flowy transitions, but 
 ANIMATION_DATA = [
     {
         'name': 'MonoColor',
-        'description': 'Monochromatic color switching (different sections possible)',
-        'variation': 0,
-        'direction': 0
+        'description': 'Monochromatic color switching (different sections possible)'
     },
     {
         'name': 'Flow',
-        'description': 'Flowing colors',
-        'variation': 0,
-        'direction': 0
+        'description': 'Flowing colors'
     },
     {
         'name': 'Shooter',
-        'description': 'Shooting colors',
-        'variation': 0,
-        'direction': 0
+        'description': 'Shooting colors'
     },
     {
         'name': 'Strobo',
-        'description': 'Strobo effect',
-        'variation': 0,
-        'direction': 0
+        'description': 'Strobo effect'
     }
 ]
