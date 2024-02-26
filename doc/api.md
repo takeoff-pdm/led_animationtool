@@ -63,8 +63,14 @@ Animations:
 - ``/api/get/animation``
     - Values: ``{ id: Integer }``
     - Returns: ``{ animation: Animation | null }``
+- ``/api/get/section_animations``
+    - Values: ``{ id: Integer }`` (Id of section)
+    - Returns: ``{ animations: List }``
+- ``/api/get/section_animation``
+    - Values: ``{ section_id: Integer, animation_id: Integer }``
+    - Returns: ``{ animation: Animation | null }``
 - ``/api/update/animation``
-    - Values: ``{ id: Integer, name: String, description: String, variation: Integer, direction: Integer }``
+    - Values: ``{ id: Integer, section_id: Integer | null, name: String, description: String, variation: Integer, direction: Integer }``
     - Returns: ``{ success: boolean }``
 - ``/api/start/animate``
     - Values: ``{ color_sequence_id: Integer, animation_id: Integer, section_id: Integer }``
