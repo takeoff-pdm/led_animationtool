@@ -33,6 +33,17 @@ function removeSection(data) {
     }).then(json => console.log("Request complete! response:", json));
 }
 
+// Section Animation
+function getSectionAnimations(data) {
+    fetch(url + "/api/get/section_animations", {
+    method: "POST",
+    headers: {'Content-Type': 'application/json'}, 
+    body: JSON.stringify(data)
+    }).then(res => {
+    return res.json();
+    }).then(json => console.log("Request complete! response:", json));
+}
+
 // ColorSequence
 function addColorSequence(data) {    
     fetch(url + "/api/add/color_sequence", {
@@ -186,13 +197,16 @@ function updateBpm(data) {
 }
 
 // Section
-// addSection({name: "Sektion 1", start_led: 0, end_led: 60})
+// addSection({name: "Sektion 2", start_led: 0, end_led: 59})
 // updateSection({id: 0, name: "Banana", start_led: 0, end_led: 59})
 // removeSection({id: 0})
 
+// Section Animation
+// getSectionAnimations({id: 1})
+
 // Color Sequence
 // addColorSequence({name: "Marlene", description: "halt Marlene", selection: 0, color_amount: 1})
-// updateColorSequence({id: 2, name: "Random", description: "halt random", selection: 0, color_amount: 3})
+// updateColorSequence({id: 2, name: "Random", description: "halt random", selection: 1, color_amount: 4})
 // removeColorSequence({id: 1})
 
 // Color
@@ -211,5 +225,5 @@ function updateBpm(data) {
 // getSettings()
 // updateBrightness({ value: 80 })
 // updateLedCount({ value: 100 })
-// updateBpm({ value: 10 })
+// updateBpm({ value: 100 })
 // getSettings()
