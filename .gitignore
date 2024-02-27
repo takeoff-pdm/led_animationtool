@@ -164,3 +164,6 @@ db.db
 
 # Test
 node_modules/
+
+# JetBrains
+.idea/

@@ -1,4 +1,6 @@
 from util.database.database import Database
+from util.database.section_animation import add_section_animations
+
 
 def recreate_section(section_data) -> dict:
     return {
@@ -8,37 +10,42 @@ def recreate_section(section_data) -> dict:
         'end_led': section_data[3]
     }
 
+
 def add_section(id: int, name: str, start_led: int, end_led: int) -> bool:
     # print((Database.fetchone_from_db('SELECT MAX(id) FROM sections', {}) 
     #                                       if not None and not (None,) else -1) + 1)
-    print(Database.fetchone_from_db('SELECT MAX(id) FROM sections', {})[0])
-    
-    if not Database.push_to_db('INSERT INTO sections VALUES(:id, :name, :start_led, :end_led)', 
-                                  { 
-                                    'id': id,
-                                    'name': name, 
-                                    'start_led': start_led, 
-                                    'end_led': end_led
-                                  }):
+    if not Database.push_to_db('INSERT INTO sections VALUES(:id, :name, :start_led, :end_led)',
+                               {
+                                   'id': id,
+                                   'name': name,
+                                   'start_led': start_led,
+                                   'end_led': end_led
+                               }):
         return False
-    
+
+    if not add_section_animations(id):
+        return False
+
     return True
+
 
 def remove_section(id: int) -> bool:
     if not Database.push_to_db('DELETE FROM sections Where id = :id', {'id': id}):
         return False
-    
+
     return True
 
+
 def update_section(id: int, name: str, start_led: int, end_led: int) -> bool:
-    '''Update section by name.
-    '''
+    """Update section by name.
+    """
     if not Database.push_to_db('UPDATE sections SET name = :name, start_led = :start_led, end_led = :end_led \
-                                WHERE id = :id', 
-                                  {'id': id, 'name': name, 'start_led': start_led, 'end_led': end_led}):
+                                WHERE id = :id',
+                               {'id': id, 'name': name, 'start_led': start_led, 'end_led': end_led}):
         return False
-    
+
     return True
+
 
 def fetch_sections() -> list | bool:
     sections_data = Database.fetchall_from_db('SELECT id, name, start_led, end_led FROM sections', {})
@@ -55,9 +62,10 @@ def fetch_sections() -> list | bool:
             sections.append(recreate_section(section_data))
 
         return sections
-    
+
     else:
-        return [ recreate_section(sections_data) ]
+        return [recreate_section(sections_data)]
+
 
 def fetch_section(id: int) -> dict | bool:
     section_data = Database.fetchone_from_db('SELECT id, name, start_led, end_led FROM sections \

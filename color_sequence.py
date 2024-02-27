@@ -5,9 +5,9 @@ from util.database.database import Database
 from color import Color
 
 
-class ColorSequence():
-    def __init__(self, id: int = None, name: str = None, description: str= None, 
-                 selection: int= None, color_amount: int= None):
+class ColorSequence:
+    def __init__(self, id: int | None = None, name: str | None = None, description: str | None = None,
+                 selection: int | None = None, color_amount: int | None = None):
         self.id = id
         self.color_list = []  # Do not use this value outside the class, rather use colors property
         
@@ -25,7 +25,7 @@ class ColorSequence():
             self.variation = color_sequence_data['selection']
             self.direction = color_sequence_data['color_amount']
     
-    def sync_changes_to_db(self, new: bool=False) -> bool:
+    def sync_changes_to_db(self, new: bool = False) -> bool:
         if new:
             max_id = Database.fetchone_from_db('SELECT MAX(id) FROM color_sequences', {})[0]
             

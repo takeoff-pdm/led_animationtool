@@ -5,84 +5,117 @@ Sections:
 - ``/api/get/sections``
     - Values: ``{}``
     - Returns: ``{ sections: List }``
+    - Method: ``GET``
 - ``/api/get/section``
     - Values: ``{ id: Integer }``
     - Returns: ``{ section: Section | null }``
+    - Method: ``POST``
 - ``/api/add/section``
     - Values: ``{ name: String, start_led: Integer, end_led: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/remove/section``
     - Values: ``{ id: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/update/section``
     - Values: ``{ id: Integer, name: String, start_led: Integer, end_led: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 
 Color Sequence:
 - ``/api/get/color_sequences``
     - Values: ``{}``
     - Returns: ``{ color_sequences: List }``
+    - Method: ``GET``
 - ``/api/get/color_sequence``
     - Values: ``{ id: Integer }``
     - Returns: ``{ color_sequence: ColorSequence | null }``
+    - Method: ``POST``
 - ``/api/add/color_sequence``
     - Values: ``{ name: String, description: String, selection: Integer, color_amount: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/remove/color_sequence``
     - Values: ``{ id: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/update/color_sequence``
     - Values: ``{ id: Integer, name: String, description: String, selection: Integer, color_amount: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 
 Colors:
 - ``/api/get/colors``
     - Values: ``{}``
     - Returns: ``{ colors: List }``
+    - Method: ``GET``
 - ``/api/get/colors_from_sequence``
     - Values: ``{ id: Integer }`` (Id of color-sequence)
     - Returns: ``{ colors: List }``
+    - Method: ``POST``
 - ``/api/get/color``
     - Values: ``{ id: Integer }`` (Id of color)
     - Returns: ``{ color: Color | null }``
+    - Method: ``POST``
 - ``/api/add/color``
     - Values: ``{ color_sequence_id: Integer, position: Integer, red: Integer, green: Integer, blue: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/remove/color``
     - Values: ``{ id: Integer }`` (Id of color)
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/update/color``
     - Values: ``{ id: Integer, color_sequence_id: Integer, red: Integer, green: Integer, blue: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
     - Does not update color-sequence-id!
 
 Animations:
 - ``/api/get/animations``
     - Values: ``{}``
     - Returns: ``{ animations: List }``
+    - Method: ``GET``
 - ``/api/get/animation``
     - Values: ``{ id: Integer }``
     - Returns: ``{ animation: Animation | null }``
+    - Method: ``POST``
+- ``/api/get/section_animations``
+    - Values: ``{ id: Integer }`` (Id of section)
+    - Returns: ``{ animations: List }``
+    - Method: ``POST``
+- ``/api/get/section_animation``
+    - Values: ``{ section_id: Integer, animation_id: Integer }``
+    - Returns: ``{ animation: Animation | null }``
+    - Method: ``POST``
 - ``/api/update/animation``
-    - Values: ``{ id: Integer, name: String, description: String, variation: Integer, direction: Integer }``
+    - Values: ``{ id: Integer, section_id: Integer | null, name: String, description: String, variation: Integer, direction: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/start/animate``
     - Values: ``{ color_sequence_id: Integer, animation_id: Integer, section_id: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/stop/animate``
     - Values: ``{ id: Integer }`` (Id of section)
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 
 Settings:
 - ``/api/get/settings``
     - Values: ``{ }``
     - Returns: [Config](/config.json)
+    - Method: ``GET``
 - ``/api/update/brightness``
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/update/led-count``
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``
 - ``/api/update/bpm``
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
+    - Method: ``POST``

@@ -5,6 +5,17 @@ CREATE TABLE IF NOT EXISTS sections (
     end_led INT(32) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS section_animations (
+    section_id INT(32) NOT NULL,
+    animation_id INT(32) NOT NULL,
+    variation INT(32) NOT NULL DEFAULT 0, -- If multiple variations are possible
+    direction INT(32) NOT NULL DEFAULT 0, -- 0: normal, 1: reverse, 2: inner to outer, 3: outer to inner, 
+                                          -- 4, 5, 6, 7: switching every time, second, fourth, eighth time (between normal and reverse)
+    off_set INT(32) NOT NULL DEFAULT 0,   -- Beats the color selection is ahead
+
+    PRIMARY KEY (section_id, animation_id)
+);
+
 CREATE TABLE IF NOT EXISTS color_sequences (
     id INT(32) PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
@@ -26,8 +37,5 @@ CREATE TABLE IF NOT EXISTS colors (
 CREATE TABLE IF NOT EXISTS animations (
     id INT(32) PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
-    description VARCHAR(128) NOT NULL,
-    variation INT(32) NOT NULL DEFAULT 0, -- If multiple variations are possible
-    direction INT(32) NOT NULL DEFAULT 0  -- 0: normal, 1: reverse, 2: inner to outer, 3: outer to inner, 
-                                          -- 4, 5, 6, 7: switching every time, second, fourth, eighth time (between normal and reverse)
+    description VARCHAR(128) NOT NULL
 );
