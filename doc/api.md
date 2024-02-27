@@ -90,7 +90,7 @@ Animations:
     - Returns: ``{ animation: Animation | null }``
     - Method: ``POST``
 - ``/api/update/animation``
-    - Values: ``{ id: Integer, section_id: Integer | null, name: String, description: String, variation: Integer, direction: Integer }``
+    - Values: ``{ id: Integer, section_id: Integer | null, name: String, description: String, variation: Integer, direction: Integer, offset: Integer }``
     - Returns: ``{ success: boolean }``
     - Method: ``POST``
 - ``/api/start/animate``
