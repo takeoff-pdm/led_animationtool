@@ -111,6 +111,7 @@ Settings:
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
     - Method: ``POST``
+    - Brightness in percent (0-100%)
 - ``/api/update/led-count``
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
