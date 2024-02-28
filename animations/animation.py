@@ -68,14 +68,14 @@ class Animation:
     
     def set_pixel_color(self, pixel: int, color_or_r: StripColor | int, g: int = None, b: int = None):
         if type(color_or_r) == int and g != None and b != None:
-            self.strip.setPixelColor(pixel, StripColor(color_or_r * self.strip.brightness, 
-                                                       g * self.strip.brightness, 
-                                                       b * self.strip.brightness))
+            self.strip.setPixelColor(pixel, StripColor(int(color_or_r * self.strip.brightness), 
+                                                       int(g * self.strip.brightness), 
+                                                       int(b * self.strip.brightness)))
         
         # Update pixel brightness
-        color_or_r.r *= self.strip.brightness
-        color_or_r.g *= self.strip.brightness
-        color_or_r.b *= self.strip.brightness
+        color_or_r.r *= int(self.strip.brightness)
+        color_or_r.g *= int(self.strip.brightness)
+        color_or_r.b *= int(self.strip.brightness)
 
         self.strip.setPixelColor(pixel, color_or_r)
 
