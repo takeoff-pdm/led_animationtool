@@ -207,7 +207,7 @@ class MonoColor(Animation):
 
                 for i in animation_range:
                     for j in i:
-                        self.strip.setPixelColor(j, color)
+                        self.set_pixel_color(j, color)
 
             self.strip.show()
 
@@ -262,7 +262,7 @@ class MonoColor(Animation):
                                 else blue_transition[len(blue_transition) - 1] \
                                 if len(blue_transition) > 0 else colors[index].b
 
-                            self.strip.setPixelColor(j, StripColor(red, green, blue))
+                            self.set_pixel_color(j, StripColor(red, green, blue))
 
                 self.strip.show()
 
