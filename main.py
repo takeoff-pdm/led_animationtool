@@ -156,7 +156,7 @@ async def update_anim(animation: Animation):
 
     return JSONResponse(content={
         'success': strip.update_animation(animation.id, animation.section_id, animation.name, animation.description,
-                                          animation.variation, animation.direction)
+                                          animation.variation, animation.direction, animation.offset)
     })
 
 
