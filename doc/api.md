@@ -116,6 +116,7 @@ Settings:
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
     - Method: ``POST``
+    - Note that this stops all animations and restarts them afterwards
 - ``/api/update/bpm``
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
