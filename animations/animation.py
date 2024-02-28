@@ -1,7 +1,7 @@
 from rpi_ws281x import Color as StripColor
 
 from util.database.animation import fetch_animation, add_animation, remove_animation, update_animation
-from util.database.section_animation import fetch_section_animation
+from util.database.section_animation import fetch_section_animation, update_section_animation
 from util.database.database import Database
 
 from __init__ import ANIMATION_STEPS
@@ -16,7 +16,7 @@ class Animation:
         self.direction = 0
         self.offset = 0
 
-        if description != None and variation != None and direction != None:
+        if description != None and variation != None and direction != None and offset != None:
             self.name = name
             self.description = description
             self.variation = variation
@@ -57,12 +57,27 @@ class Animation:
             return add_animation(self.id, self.name, self.description, self.variation,
                                  self.direction)
 
-        return update_animation(self.id, self.name, self.description, self.variation,
-                                self.direction)
+        if not update_animation(self.id, self.name, self.description):
+            return False
+        
+        return update_section_animation(self.section_id, self.id, self.variation, self.direction, self.offset)
 
     @property
     def sleep_time(self):
         return 60 / self.bpm
+    
+    def set_pixel_color(self, pixel: int, color_or_r: StripColor | int, g: int = None, b: int = None):
+        if type(color_or_r) == int and g != None and b != None:
+            self.strip.setPixelColor(pixel, StripColor(color_or_r * self.strip.brightness, 
+                                                       g * self.strip.brightness, 
+                                                       b * self.strip.brightness))
+        
+        # Update pixel brightness
+        color_or_r.r *= self.strip.brightness
+        color_or_r.g *= self.strip.brightness
+        color_or_r.b *= self.strip.brightness
+
+        self.strip.setPixelColor(pixel, color_or_r)
 
     def color_wipe(self, color):
         """Change color of all pixels of selected section.
