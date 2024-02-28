@@ -61,6 +61,7 @@ class Strip:
 
         self.strip.begin()  # Start the strip
 
+        self.stop = False  # Add variable to kill animation thread
         self.animating = None
 
     @staticmethod
@@ -80,11 +81,27 @@ class Strip:
         config = self.fetch_config()
 
         self.strip = Adafruit_NeoPixel(config['led_count'], config['pin'], config['frequency'],
-                                       config['dma'], config['led_invert'], config['brightness'],
+                                       config['dma'], config['led_invert'], 255,
                                        config['channel'])
 
         for animation in self.running_animations:
             animation.strip = self.strip
+    
+    def restart_strip(self):
+        # Stop all running animations
+        self.stop = True
+        sleep(self.sleep_time * 1.1)  # Wait for all animations to stop
+
+        self.strip = None
+
+        self.init_strip()
+
+        self.strip.begin()  # Restart the strip
+
+        # Restart all animations
+        self.stop = False
+        self.animating = Thread(target=self.animate, args=(lambda : self.stop,))
+        self.animating.start()
 
     def create_animations(self):
         for x in range(len(ANIMATION_DATA)):
@@ -122,13 +139,11 @@ class Strip:
             self.create_animations()
 
     def set_brightness(self, brightness: int) -> bool:
-        if brightness < 0 or brightness > 255:
+        if brightness < 0 or brightness > 100:
             return False
 
-        self.brightness = brightness
+        self.brightness = brightness / 100
         self.update_config('brightness', self.brightness)
-
-        self.init_strip()  # Update strip
 
         return True
 
@@ -139,7 +154,7 @@ class Strip:
         self.led_count = led_count
         self.update_config('led_count', self.led_count)
 
-        self.init_strip()  # Update strip
+        self.restart_strip()  # Update strip
 
         return True
 
@@ -305,7 +320,7 @@ class Strip:
         self.strip.show()
 
     def update_animation(self, id: int, section_id: int, name: str, description: str, variation: int, direction: int,
-                         offset: int | None = None) -> bool:
+                         offset: int) -> bool:
         animation = Animation(id, section_id, name, description, variation, direction, offset)
 
         # Update running animations
@@ -333,9 +348,9 @@ class Strip:
 
         self.running_animations.append(animation)
 
-    def animate(self):
+    def animate(self, stop):
         try:
-            while True:
+            while stop() == False:
                 starting_time = time_ns() // 1_000_000
 
                 # Check if bpm of animations is off
@@ -423,7 +438,7 @@ class Strip:
             self.add_animation(animation, section, color_sequence)
 
         if self.animating == None:
-            self.animating = Thread(target=self.animate)
+            self.animating = Thread(target=self.animate, args=(lambda : self.stop,))
             self.animating.start()
 
         return True
