@@ -69,10 +69,10 @@ class Flow(Animation):
                     for i in animation_range:
                         for j in i:
                             if j + (self.end_led + self.start_led) in range(self.start_led, self.end_led + 1) and self.direction == 0:
-                                self.strip.setPixelColor(j + (self.end_led + self.start_led), previous_color)
+                                self.set_pixel_color(j + (self.end_led + self.start_led), previous_color)
                             
                             elif j - (self.end_led + self.start_led) in range(self.start_led, self.end_led + 1) and self.direction == 1:
-                                self.strip.setPixelColor(j - (self.end_led + self.start_led), previous_color)
+                                self.set_pixel_color(j - (self.end_led + self.start_led), previous_color)
                             
                             if j not in range(self.start_led, self.end_led + 1) and self.direction == 0 | 1:
                                 continue
@@ -84,7 +84,7 @@ class Flow(Animation):
                                  and self.direction == 2 | 3 and i == 1:
                                 continue
 
-                            self.strip.setPixelColor(j, color)
+                            self.set_pixel_color(j, color)
                     
                 self.strip.show()
 
