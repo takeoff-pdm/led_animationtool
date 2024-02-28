@@ -51,4 +51,4 @@ class SectionAnimation(BaseModel):
 
 
 class Value(BaseModel):
-    value: int
+    value: float
