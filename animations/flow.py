@@ -56,11 +56,10 @@ class Flow(Animation):
     def animate(self, beat: int):
         starting_time = time_ns() // 1_000_000
         colors = self.select_colors(beat)
-        previous_colors = self.select_colors(beat - 1)
 
         if self.variation == 0:
-            for animation_stage in range(self.end_led - self.start_led + 1):
-                for index, (color, previous_color) in enumerate(zip(colors, previous_colors)):
+            for animation_stage in range((self.end_led - self.start_led) * 2 + 1):
+                for index, color in enumerate(colors):
                     animation_range = self.select_range(animation_stage, index, colors)
 
                     if len(animation_range) == 0:
@@ -68,28 +67,15 @@ class Flow(Animation):
                     
                     for i in animation_range:
                         for j in i:
-                            if j + (self.end_led + self.start_led) in range(self.start_led, self.end_led + 1) and self.direction == 0:
-                                self.set_pixel_color(j + (self.end_led + self.start_led), previous_color)
-                            
-                            elif j - (self.end_led + self.start_led) in range(self.start_led, self.end_led + 1) and self.direction == 1:
-                                self.set_pixel_color(j - (self.end_led + self.start_led), previous_color)
-                            
-                            if j not in range(self.start_led, self.end_led + 1) and self.direction == 0 | 1:
-                                continue
-                            
-                            elif j not in range(self.start_led, int(self.end_led / 2) + 1) and self.direction == 2 | 3 and i == 0:
-                                continue
-                            
-                            elif j not in range(self.start_led + int((self.end_led - self.start_led) / 2) + 1, self.end_led + 1) \
-                                 and self.direction == 2 | 3 and i == 1:
+                            if j not in range(self.start_led, self.end_led + 1):
                                 continue
 
                             self.set_pixel_color(j, color)
-                    
+                
                 self.strip.show()
 
                 sleep(self.sleep_time / (self.end_led - self.start_led) 
-                      - ((time_ns() // 1_000_000 - starting_time) // 1_000))
+                       - ((time_ns() // 1_000_000 - starting_time) // 1_000))
                 starting_time = time_ns() // 1_000_000
         
         elif self.variation == 1:  # Smooth transition between colors
