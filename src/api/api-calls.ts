@@ -48,7 +48,7 @@ const removeColorSequence = (data: ColorSequence) =>
 
 // Color
 const getColor = (data: Color) => sendRequest("get/color", "GET", data);
-const getColorsFromSequence = (data: ColorSequence) =>
+const getColorsFromSequence = (sequence_id:number) =>
   sendRequest("get/colors_from_sequence", "GET", data);
 const addColor = (data: Color) => sendRequest("add/color", "POST", data);
 const updateColor = (data: Color) => sendRequest("update/color", "POST", data);

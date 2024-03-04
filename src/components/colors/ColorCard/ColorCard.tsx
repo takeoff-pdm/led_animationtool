@@ -1,4 +1,4 @@
-import { ColorSequence } from "@/api/types";
+import { Color, ColorSequence } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import ColorSequenceBuilder from "./ColorSequenceBuilder";
 import { useColorsContext } from "../ColorsContext/ColorsContext";
+import { getColorsFromSequence } from "@/api/api-calls";
 
 export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   colorSequence,
@@ -30,6 +31,7 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
 
   const [tab, setTab] = useState<"settings" | "preview">("preview");
   const [editMode, setEditMode] = useState<boolean>(false);
+
 
   const [colors, setColors] = useState(
     [
@@ -49,32 +51,16 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
         position: 1,
         red: 200,
       },
-      {
-        id: 1245,
-        blue: 50,
-        color_sequence_id: "",
-        green: 100,
-        position: 2,
-        red: 150,
-      },
-      {
-        id: 1246,
-        blue: 200,
-        color_sequence_id: "",
-        green: 50,
-        position: 3,
-        red: 100,
-      },
-      {
-        id: 1247,
-        blue: 100,
-        color_sequence_id: "",
-        green: 200,
-        position: 4,
-        red: 50,
-      },
     ].sort((a, b) => a.position - b.position)
   );
+
+  useEffect(() => {
+    getColorsFromSequence(colorSequence.id).then((a:{
+      colors:Color[]
+    }) => {
+      setColors(a.colors.sort((a, b) => a.position - b.position));
+    });
+  }, []);
 
   useEffect(() => {
     if (!editMode) {
