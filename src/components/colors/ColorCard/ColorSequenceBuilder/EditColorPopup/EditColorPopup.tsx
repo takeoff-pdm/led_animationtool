@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Pencil1Icon, Pencil2Icon, PlusIcon } from "@radix-ui/react-icons";
 import { Colorful } from "@uiw/react-color";
 import { useState } from "react";
@@ -9,22 +10,35 @@ export const EditColorPopup: React.FC<{
   children: any;
 }> = ({ hex, setHex, children }) => {
   // TODO: Save on change
-  const [hidden, setHidden] = useState<boolean>(false);
+
+  const [open, setOpen] = useState(false);
+  const [color, setColor] = useState(hex);
+
   return (
-    <div onClick={() => setHidden(!hidden)} className="relative group">
-      {children}
-      <Button
-        variant={"secondary"}
-        size={"icon"}
-        className={`w-6 h-6 ${
-          !hidden ? "opacity-50" : "opacity-100"
-        } shrink-0 group-hover:opacity-100 z-10 absolute -top-1 right-1 `}
-      >
-        <Pencil2Icon className="w-3.5 h-3.5 " />
-      </Button>
-      <div className={`${!hidden && "hidden"}`}>
-        <Colorful color={hex} onChange={(c) => setHex(c.hex)} />
-      </div>
-    </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <div className="relative group">
+          {children}
+          <Button
+            variant={"secondary"}
+            size={"icon"}
+            className={`w-6 h-6 opacity-100 shrink-0 group-hover:opacity-100 z-10 absolute -top-1 right-1 `}
+          >
+            <Pencil2Icon className="w-3.5 h-3.5 " />
+          </Button>
+        </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-60 h-72">
+        
+        <Colorful className="w-32 overflow-hidden" color={color} onChange={(c) => setColor(c.hex)} />
+        <div className="w-full pt-5 h-12 flex justify-between">
+        <Button onClick={() => {
+          setColor(hex);
+          setOpen(false);
+        }} variant={"secondary"}>Close</Button>
+        <Button onClick={() => {setHex(color); setOpen(false);}}>Save</Button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
