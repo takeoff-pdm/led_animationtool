@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Pencil1Icon, Pencil2Icon, PlusIcon } from "@radix-ui/react-icons";
+import {  Pencil2Icon, TrashIcon } from "@radix-ui/react-icons";
 import { Colorful } from "@uiw/react-color";
 import { useState } from "react";
 
@@ -29,14 +29,43 @@ export const EditColorPopup: React.FC<{
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-60 h-72">
-        
-        <Colorful className="w-32 overflow-hidden" color={color} onChange={(c) => setColor(c.hex)} />
-        <div className="w-full pt-5 h-12 flex justify-between">
-        <Button onClick={() => {
-          setColor(hex);
-          setOpen(false);
-        }} variant={"secondary"}>Close</Button>
-        <Button onClick={() => {setHex(color); setOpen(false);}}>Save</Button>
+        <Colorful
+          className="w-32 overflow-hidden"
+          color={color}
+          onChange={(c) => setColor(c.hex)}
+        />
+        <div className="w-full pt-5 h-12 items-center flex justify-between">
+          <Button
+            onClick={() => {
+              setColor(hex);
+              setOpen(false);
+            }}
+            size={"icon"}
+            variant={"destructive"}
+          >
+            <TrashIcon />
+          </Button>
+          <div className="flex items-center space-x-1">
+            <Button
+              onClick={() => {
+                setColor(hex);
+                setOpen(false);
+              }}
+              size={"default"}
+              variant={"ghost"}
+            >
+              Close
+            </Button>
+            <Button
+              size={"default"}
+              onClick={() => {
+                setHex(color);
+                setOpen(false);
+              }}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </PopoverContent>
     </Popover>
