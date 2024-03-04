@@ -83,7 +83,7 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   }, [editMode]);
 
   return (
-    <Card className="max-w-sm min-w-[384px] overflow-scroll h-[330px] w-full">
+    <Card className="max-w-sm min-w-[384px] min-h-[330px] w-full">
       <CardHeader className="">
         <CardTitle
           contentEditable={editMode}
