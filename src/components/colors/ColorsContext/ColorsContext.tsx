@@ -1,3 +1,4 @@
+import { getColorSequences } from "@/api/api-calls";
 import { getAllCollorSequences } from "@/api/colors/get-all";
 import { ColorSequence } from "@/api/types";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -28,8 +29,8 @@ export const ColorsContext: React.FC<{ children: any }> = ({ children }) => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    getAllCollorSequences().then((a) => {
-      setColorSequences(a);
+    getColorSequences().then((a:{color_sequences:ColorSequence[]}) => {
+      setColorSequences(a.color_sequences);
       setLoaded(true);
     });
   }, []);
