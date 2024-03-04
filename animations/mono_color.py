@@ -223,9 +223,9 @@ class MonoColor(Animation):
             blue_transitions = []
 
             for color, next_color in zip(colors, next_colors):
-                red_transition.append(self.color_transition(color.r, next_color.r))
-                green_transition.append(self.color_transition(color.g, next_color.g))
-                blue_transition.append(self.color_transition(color.b, next_color.b))
+                red_transitions.append(self.color_transition(color.r, next_color.r))
+                green_transitions.append(self.color_transition(color.g, next_color.g))
+                blue_transitions.append(self.color_transition(color.b, next_color.b))
 
             # The number of transitions until next color is reached 
             # (Wait half the time to still show this color)

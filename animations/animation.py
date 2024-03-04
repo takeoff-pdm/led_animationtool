@@ -44,6 +44,7 @@ class Animation:
         self.end_led = 0
 
         self.strip = None
+        self.brightness = 255
         self.color_sequence = None
 
     def sync_changes_to_db(self, new: bool = False) -> bool:
@@ -66,18 +67,16 @@ class Animation:
     def sleep_time(self):
         return 60 / self.bpm
     
-    def set_pixel_color(self, pixel: int, color_or_r: StripColor | int, g: int = None, b: int = None):
+    def set_pixel_color(self, pixel: int, color_or_r, g: int = None, b: int = None):
         if type(color_or_r) == int and g != None and b != None:
-            self.strip.setPixelColor(pixel, StripColor(int(color_or_r * self.strip.brightness), 
-                                                       int(g * self.strip.brightness), 
-                                                       int(b * self.strip.brightness)))
+            self.strip.setPixelColor(pixel, StripColor(int(color_or_r * self.brightness),
+                                                       int(g * self.brightness),
+                                                       int(b * self.brightness)))
         
         # Update pixel brightness
-        color_or_r.r *= int(self.strip.brightness)
-        color_or_r.g *= int(self.strip.brightness)
-        color_or_r.b *= int(self.strip.brightness)
-
-        self.strip.setPixelColor(pixel, color_or_r)
+        self.strip.setPixelColor(pixel, StripColor(int(color_or_r.r * self.brightness),
+                                                   int(color_or_r.g * self.brightness),
+                                                   int(color_or_r.b * self.brightness)))
 
     def color_wipe(self, color):
         """Change color of all pixels of selected section.
@@ -123,8 +122,8 @@ class Animation:
         return colors
             
     def color_transition(self, color: int, next_color: int) -> list:
-        '''Make range of colors between two color parts (Only R, G or B).
-        '''
+        """Make range of colors between two color parts (Only R, G or B).
+        """
         if color < next_color:
                     return list(range(color, next_color, 
                                       (next_color - color) // ANIMATION_STEPS 

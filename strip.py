@@ -144,6 +144,10 @@ class Strip:
 
         self.brightness = brightness / 100
         self.update_config('brightness', self.brightness)
+        
+        # Update brightness in every running animation
+        for animation in self.running_animations:
+            animation.brightness = self.brightness
 
         return True
 
@@ -151,7 +155,7 @@ class Strip:
         if led_count < 0:
             return False
 
-        self.led_count = led_count
+        self.led_count = int(led_count)  # Ensure that led-count is an integer
         self.update_config('led_count', self.led_count)
 
         self.restart_strip()  # Update strip
@@ -345,6 +349,7 @@ class Strip:
         animation.color_sequence = color_sequence
 
         animation.strip = self.strip
+        animation.brightness = self.brightness
 
         self.running_animations.append(animation)
 
@@ -353,12 +358,18 @@ class Strip:
             while stop() == False:
                 starting_time = time_ns() // 1_000_000
 
-                # Check if bpm of animations is off
                 if len(self.running_animations) > 0:
+                    # Check if bpm of animations is off
                     if self.running_animations[0].bpm != self.bpm:
-                        # Rearange beats
+                        # Rearrange beats
                         for animation in self.running_animations:
                             animation.bpm = self.bpm
+
+                    # Check if brightness of animations is off
+                    if self.running_animations[0].brightness != self.brightness:
+                        # Rearrange brightness
+                        for animation in self.running_animations:
+                            animation.brightness = self.brightness
 
                 for animation in self.running_animations:
                     Thread(target=animation.animate, args=(self.beat + animation.offset,)).start()
