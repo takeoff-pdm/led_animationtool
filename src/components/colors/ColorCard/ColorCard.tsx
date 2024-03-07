@@ -21,6 +21,7 @@ import ColorSequenceBuilder from "./ColorSequenceBuilder";
 import { useColorsContext } from "../ColorsContext/ColorsContext";
 import { getColorsFromSequence, updateColorSequence } from "@/api/api-calls";
 import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   colorSequence,
@@ -54,10 +55,12 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
       variant: success ? "default" : "destructive",
     });
     setColorSequences([
-      ...colorSequences.filter((item) => item.id !== colorSequenceTemp.id),
-      {
-        ...colorSequenceTemp,
-      },
+      ...colorSequences.map((item) => {
+        if (item.id === colorSequenceTemp.id) {
+          return colorSequenceTemp;
+        }
+        return item;
+      }),
     ]);
   };
 
@@ -74,7 +77,19 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
           }}
           className=""
         >
-          {colorSequenceTemp.name}
+          {(editMode && (
+            <Input
+              className="h-8 w-full"
+              value={colorSequenceTemp.name}
+              onChange={(e) =>
+                setColorSequenceTemp({
+                  ...colorSequenceTemp,
+                  name: e.currentTarget.value,
+                })
+              }
+            />
+          )) ||
+            colorSequenceTemp.name}
         </CardTitle>
         <CardDescription
           contentEditable={editMode}
@@ -85,7 +100,19 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
             })
           }
         >
-          {colorSequenceTemp.description}
+          {(editMode && (
+            <Input
+              className="h-8 w-full"
+              value={colorSequenceTemp.description}
+              onChange={(e) =>
+                setColorSequenceTemp({
+                  ...colorSequenceTemp,
+                  description: e.currentTarget.value,
+                })
+              }
+            />
+          )) ||
+            colorSequenceTemp.description}
         </CardDescription>
       </CardHeader>
       <CardContent>
