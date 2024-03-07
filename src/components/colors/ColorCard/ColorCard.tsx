@@ -32,9 +32,9 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   const [tab, setTab] = useState<"settings" | "preview">("preview");
   const [editMode, setEditMode] = useState<boolean>(false);
 
+  const [colors, setColors] = useState([] as Color[]);
 
-  const [colors, setColors] = useState(
-    [
+  /*[
       {
         id: 123,
         blue: 250,
@@ -51,13 +51,10 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
         position: 1,
         red: 200,
       },
-    ].sort((a, b) => a.position - b.position)
-  );
+    ].sort((a, b) => a.position - b.position)*/
 
   useEffect(() => {
-    getColorsFromSequence(colorSequence.id).then((a:{
-      colors:Color[]
-    }) => {
+    getColorsFromSequence(colorSequence.id).then((a: { colors: Color[] }) => {
       setColors(a.colors.sort((a, b) => a.position - b.position));
     });
   }, []);
@@ -98,7 +95,7 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
       <CardContent>
         {tab === "preview" ? (
           <div className="w-full h-40">
-            <Skeleton className="w-full h-full" />
+            <ColorsPreview colors={colors} />
           </div>
         ) : (
           <div className="w-full min-h-32 space-y-3">
@@ -150,7 +147,6 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
                 ),
                 {
                   ...colorSequenceTemp,
-                  
                 },
               ]);
             }}
@@ -162,5 +158,23 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
         )}
       </CardFooter>
     </Card>
+  );
+};
+
+const ColorsPreview: React.FC<{
+  colors: Color[];
+}> = ({ colors }) => {
+  //make it a gradient
+  const gradient = colors
+    .map((color) => `rgb(${color.red}, ${color.green}, ${color.blue})`)
+    .join(", ");
+
+  return (
+    <div
+      className="w-full h-40 rounded-lg"
+      style={{
+        background: `linear-gradient(to right, ${gradient})`,
+      }}
+    ></div>
   );
 };
