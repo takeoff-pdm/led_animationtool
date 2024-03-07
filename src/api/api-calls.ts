@@ -48,15 +48,21 @@ const removeColorSequence = (data: ColorSequence) =>
 
 // Color
 const getColor = (data: Color) => sendRequest("get/color", "GET", data);
-const getColorsFromSequence = (sequence_id:number) =>
-  sendRequest("get/colors_from_sequence", "GET", data);
+const getColorsFromSequence = (sequence_id: number) =>
+  sendRequest("get/colors_from_sequence", "POST", {
+    id: sequence_id,
+  });
 const addColor = (data: Color) => sendRequest("add/color", "POST", data);
 const updateColor = (data: Color) => sendRequest("update/color", "POST", data);
 const removeColor = (data: Color) => sendRequest("remove/color", "POST", data);
 
 // Animation
-const getSectionAnimations = (data: { section_id: number }) => sendRequest("get/section_animations","POST", data);
-const setSectionAnimation = (data: { section_id: number, animation_id:number }) => sendRequest("get/section_animation","POST", data);
+const getSectionAnimations = (data: { section_id: number }) =>
+  sendRequest("get/section_animations", "POST", data);
+const setSectionAnimation = (data: {
+  section_id: number;
+  animation_id: number;
+}) => sendRequest("get/section_animation", "POST", data);
 const getAnimations = () => sendRequest("get/animations", "GET");
 const getAnimation = (data: { id: number }) =>
   sendRequest("get/animation", "POST", data);
