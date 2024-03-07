@@ -2,8 +2,8 @@ import { Color } from "@/api/types";
 import { SortableItemContext } from "../SortableColorItem/SortableColorItem";
 import { useContext, useState } from "react";
 import EditColorPopup from "../EditColorPopup";
-import rgbHex from "rgb-hex";
 import hexRgb from "hex-rgb";
+import { rgbaToHex } from "@uiw/react-color";
 
 export const ColorItem: React.FC<{ color: Color }> = ({ color }) => {
   const [backgroundColor, setBackgroundColor] = useState<string>(
@@ -13,7 +13,12 @@ export const ColorItem: React.FC<{ color: Color }> = ({ color }) => {
 
   return (
     <EditColorPopup
-      hex={rgbHex(backgroundColor)}
+      hex={rgbaToHex({
+        r: color.red,
+        g: color.green,
+        b: color.blue,
+        a: 1,
+      })}
       setHex={(hex) => {
         const rgbCol = hexRgb(hex);
         setBackgroundColor(

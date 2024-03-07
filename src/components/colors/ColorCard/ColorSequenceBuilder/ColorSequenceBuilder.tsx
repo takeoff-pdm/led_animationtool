@@ -16,14 +16,14 @@ import { useMemo, useState } from "react";
 import SortableColorItem from "./SortableColorItem";
 import SortableColorItemOverlay from "./SortableColorItemOverlay";
 import AddColorButton from "../../AddColorButton";
-import { Color } from "@/api/types";
+import { Color, ColorSequence } from "@/api/types";
+import { addColor } from "@/api/api-calls";
 
 export const ColorSequenceBuilder: React.FC<{
+  sequence: ColorSequence;
   colors: Color[];
   setColors: (colors: Color[]) => void;
-}> = ({
-  colors, setColors
-}) => {
+}> = ({ sequence, colors, setColors }) => {
   const [active, setActive] = useState<Active | null>(null);
   const activeItem = useMemo(
     () => colors.find((item) => item.id === active?.id),
@@ -62,18 +62,20 @@ export const ColorSequenceBuilder: React.FC<{
             <SortableColorItem key={color.id} color={color} />
           ))}
           <AddColorButton
-            addColor={() => {
-              setColors([
-                ...colors,
-                {
-                  id: Math.random(),
-                  blue: 0,
-                  color_sequence_id: "",
-                  green: 0,
-                  position: colors.length,
-                  red: 0,
-                },
-              ]);
+            addColor={async () => {
+              const lastColor = colors[colors.length - 1];
+              const newColor = {
+                id: Math.trunc(Math.random() * 1000000),
+                color_sequence_id: JSON.stringify(sequence.id),
+                position: lastColor.position + 1,
+                red: Math.trunc(Math.random() * 255),
+                green: Math.trunc(Math.random() * 255),
+                blue: Math.trunc(Math.random() * 255),
+              };
+              const resp = await addColor(newColor);
+              if (resp.success) {
+                setColors([...colors, newColor]);
+              }
             }}
           />
         </div>

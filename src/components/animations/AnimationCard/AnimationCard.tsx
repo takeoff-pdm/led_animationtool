@@ -11,6 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAnimationsContext } from "../Context/Context";
 import { useState } from "react";
+import { Animation } from "@/api/types";
 import {
   Select,
   SelectContent,
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import AnimationCardContext from "../AnimationCardContext";
 import { Label } from "@/components/ui/label";
-import { startAnimation } from "@/api/api-calls";
+import { startAnimation, updateAnimation } from "@/api/api-calls";
 import { useToast } from "@/components/ui/use-toast";
 
 export const AnimationCard: React.FC<{ animation: Animation }> = ({
@@ -30,6 +31,10 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
     useAnimationsContext();
   const [tab, setTab] = useState<"settings" | "preview">("preview");
   const { toast } = useToast();
+
+  const [variation, setVariation] = useState<string>();
+  const [direction, setDirection] = useState<string>();
+  const [offset, setOffset] = useState<string>();
 
   const startAnimationOnclick = async () => {
     const resp = await startAnimation({
@@ -46,6 +51,32 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
       } else {
         toast({
           title: "Failed to start animation!",
+          variant: "destructive",
+          duration: 6000,
+        });
+      }
+    }
+  };
+
+  const updateAnimationOnClick = async () => {
+    const resp = await updateAnimation({
+      id: animation.id,
+      section_id: selectedSection.id,
+      name: animation.name,
+      description: animation.description,
+      variation: variation as number,
+      direction: direction as number,
+      offset: offset as number,
+    });
+    if (resp) {
+      if (resp.success) {
+        toast({
+          title: "Updated Animation!",
+          duration: 5000,
+        });
+      } else {
+        toast({
+          title: "Failed to update animation!",
           variant: "destructive",
           duration: 6000,
         });
@@ -76,7 +107,7 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
               <div className="w-full flex space-x-1 justify-between">
                 <div className="grid gap-1.5 w-full">
                   <Label>Variation</Label>
-                  <Select>
+                  <Select onValueChange={setVariation}>
                     <SelectTrigger className="">
                       <SelectValue placeholder="Variation"></SelectValue>
                     </SelectTrigger>
@@ -90,7 +121,7 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
                 <div className="grid gap-1.5 w-full ">
                   <Label>Direction</Label>
 
-                  <Select>
+                  <Select onValueChange={setDirection}>
                     <SelectTrigger className="">
                       <SelectValue placeholder="Direction"></SelectValue>
                     </SelectTrigger>
@@ -102,8 +133,23 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="grid gap-1.5 w-full ">
+                  <Label>Direction</Label>
+
+                  <Select onValueChange={setOffset}>
+                    <SelectTrigger className="">
+                      <SelectValue placeholder="Offset"></SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="0">No offset</SelectItem>
+                      <SelectItem value="1">One Beat</SelectItem>
+                      <SelectItem value="2">Two Beats</SelectItem>
+                      <SelectItem value="3">Three Beats</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <Button className="w-full" variant={"secondary"}>
+              <Button onClick={updateAnimationOnClick} className="w-full" variant={"secondary"}>
                 Update
               </Button>
             </div>
