@@ -9,7 +9,7 @@ interface ColorSequence {
   id: number;
   name: string;
   description: string;
-  selection: 0 | 1 | 2;
+  selection: number;
   color_amount: number;
 }
 
@@ -24,10 +24,12 @@ interface Color {
 
 interface Animation {
   id: number;
+  section_id: number | null;
   name: string;
   description: string;
   variation: number;
   direction: number;
+  offset: number;
 }
 
 
