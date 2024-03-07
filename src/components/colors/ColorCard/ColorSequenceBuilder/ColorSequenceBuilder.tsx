@@ -17,7 +17,7 @@ import SortableColorItem from "./SortableColorItem";
 import SortableColorItemOverlay from "./SortableColorItemOverlay";
 import AddColorButton from "../../AddColorButton";
 import { Color, ColorSequence } from "@/api/types";
-import { addColor } from "@/api/api-calls";
+import { addColor, updateColor } from "@/api/api-calls";
 
 export const ColorSequenceBuilder: React.FC<{
   sequence: ColorSequence;
@@ -42,6 +42,10 @@ export const ColorSequenceBuilder: React.FC<{
       const activeIndex = colors.findIndex(({ id }) => id === active.id);
       const overIndex = colors.findIndex(({ id }) => id === over.id);
       setColors(arrayMove(colors, activeIndex, overIndex));
+      arrayMove(colors, activeIndex, overIndex).forEach((color, index) => {
+        color.position = index;
+        updateColor(color);
+      });
     }
   };
 

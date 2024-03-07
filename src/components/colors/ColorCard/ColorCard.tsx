@@ -66,19 +66,19 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
       <CardHeader className="">
         <CardTitle
           contentEditable={editMode}
-          onChange={(e) =>
+          onInput={(e) => {
             setColorSequenceTemp({
               ...colorSequenceTemp,
               name: e.currentTarget.innerText,
-            })
-          }
+            });
+          }}
           className=""
         >
           {colorSequenceTemp.name}
         </CardTitle>
         <CardDescription
           contentEditable={editMode}
-          onChange={(e) =>
+          onInput={(e) =>
             setColorSequenceTemp({
               ...colorSequenceTemp,
               description: e.currentTarget.innerText,
@@ -118,7 +118,11 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
                 </SelectContent>
               </Select>
             </div>
-            <ColorSequenceBuilder sequence={colorSequenceTemp}  colors={colors} setColors={setColors} />
+            <ColorSequenceBuilder
+              sequence={colorSequenceTemp}
+              colors={colors}
+              setColors={setColors}
+            />
           </div>
         )}
       </CardContent>
