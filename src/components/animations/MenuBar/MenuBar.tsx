@@ -54,7 +54,7 @@ const SectionSelector: React.FC = () => {
   const { selectedSection, setSelectedSection } = useAnimationsContext();
 
   const onSelect = (section_name: string) => {
-    const section = sections.find((s) => s.name === section_name);
+    const section = sections.find((s) => s.id === parseInt(section_name));
     if (!section) {
       throw new Error("section not found");
     }
@@ -64,13 +64,18 @@ const SectionSelector: React.FC = () => {
   return (
     <div className="grid gap-1.5">
       <Label>Sections</Label>
-      <Select value={selectedSection?.name} onValueChange={onSelect}>
+      <Select
+        value={JSON.stringify(selectedSection?.id)}
+        onValueChange={onSelect}
+      >
         <SelectTrigger className="sm:w-56 w-1/2">
           <SelectValue placeholder="Select Section"></SelectValue>
         </SelectTrigger>
         <SelectContent>
           {sections.map((section) => (
-            <SelectItem value={section.name}>{section.name}</SelectItem>
+            <SelectItem value={JSON.stringify(section.id)}>
+              {section.name}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -103,11 +108,10 @@ const ColorSequenceSelector: React.FC = () => {
     fetchColorSequences();
   }, []);
 
-
   const { selectedSequence, setSelectedSequence } = useAnimationsContext();
 
   const onSelect = (section_name: string) => {
-    const section = sequences.find((s) => s.name === section_name);
+    const section = sequences.find((s) => s.id === parseInt(section_name));
     if (!section) {
       throw new Error("section not found");
     }
@@ -118,13 +122,13 @@ const ColorSequenceSelector: React.FC = () => {
     <div className="grid gap-1.5">
       <Label>Sequence</Label>
 
-      <Select value={selectedSequence?.name} onValueChange={onSelect}>
+      <Select value={JSON.stringify(selectedSequence?.id)} onValueChange={onSelect}>
         <SelectTrigger className="sm:w-56 w-1/2">
           <SelectValue placeholder="Select Sequence"></SelectValue>
         </SelectTrigger>
         <SelectContent>
           {sequences.map((sequence) => (
-            <SelectItem value={sequence.name}>{sequence.name}</SelectItem>
+            <SelectItem value={JSON.stringify(sequence.id)}>{sequence.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>
