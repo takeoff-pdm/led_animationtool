@@ -19,42 +19,23 @@ import {
 } from "@/components/ui/select";
 import ColorSequenceBuilder from "./ColorSequenceBuilder";
 import { useColorsContext } from "../ColorsContext/ColorsContext";
-import { getColorsFromSequence } from "@/api/api-calls";
+import { getColorsFromSequence, updateColorSequence } from "@/api/api-calls";
+import { useToast } from "@/components/ui/use-toast";
 
 export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   colorSequence,
 }) => {
   const [colorSequenceTemp, setColorSequenceTemp] =
     useState<ColorSequence>(colorSequence);
-
   const { colorSequences, setColorSequences } = useColorsContext();
-
   const [tab, setTab] = useState<"settings" | "preview">("preview");
   const [editMode, setEditMode] = useState<boolean>(false);
-
   const [colors, setColors] = useState([] as Color[]);
-
-  /*[
-      {
-        id: 123,
-        blue: 250,
-        color_sequence_id: "",
-        green: 150,
-        position: 0,
-        red: 200,
-      },
-      {
-        id: 1244,
-        blue: 120,
-        color_sequence_id: "",
-        green: 150,
-        position: 1,
-        red: 200,
-      },
-    ].sort((a, b) => a.position - b.position)*/
+  const { toast } = useToast();
 
   useEffect(() => {
     getColorsFromSequence(colorSequence.id).then((a: { colors: Color[] }) => {
+      if (!a.colors) return;
       setColors(a.colors.sort((a, b) => a.position - b.position));
     });
   }, []);
@@ -64,6 +45,21 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
       setColorSequenceTemp(colorSequence);
     }
   }, [editMode]);
+
+  const onUpdate = async () => {
+    const success = await updateColorSequence(colorSequenceTemp);
+    toast({
+      duration: 3000,
+      description: success ? "Color sequence updated" : "Failed to update",
+      variant: success ? "default" : "destructive",
+    });
+    setColorSequences([
+      ...colorSequences.filter((item) => item.id !== colorSequenceTemp.id),
+      {
+        ...colorSequenceTemp,
+      },
+    ]);
+  };
 
   return (
     <Card className="max-w-sm min-w-[384px] min-h-[330px] w-full">
@@ -122,7 +118,7 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
                 </SelectContent>
               </Select>
             </div>
-            <ColorSequenceBuilder colors={colors} setColors={setColors} />
+            <ColorSequenceBuilder sequence={colorSequenceTemp}  colors={colors} setColors={setColors} />
           </div>
         )}
       </CardContent>
@@ -139,20 +135,7 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
           {tab === "preview" ? "Settings" : "Preview"}
         </Button>
         {editMode && (
-          <Button
-            onClick={() => {
-              setColorSequences([
-                ...colorSequences.filter(
-                  (item) => item.id !== colorSequenceTemp.id
-                ),
-                {
-                  ...colorSequenceTemp,
-                },
-              ]);
-            }}
-            className=""
-            variant={"default"}
-          >
+          <Button onClick={onUpdate} className="" variant={"default"}>
             Update
           </Button>
         )}
@@ -164,8 +147,10 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
 const ColorsPreview: React.FC<{
   colors: Color[];
 }> = ({ colors }) => {
+  const gradientColors = colors.length === 1 ? [colors[0], colors[0]] : colors;
+
   //make it a gradient
-  const gradient = colors
+  const gradient = gradientColors
     .map((color) => `rgb(${color.red}, ${color.green}, ${color.blue})`)
     .join(", ");
 

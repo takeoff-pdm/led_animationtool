@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import EditColorPopup from "../EditColorPopup";
 import hexRgb from "hex-rgb";
 import { rgbaToHex } from "@uiw/react-color";
+import { updateColor } from "@/api/api-calls";
 
 export const ColorItem: React.FC<{ color: Color }> = ({ color }) => {
   const [backgroundColor, setBackgroundColor] = useState<string>(
@@ -24,7 +25,12 @@ export const ColorItem: React.FC<{ color: Color }> = ({ color }) => {
         setBackgroundColor(
           `rgb(${rgbCol.red}, ${rgbCol.green}, ${rgbCol.blue})`
         );
-        // TODO: Save in api?
+        updateColor({
+          ...color,
+          red: rgbCol.red,
+          green: rgbCol.green,
+          blue: rgbCol.blue,
+        });
       }}
     >
       <div
