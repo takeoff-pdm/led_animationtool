@@ -137,7 +137,31 @@ const ColorSequenceSelector: React.FC = () => {
 };
 
 const BPMController: React.FC = () => {
-  const [bpmValue, setBpmValue] = useState<number>(120);
+  const [bpmValue, setBpmValue] = useState<number>(128);
+
+  const [tapCount, setTapCount] = useState<number>(0);
+  const [firstTap, setFirstTap] = useState<number>(0);
+  const [lastTap, setLastTap] = useState<number>(0);
+
+  const calculateBpm = () => {
+    const avgMs = (lastTap - firstTap) / 
+                  (tapCount - 1);
+
+    return Math.round(60 * 1000 / avgMs)
+  }
+
+  const tapped = (e : any) => {
+    setTapCount(tapCount + 1);
+    setFirstTap(firstTap || e.timeStamp);
+    setLastTap(e.timeStamp);
+    setBpmValue(calculateBpm());
+
+    if (tapCount % 5 == 0) {
+      updateBpm({
+        value: bpmValue,
+      });
+    }
+  }
 
   const autoDetectBPM = () => {};
 
@@ -149,7 +173,7 @@ const BPMController: React.FC = () => {
 
   return (
     <div className="sm:flex items-center sm:space-x-2 space-y-2 md:space-y-0 pt-3">
-      <Button className="w-full sm:w-40">BPM Tapper</Button>
+      <Button onClick={tapped.bind(this)} className="w-full sm:w-40">BPM Tapper</Button>
       <div className="flex items-center space-x-2">
         <Input
           className="w-20"
