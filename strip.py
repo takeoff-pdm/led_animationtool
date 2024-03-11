@@ -392,6 +392,7 @@ class Strip:
         for possible_section in self.sections:
             if possible_section.id == section_id:
                 section = possible_section
+                break
 
         if not section:
             return False
