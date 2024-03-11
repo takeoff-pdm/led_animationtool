@@ -1,5 +1,10 @@
-import { getColorSequences, getSections, updateBpm } from "@/api/api-calls";
-import { getAllCollorSequences } from "@/api/colors/get-all";
+import {
+  getColorSequences,
+  getSections,
+  startAnimation,
+  stopAnimation,
+  updateBpm,
+} from "@/api/api-calls";
 import { ColorSequence, Section } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,15 +18,77 @@ import {
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { useAnimationsContext } from "../Context/Context";
+import { PauseIcon, ResumeIcon } from "@radix-ui/react-icons";
+import { useToast } from "@/components/ui/use-toast";
 
 export const MenuBar: React.FC = () => {
   return (
     <div className="w-full min-h-20 space-y-2 py-2 sm:flex justify-between sm:px-14 px-4  items-center">
-      <div className="flex space-x-2 sm:mr-2">
+      <div className="flex space-x-2 sm:mr-2 w-full">
+        <SectionPauseResumeButton />
         <SectionSelector />
         <ColorSequenceSelector />
       </div>
       <BPMController />
+    </div>
+  );
+};
+
+const SectionPauseResumeButton: React.FC = () => {
+  const { selectedSection, activeAnimation, selectedSequence } =
+    useAnimationsContext();
+  const [active, setActive] = useState<boolean>(
+    selectedSection.isActive || false
+  );
+  const { toast } = useToast();
+
+  const onClick = async () => {
+    if (active) {
+      const resp = await stopAnimation({
+        id: selectedSection.id,
+      });
+      if (resp.success) {
+        setActive(!active);
+      } else {
+        toast({
+          title: "Failed to stop animation!",
+          variant: "destructive",
+          duration: 6000,
+        });
+      }
+    } else {
+      const resp = await startAnimation({
+        section_id: selectedSection.id,
+        animation_id: activeAnimation ? activeAnimation.id : 0,
+        color_sequence_id: selectedSequence.id,
+      });
+      if (resp.success) {
+        setActive(!active);
+      } else {
+        toast({
+          title: "Failed to start animation!",
+          variant: "destructive",
+          duration: 6000,
+        });
+      }
+    }
+  };
+
+  return (
+    <div className="mt-5">
+      <Button
+        //  disabled={!selectedSection.isActive}
+        variant={"default"}
+        onClick={onClick}
+        className="pr-5"
+      >
+        {active ? (
+          <PauseIcon className="w-4 h-4 mr-2" />
+        ) : (
+          <ResumeIcon className="w-4 h-4 mr-2" />
+        )}
+        {active ? "Pause" : "Resume"}
+      </Button>
     </div>
   );
 };
@@ -62,13 +129,13 @@ const SectionSelector: React.FC = () => {
   };
 
   return (
-    <div className="grid gap-1.5">
+    <div className="grid gap-1.5 w-full sm:w-fit">
       <Label>Sections</Label>
       <Select
         value={JSON.stringify(selectedSection?.id)}
         onValueChange={onSelect}
       >
-        <SelectTrigger className="sm:w-56 w-1/2">
+        <SelectTrigger className="sm:w-56 w-full">
           <SelectValue placeholder="Select Section"></SelectValue>
         </SelectTrigger>
         <SelectContent>
@@ -119,16 +186,21 @@ const ColorSequenceSelector: React.FC = () => {
   };
 
   return (
-    <div className="grid gap-1.5">
+    <div className="grid gap-1.5 w-full sm:w-fit">
       <Label>Sequence</Label>
 
-      <Select value={JSON.stringify(selectedSequence?.id)} onValueChange={onSelect}>
-        <SelectTrigger className="sm:w-56 w-1/2">
+      <Select
+        value={JSON.stringify(selectedSequence?.id)}
+        onValueChange={onSelect}
+      >
+        <SelectTrigger className="sm:w-56 w-full">
           <SelectValue placeholder="Select Sequence"></SelectValue>
         </SelectTrigger>
         <SelectContent>
           {sequences.map((sequence) => (
-            <SelectItem value={JSON.stringify(sequence.id)}>{sequence.name}</SelectItem>
+            <SelectItem value={JSON.stringify(sequence.id)}>
+              {sequence.name}
+            </SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -144,13 +216,12 @@ const BPMController: React.FC = () => {
   const [lastTap, setLastTap] = useState<number>(0);
 
   const calculateBpm = () => {
-    const avgMs = (lastTap - firstTap) / 
-                  (tapCount - 1);
+    const avgMs = (lastTap - firstTap) / (tapCount - 1);
 
-    return Math.round(60 * 1000 / avgMs)
-  }
+    return Math.round((60 * 1000) / avgMs);
+  };
 
-  const tapped = (e : any) => {
+  const tapped = (e: any) => {
     setTapCount(tapCount + 1);
     setFirstTap(firstTap || e.timeStamp);
     setLastTap(e.timeStamp);
@@ -161,7 +232,7 @@ const BPMController: React.FC = () => {
         value: bpmValue,
       });
     }
-  }
+  };
 
   const autoDetectBPM = () => {};
 
@@ -173,10 +244,15 @@ const BPMController: React.FC = () => {
 
   return (
     <div className="sm:flex items-center sm:space-x-2 space-y-2 md:space-y-0 pt-3">
-      <Button onClick={tapped.bind(this)} className="w-full sm:w-40">BPM Tapper</Button>
-      <div className="flex items-center space-x-2">
+      <Button onClick={tapped.bind(this)} className="w-full sm:w-40">
+        BPM Tapper
+      </Button>
+      <div className="flex items-center space-x-2 w-full ">
+        <Button onClick={autoDetectBPM} variant={"secondary"}>
+          Auto Detect
+        </Button>
         <Input
-          className="w-20"
+          className="w-20 "
           placeholder="120"
           value={bpmValue}
           onChange={(e) => {
@@ -184,13 +260,11 @@ const BPMController: React.FC = () => {
           }}
           type="number"
         />
-        <Button onClick={autoDetectBPM} variant={"secondary"}>
-          Auto Detect
-        </Button>
         <Button
           onClick={() => {
             onSave();
           }}
+          className="grow"
         >
           Save
         </Button>

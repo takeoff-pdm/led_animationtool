@@ -3,6 +3,7 @@ interface Section {
   name: string;
   start_led: number;
   end_led: number;
+  isActive?: boolean;
 }
 
 interface ColorSequence {
@@ -31,6 +32,5 @@ interface Animation {
   direction: number;
   offset: number;
 }
-
 
 export type { Animation, Section, Color, ColorSequence };

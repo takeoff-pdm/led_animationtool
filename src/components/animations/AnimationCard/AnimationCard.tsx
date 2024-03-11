@@ -1,4 +1,3 @@
-import { Animation } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,8 +26,12 @@ import { useToast } from "@/components/ui/use-toast";
 export const AnimationCard: React.FC<{ animation: Animation }> = ({
   animation,
 }) => {
-  const { activeAnimation, selectedSequence, selectedSection } =
-    useAnimationsContext();
+  const {
+    activeAnimation,
+    selectedSequence,
+    selectedSection,
+    setSelectedSection,
+  } = useAnimationsContext();
   const [tab, setTab] = useState<"settings" | "preview">("preview");
   const { toast } = useToast();
 
@@ -44,6 +47,7 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
     });
     if (resp) {
       if (resp.success) {
+        setSelectedSection({ ...selectedSection, isActive: true });
         toast({
           title: "Started animation!",
           duration: 5000,
@@ -64,9 +68,9 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
       section_id: selectedSection.id,
       name: animation.name,
       description: animation.description,
-      variation: variation as number,
-      direction: direction as number,
-      offset: offset as number,
+      variation: variation as unknown as number,
+      direction: direction as unknown as number,
+      offset: offset as unknown as number,
     });
     if (resp) {
       if (resp.success) {
@@ -149,7 +153,11 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
                   </Select>
                 </div>
               </div>
-              <Button onClick={updateAnimationOnClick} className="w-full" variant={"secondary"}>
+              <Button
+                onClick={updateAnimationOnClick}
+                className="w-full"
+                variant={"secondary"}
+              >
                 Update
               </Button>
             </div>
