@@ -33,4 +33,16 @@ interface Animation {
   offset: number;
 }
 
-export type { Animation, Section, Color, ColorSequence };
+interface Settings {
+  brightness: number;
+  led_count: number;
+  element_length: number;
+  pin: number;
+  frequency: number;
+  dma: number;
+  led_invert: boolean;
+  channel: number;
+  bpm: number;
+}
+
+export type { Animation, Section, Color, ColorSequence, Settings };

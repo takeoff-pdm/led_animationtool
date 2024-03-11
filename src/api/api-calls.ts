@@ -68,17 +68,19 @@ const getAnimation = (data: { id: number }) =>
   sendRequest("get/animation", "POST", data);
 const updateAnimation = (data: Animation) =>
   sendRequest("update/animation", "POST", data);
-const startAnimation = (
-  data: {
-    color_sequence_id: number;
-    animation_id: number;
-    section_id: number;
-  }
-) => sendRequest("start/animate", "POST", data);
+const startAnimation = (data: {
+  color_sequence_id: number;
+  animation_id: number;
+  section_id: number;
+}) => sendRequest("start/animate", "POST", data);
 const stopAnimation = (data: RequestData) =>
   sendRequest("stop/animate", "POST", data);
 
+const getSectionData = (data: { section_id: number }) =>
+  sendRequest("/api/running_animation", "POST", data);
+
 // Settings
+
 const getSettings = () => sendRequest("get/settings", "GET");
 // { value: 80 }
 const updateBrightness = (data: SettingsValueData) =>
