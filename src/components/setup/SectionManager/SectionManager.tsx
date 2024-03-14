@@ -1,4 +1,4 @@
-import { addSection, getSections, removeSection } from "@/api/api-calls";
+import { updateSections, addSection, getSections, removeSection } from "@/api/api-calls";
 import { Section } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,6 +67,8 @@ export const SectionManager: React.FC = () => {
 
   const onUpdate = () => {
     setSections(editedSections);
+
+    updateSections(editedSections);
   };
 
   const onCancel = () => {
