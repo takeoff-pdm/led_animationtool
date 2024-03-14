@@ -138,7 +138,7 @@ const SectionSelector: React.FC = () => {
         onValueChange={onSelect}
       >
         <SelectTrigger className="w-full lg:w-56">
-          <SelectValue placeholder="Select Section"></SelectValue>
+          <SelectValue placeholder="Section"></SelectValue>
         </SelectTrigger>
         <SelectContent>
           {sections.map((section) => (
@@ -196,7 +196,7 @@ const ColorSequenceSelector: React.FC = () => {
         onValueChange={onSelect}
       >
         <SelectTrigger className="w-full lg:w-56">
-          <SelectValue placeholder="Select Sequence"></SelectValue>
+          <SelectValue placeholder="Sequence"></SelectValue>
         </SelectTrigger>
         <SelectContent>
           {sequences.map((sequence) => (
