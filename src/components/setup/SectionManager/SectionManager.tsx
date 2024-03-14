@@ -17,12 +17,11 @@ import {
 } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
 import { useSetupContext } from "../SetupContext/SetupContext";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export const SectionManager: React.FC = () => {
   const [editedSections, setEditedSections] = useState<Section[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
-  const { toast } = useToast();
 
   useEffect(() => {
     const fetchSections = async () => {
@@ -62,10 +61,7 @@ export const SectionManager: React.FC = () => {
     if (resp.success) {
       setSections(sections.filter((s) => s.id !== section.id));
     } else {
-      toast({
-        title: "Failed to remove section",
-        duration: 6000
-      });
+      toast("Failed to remove section");
     }
   };
 

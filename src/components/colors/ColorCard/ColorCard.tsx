@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import {
   Select,
@@ -20,7 +19,7 @@ import {
 import ColorSequenceBuilder from "./ColorSequenceBuilder";
 import { useColorsContext } from "../ColorsContext/ColorsContext";
 import { getColorsFromSequence, updateColorSequence } from "@/api/api-calls";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
 export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
@@ -32,7 +31,6 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
   const [tab, setTab] = useState<"settings" | "preview">("preview");
   const [editMode, setEditMode] = useState<boolean>(false);
   const [colors, setColors] = useState([] as Color[]);
-  const { toast } = useToast();
 
   useEffect(() => {
     getColorsFromSequence(colorSequence.id).then((a: { colors: Color[] }) => {
@@ -49,11 +47,7 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
 
   const onUpdate = async () => {
     const success = await updateColorSequence(colorSequenceTemp);
-    toast({
-      duration: 3000,
-      description: success ? "Color sequence updated" : "Failed to update",
-      variant: success ? "default" : "destructive",
-    });
+    toast(success ? "Color sequence updated" : "Failed to update");
     setColorSequences([
       ...colorSequences.map((item) => {
         if (item.id === colorSequenceTemp.id) {

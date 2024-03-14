@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { useAnimationsContext } from "../Context/Context";
 import { PauseIcon, ResumeIcon } from "@radix-ui/react-icons";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner"
 
 export const MenuBar: React.FC = () => {
   return (
@@ -42,7 +42,6 @@ const SectionPauseResumeButton: React.FC = () => {
   const [active, setActive] = useState<boolean>(
     selectedSection.isActive || false,
   );
-  const { toast } = useToast();
 
   const onClick = async () => {
     if (active) {
@@ -52,11 +51,7 @@ const SectionPauseResumeButton: React.FC = () => {
       if (resp.success) {
         setActive(!active);
       } else {
-        toast({
-          title: "Failed to stop animation!",
-          variant: "destructive",
-          duration: 6000,
-        });
+        toast("Failed to stop animation!");
       }
     } else {
       const resp = await startAnimation({
@@ -67,11 +62,7 @@ const SectionPauseResumeButton: React.FC = () => {
       if (resp.success) {
         setActive(!active);
       } else {
-        toast({
-          title: "Failed to start animation!",
-          variant: "destructive",
-          duration: 6000,
-        });
+        toast("Failed to start animation!");
       }
     }
   };
