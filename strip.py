@@ -256,6 +256,13 @@ class Strip:
 
     def update_color_sequence(self, id: int, name: str, description: str,
                               selection: int, color_amount: int) -> bool:
+        for animation in self.running_animations:
+            if animation.color_sequence.id == id:
+                animation.color_sequence.name = name
+                animation.color_sequence.description = description
+                animation.color_sequence.selection = selection
+                animation.color_sequence.color_amount = color_amount
+            
         for color_sequence in self.color_sequences:
             if color_sequence.id == id:
                 color_sequence.name = name
