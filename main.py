@@ -56,6 +56,15 @@ async def update_section(section: Section):
                                                                  section.start_led, section.end_led)})
 
 
+@app.post('/api/running_animation')
+async def get_animation(id: Id):
+    for animation in strip.running_animations:
+        if animation.section_id == id.id:
+            return JSONResponse(content={'animation_id': animation.id, 'color_sequence_id': animation.color_sequence.id})
+    
+    return JSONResponse(content={'animation_id': False, 'color_sequence_id': False})
+
+
 # Color Sequence
 @app.get('/api/get/color_sequences')
 async def get_color_sequences():
