@@ -23,8 +23,8 @@ import { useToast } from "@/components/ui/use-toast";
 
 export const MenuBar: React.FC = () => {
   return (
-    <div className="w-full min-h-20 space-y-2 py-2 lg:flex justify-between lg:px-14 px-4  items-center">
-      <div className="flex space-x-2 lg:mr-2 w-full">
+    <div className="min-h-20 w-full items-center justify-between space-y-2 px-4 py-2 lg:flex  lg:px-14">
+      <div className="flex w-full space-x-2 lg:mr-2">
         <SectionPauseResumeButton />
         <SectionSelector />
         <ColorSequenceSelector />
@@ -38,7 +38,7 @@ const SectionPauseResumeButton: React.FC = () => {
   const { selectedSection, activeAnimation, selectedSequence } =
     useAnimationsContext();
   const [active, setActive] = useState<boolean>(
-    selectedSection.isActive || false
+    selectedSection.isActive || false,
   );
   const { toast } = useToast();
 
@@ -83,11 +83,11 @@ const SectionPauseResumeButton: React.FC = () => {
         className="pr-5"
       >
         {active ? (
-          <PauseIcon className="w-4 h-4 mr-2" />
+          <PauseIcon className="h-4 w-4 sm:mr-2" />
         ) : (
-          <ResumeIcon className="w-4 h-4 mr-2" />
+          <ResumeIcon className="h-4 w-4 sm:mr-2" />
         )}
-        {active ? "Pause" : "Resume"}
+        <div className="hidden sm:block">{active ? "Pause" : "Resume"}</div>
       </Button>
     </div>
   );
@@ -129,13 +129,13 @@ const SectionSelector: React.FC = () => {
   };
 
   return (
-    <div className="grid gap-1.5 w-full lg:w-fit">
+    <div className="grid w-full gap-1.5 lg:w-fit">
       <Label>Sections</Label>
       <Select
         value={JSON.stringify(selectedSection?.id)}
         onValueChange={onSelect}
       >
-        <SelectTrigger className="lg:w-56 w-full">
+        <SelectTrigger className="w-full lg:w-56">
           <SelectValue placeholder="Select Section"></SelectValue>
         </SelectTrigger>
         <SelectContent>
@@ -186,14 +186,14 @@ const ColorSequenceSelector: React.FC = () => {
   };
 
   return (
-    <div className="grid gap-1.5 w-full lg:w-fit">
+    <div className="grid w-full gap-1.5 lg:w-fit">
       <Label>Sequence</Label>
 
       <Select
         value={JSON.stringify(selectedSequence?.id)}
         onValueChange={onSelect}
       >
-        <SelectTrigger className="lg:w-56 w-full">
+        <SelectTrigger className="w-full lg:w-56">
           <SelectValue placeholder="Select Sequence"></SelectValue>
         </SelectTrigger>
         <SelectContent>
@@ -243,11 +243,11 @@ const BPMController: React.FC = () => {
   };
 
   return (
-    <div className="lg:flex items-center lg:space-x-2 space-y-2 lg:space-y-0 pt-3">
+    <div className="items-center space-y-2 pt-3 lg:flex lg:space-x-2 lg:space-y-0">
       <Button onClick={tapped.bind(this)} className="w-full lg:w-40">
         BPM Tapper
       </Button>
-      <div className="flex items-center space-x-2 w-full ">
+      <div className="flex w-full items-center space-x-2 ">
         <Button onClick={autoDetectBPM} variant={"secondary"}>
           Auto Detect
         </Button>
