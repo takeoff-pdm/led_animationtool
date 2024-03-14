@@ -23,8 +23,8 @@ import { useToast } from "@/components/ui/use-toast";
 
 export const MenuBar: React.FC = () => {
   return (
-    <div className="w-full min-h-20 space-y-2 py-2 sm:flex justify-between sm:px-14 px-4  items-center">
-      <div className="flex space-x-2 sm:mr-2 w-full">
+    <div className="w-full min-h-20 space-y-2 py-2 lg:flex justify-between lg:px-14 px-4  items-center">
+      <div className="flex space-x-2 lg:mr-2 w-full">
         <SectionPauseResumeButton />
         <SectionSelector />
         <ColorSequenceSelector />
@@ -129,13 +129,13 @@ const SectionSelector: React.FC = () => {
   };
 
   return (
-    <div className="grid gap-1.5 w-full sm:w-fit">
+    <div className="grid gap-1.5 w-full lg:w-fit">
       <Label>Sections</Label>
       <Select
         value={JSON.stringify(selectedSection?.id)}
         onValueChange={onSelect}
       >
-        <SelectTrigger className="sm:w-56 w-full">
+        <SelectTrigger className="lg:w-56 w-full">
           <SelectValue placeholder="Select Section"></SelectValue>
         </SelectTrigger>
         <SelectContent>
@@ -186,14 +186,14 @@ const ColorSequenceSelector: React.FC = () => {
   };
 
   return (
-    <div className="grid gap-1.5 w-full sm:w-fit">
+    <div className="grid gap-1.5 w-full lg:w-fit">
       <Label>Sequence</Label>
 
       <Select
         value={JSON.stringify(selectedSequence?.id)}
         onValueChange={onSelect}
       >
-        <SelectTrigger className="sm:w-56 w-full">
+        <SelectTrigger className="lg:w-56 w-full">
           <SelectValue placeholder="Select Sequence"></SelectValue>
         </SelectTrigger>
         <SelectContent>
@@ -243,8 +243,8 @@ const BPMController: React.FC = () => {
   };
 
   return (
-    <div className="sm:flex items-center sm:space-x-2 space-y-2 md:space-y-0 pt-3">
-      <Button onClick={tapped.bind(this)} className="w-full sm:w-40">
+    <div className="lg:flex items-center lg:space-x-2 space-y-2 lg:space-y-0 pt-3">
+      <Button onClick={tapped.bind(this)} className="w-full lg:w-40">
         BPM Tapper
       </Button>
       <div className="flex items-center space-x-2 w-full ">

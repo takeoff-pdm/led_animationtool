@@ -1,0 +1,1 @@
+stop animation for section button
