@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { useAnimationsContext } from "../Context/Context";
 import { PauseIcon, ResumeIcon } from "@radix-ui/react-icons";
-import { toast } from "sonner"
+import { toast } from "sonner";
 
 export const MenuBar: React.FC = () => {
   return (
@@ -40,7 +40,7 @@ const SectionPauseResumeButton: React.FC = () => {
   const { selectedSection, activeAnimation, selectedSequence } =
     useAnimationsContext();
   const [active, setActive] = useState<boolean>(
-    selectedSection.isActive || false,
+    selectedSection.isActive || false
   );
 
   const onClick = async () => {
@@ -235,12 +235,24 @@ const BPMController: React.FC = () => {
     });
   };
 
+  // call tapped.bind(this) when command + B is pressed
+
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "b" && e.metaKey) {
+        tapped({timeStamp: e.timeStamp});
+      }
+    });
+  }, []);
+
+
   return (
-    <div className="w-full shrink-0 items-center space-y-2 pt-3 md:flex md:space-x-2 md:space-y-0">
-      <Button onClick={tapped.bind(this)} className="w-full lg:w-40">
+    <div className="w-full shrink-0 items-center justify-end space-y-2 pt-3 sm:flex sm:space-x-2 sm:space-y-0">
+      <Button onClick={tapped.bind(this)} className="w-full relative lg:w-52 lg:justify-start">
         BPM Tapper
+        <div className="text-slate-400 ml-2 absolute right-4 top-2">⌘ + B</div>
       </Button>
-      <div className="flex w-full items-center space-x-2 ">
+      <div className="flex items-center justify-end space-x-2 ">
         <Button onClick={autoDetectBPM} variant={"secondary"}>
           Auto Detect
         </Button>
@@ -257,7 +269,7 @@ const BPMController: React.FC = () => {
           onClick={() => {
             onSave();
           }}
-          className="grow"
+          className="grow max-w-40 md:max-w-96"
         >
           Save
         </Button>

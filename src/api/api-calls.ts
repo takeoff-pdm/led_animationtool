@@ -13,7 +13,7 @@ interface SettingsValueData {
 async function sendRequest(
   endpoint: string,
   method: "GET" | "POST",
-  data?: RequestData
+  data?: RequestData,
 ): Promise<any> {
   const url = `${RECEIVER_HOST}/api/${endpoint}`;
   const options: RequestInit = {

@@ -89,8 +89,6 @@ const MobileNavbar: React.FC = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
-          <DropdownMenuLabel>Led Manager</DropdownMenuLabel>
-          <DropdownMenuSeparator />
           <DropdownMenuGroup>
             {ITEMS_NAVBAR.map((item) => (
               <Link href={item.href}>

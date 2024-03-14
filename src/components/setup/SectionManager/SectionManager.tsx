@@ -74,7 +74,7 @@ export const SectionManager: React.FC = () => {
   };
 
   return (
-    <Card className="max-w-md min-h-72">
+    <Card className="max-w-4xl min-h-72">
       <CardHeader>
         <CardTitle>Setup Sections</CardTitle>
         <CardDescription>Manage your sections.</CardDescription>
@@ -83,7 +83,7 @@ export const SectionManager: React.FC = () => {
         {editedSections.length === 0 ? (
           <PlaceHolder />
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2 min-h-40">
             {editedSections.map((section) => (
               <SectionItem
                 onDelete={() => onDelete(section)}
