@@ -29,7 +29,9 @@ export const MenuBar: React.FC = () => {
         <SectionSelector />
         <ColorSequenceSelector />
       </div>
-      <BPMController />
+      <div className="flex w-full">
+        <BPMController />
+      </div>
     </div>
   );
 };
@@ -243,7 +245,7 @@ const BPMController: React.FC = () => {
   };
 
   return (
-    <div className="items-center space-y-2 pt-3 lg:flex lg:space-x-2 lg:space-y-0">
+    <div className="w-full shrink-0 items-center space-y-2 pt-3 md:flex md:space-x-2 md:space-y-0">
       <Button onClick={tapped.bind(this)} className="w-full lg:w-40">
         BPM Tapper
       </Button>
