@@ -21,7 +21,7 @@ import {
 import AnimationCardContext from "../AnimationCardContext";
 import { Label } from "@/components/ui/label";
 import { startAnimation, updateAnimation } from "@/api/api-calls";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export const AnimationCard: React.FC<{ animation: Animation }> = ({
   animation,
@@ -33,7 +33,6 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
     setSelectedSection,
   } = useAnimationsContext();
   const [tab, setTab] = useState<"settings" | "preview">("preview");
-  const { toast } = useToast();
 
   const [variation, setVariation] = useState<string>();
   const [direction, setDirection] = useState<string>();
@@ -48,16 +47,9 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
     if (resp) {
       if (resp.success) {
         setSelectedSection({ ...selectedSection, isActive: true });
-        toast({
-          title: "Started animation!",
-          duration: 5000,
-        });
+        toast("Started animation!");
       } else {
-        toast({
-          title: "Failed to start animation!",
-          variant: "destructive",
-          duration: 6000,
-        });
+        toast("Failed to start animation!");
       }
     }
   };
@@ -79,37 +71,33 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
           duration: 5000,
         });
       } else {
-        toast({
-          title: "Failed to update animation!",
-          variant: "destructive",
-          duration: 6000,
-        });
+        toast("Failed to update animation!");
       }
     }
   };
 
   return (
     <AnimationCardContext animation={animation}>
-      <Card className="max-w-sm min-w-[384px] w-full">
+      <Card className="w-full min-w-[384px] max-w-sm">
         <CardHeader className="">
           <div className="flex items-center justify-between">
             <CardTitle className="">{animation.name}</CardTitle>
             {animation == activeAnimation ||
               (false && (
-                <div className="w-3 h-3 rounded-full animate-pulse bg-green-400 "></div>
+                <div className="h-3 w-3 animate-pulse rounded-full bg-green-400 "></div>
               ))}
           </div>
           <CardDescription>{animation.description}</CardDescription>
         </CardHeader>
         <CardContent>
           {tab === "preview" ? (
-            <div className="w-full h-32">
-              <Skeleton className="w-full h-full" />
+            <div className="h-32 w-full">
+              <Skeleton className="h-full w-full" />
             </div>
           ) : (
-            <div className="w-full h-32 space-y-3">
-              <div className="w-full flex space-x-1 justify-between">
-                <div className="grid gap-1.5 w-full">
+            <div className="h-32 w-full space-y-3">
+              <div className="flex w-full justify-between space-x-1">
+                <div className="grid w-full gap-1.5">
                   <Label>Variation</Label>
                   <Select onValueChange={setVariation}>
                     <SelectTrigger className="">
@@ -122,7 +110,7 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid gap-1.5 w-full ">
+                <div className="grid w-full gap-1.5 ">
                   <Label>Direction</Label>
 
                   <Select onValueChange={setDirection}>
@@ -137,7 +125,7 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="grid gap-1.5 w-full ">
+                <div className="grid w-full gap-1.5 ">
                   <Label>Direction</Label>
 
                   <Select onValueChange={setOffset}>
