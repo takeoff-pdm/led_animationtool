@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -13,6 +12,8 @@ import { useSetupContext } from "../SetupContext/SetupContext";
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Settings } from "@/api/types";
+import { updateBrightness, updateLedCount } from "@/api/api-calls";
+
 
 const LabeledInput: React.FC<{
   value: any;
@@ -21,22 +22,33 @@ const LabeledInput: React.FC<{
   type?: string;
   label: string;
 }> = ({ value, placeholder, onChange, label, type }) => {
+
+  const [value1, setValue1] = useState<string>(value);
+
   return (
     <div className="grid w-full gap-1.5">
       <Label>{label}</Label>
-      <Input
-        value={value}
-        type={type}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <div className="flex space-x-2 items-center">
+        <Input
+          value={value1}
+          type={type}
+          placeholder={placeholder}
+          onChange={(e) => setValue1(e.target.value)}
+        />
+        <Button onChange={() => {
+          setValue1(value);
+        }} variant="secondary" size="sm" className="shrink-0 px-5">Cancel</Button>
+        <Button onClick={(e) => {
+          onChange(value1);
+        }} size="sm">Save</Button>
+      </div>
+      
     </div>
   );
 };
 
 export const ConfigManager: React.FC = () => {
   const { settings, setSettings } = useSetupContext();
-  const [tempSettings, setTempSettings] = useState<Settings>(settings);
   return (
     <Card className="max-w-4xl">
       <CardHeader>
@@ -48,89 +60,33 @@ export const ConfigManager: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         <LabeledInput
-          value={tempSettings.brightness}
+          value={settings.brightness}
           placeholder="Brightness"
           type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, brightness: parseInt(value) })
-          }
+          onChange={(value) => {
+            setSettings({
+              ...settings,
+              brightness: parseInt(value)
+            });
+            updateBrightness(value);
+          }}
           label="Brightness"
         />
         <LabeledInput
-          value={tempSettings.ledCount}
+          value={settings.ledCount}
           placeholder="Led Count"
           type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, ledCount: parseInt(value) })
-          }
+          onChange={(value) => {
+            setSettings({
+              ...settings,
+              ledCount: parseInt(value)
+            });
+
+            updateLedCount(value);
+          }}
           label="Led Count"
         />
-        <LabeledInput
-          value={tempSettings.pin}
-          placeholder="Pin"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, pin: parseInt(value) })
-          }
-          label="Pin"
-        />
-        <LabeledInput
-          value={tempSettings.frequency}
-          placeholder="Frequency"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, frequency: parseInt(value) })
-          }
-          label="Frequency"
-        />
-        <LabeledInput
-          value={tempSettings.dma}
-          placeholder="DMA"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, dma: parseInt(value) })
-          }
-          label="DMA"
-        />
-
-        <LabeledInput
-          value={tempSettings.channel}
-          placeholder="Channel"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, channel: parseInt(value) })
-          }
-          label="Channel"
-        />
-        <div className="grid w-full gap-1.5">
-          <Label>Invert LED</Label>
-          <Switch
-            checked={tempSettings.led_invert}
-            onChange={(value) =>
-              setTempSettings({ ...tempSettings, invert: value })
-            }
-          />
-        </div>
       </CardContent>
-      <CardFooter className="justify-end space-x-2">
-        <Button
-          onClick={() => {
-            // TODO: Does not work
-            setTempSettings(settings);
-          }}
-          variant={"ghost"}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={() => {
-            // TODO: SEND TO API
-            setSettings(tempSettings);
-          }}
-        >
-          Save
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
