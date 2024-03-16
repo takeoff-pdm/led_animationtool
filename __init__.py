@@ -5,7 +5,7 @@ CONFIG_FILE = 'config.json'
 DATABASE_FILE = './db.db'
 
 # Animations
-ANIMATION_STEPS = 50 # The more steps, the more accurate flowy transitions, but also more power drawn
+ANIMATION_STEPS = 30 # The more steps, the more accurate flowy transitions, but also more power drawn & slower -> Maximum 40
 
 ANIMATION_DATA = [
     {
@@ -17,11 +17,11 @@ ANIMATION_DATA = [
         'description': 'Flowing colors'
     },
     {
+        'name': 'Strobe',
+        'description': 'Strobe effect'
+    },
+    {
         'name': 'Shooter',
         'description': 'Shooting colors'
     },
-    {
-        'name': 'Strobo',
-        'description': 'Strobo effect'
-    }
 ]

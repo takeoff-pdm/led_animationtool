@@ -54,11 +54,22 @@ class Flow(Animation):
         return animation_range
 
     def animate(self, beat: int):
+        if beat % 2 == 1:  # Start animation at every second beat
+            return
+        
         starting_time = time_ns() // 1_000_000
         colors = self.select_colors(beat)
 
-        if self.variation == 0:
-            for animation_stage in range((self.end_led - self.start_led) * 2 + 1):
+        if self.variation == 0 or self.variation == 1:
+            step = 2 if (self.end_led - self.start_led) + 1 > 60 \
+                   else 3 if (self.end_led - self.start_led) + 1 > 240 \
+                   else 4 if (self.end_led - self.start_led) + 1 > 360 else 1  # Avoid having too slow code by skipping some pixels
+
+            step = int(step * (self.bpm / 100 + 1))  # Adjust speed to bpm
+        
+            strip_section = range(self.start_led, self.end_led + 1)
+
+            for animation_stage in range(0, (self.end_led - self.start_led) * 2 + 1, step):
                 for index, color in enumerate(colors):
                     animation_range = self.select_range(animation_stage, index, colors)
 
@@ -67,18 +78,36 @@ class Flow(Animation):
                     
                     for i in animation_range:
                         for j in i:
-                            if j not in range(self.start_led, self.end_led + 1):
+                            if j not in strip_section:
                                 continue
 
                             self.set_pixel_color(j, color)
                 
                 self.strip.show()
 
-                sleep(self.sleep_time / (self.end_led - self.start_led) 
-                       - ((time_ns() // 1_000_000 - starting_time) // 1_000))
+                if self.variation == 0:  # Consistend flow speed
+                    sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
+                                - ((time_ns() // 1_000_000 - starting_time) / 1_000)
+                
+                elif self.variation == 1:  # Slowing down until middle, then speeding up again  # TODO: Fix the animation (looks awful at the moment)
+                    speed_variance = ((self.end_led - self.start_led) - animation_stage) / (self.end_led - self.start_led) * 2 \
+                                     if animation_stage < (self.end_led - self.start_led) \
+                                     else (animation_stage - (self.end_led - self.start_led)) / (self.end_led - self.start_led) * 2
+                    
+                    sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
+                                * speed_variance \
+                                - ((time_ns() // 1_000_000 - starting_time) / 1_000)
+                
+                # * (1.5 if animation_stage > ((self.end_led - self.start_led) * 2 + 1) / 2 else .75) \ # After '* step'
+
+                if sleep_time > 0:
+                    sleep(sleep_time)
+                # else:
+                #     print("sloow flow")
+                
                 starting_time = time_ns() // 1_000_000
         
-        elif self.variation == 1:  # Smooth transition between colors
+        elif self.variation == 2:  # Smooth transition between colors?
             pass
 
         # print('whoooooohw de floooohw')

@@ -72,9 +72,6 @@ class MonoColor(Animation):
         return animation_range
 
     def animate(self, beat: int, reverse: bool = False):
-        # Split strip up into slices for the different sections
-        colors = self.select_colors(beat)
-
         match self.direction:
             case 4:
                 self.direction = 0
@@ -197,6 +194,9 @@ class MonoColor(Animation):
                 self.direction = 7
 
                 return
+        
+        # Split strip up into slices for the different sections
+        colors = self.select_colors(beat)
 
         if self.variation == 0:  # No transition color change
             for index, color in enumerate(colors):
@@ -217,54 +217,62 @@ class MonoColor(Animation):
 
             if reverse == True:
                 next_colors = self.select_colors(beat - 1 if beat > 0 else 15)
-
+            
             red_transitions = []
             green_transitions = []
             blue_transitions = []
-
+            
             for color, next_color in zip(colors, next_colors):
                 red_transitions.append(self.color_transition(color.r, next_color.r))
                 green_transitions.append(self.color_transition(color.g, next_color.g))
                 blue_transitions.append(self.color_transition(color.b, next_color.b))
+            
+            step = 2 if (self.end_led - self.start_led) + 1 > 120 \
+                   else 3 if (self.end_led - self.start_led) + 1 > 240 \
+                   else 4 if (self.end_led - self.start_led) + 1 > 480 else 1  # Avoid having too slow code by skipping some pixels
 
             # The number of transitions until next color is reached 
             # (Wait half the time to still show this color)
-            for x in range(ANIMATION_STEPS * 2):
+            for x in range(0, ANIMATION_STEPS * 2, step):
                 if x == 0:  # Show current/initial color
                     self.variation = 0
                     self.animate(beat)
                     self.variation = 1
 
-                if x < ANIMATION_STEPS:
-                    continue
+                if x > ANIMATION_STEPS:  # Transition to next color, when half the time has passed
+                    for index, (red_transition, green_transition, blue_transition) \
+                            in enumerate(zip(red_transitions, green_transitions, blue_transitions)):
+                        
+                        red = red_transition[x - ANIMATION_STEPS] \
+                            if len(red_transition) > x - ANIMATION_STEPS \
+                            else red_transition[len(red_transition) - 1] \
+                            if len(red_transition) > 0 else colors[index].r
 
-                for index, (red_transition, green_transition, blue_transition) \
-                        in enumerate(zip(red_transitions, green_transitions, blue_transitions)):
-                    animation_range = self.select_range(index, colors)
+                        green = green_transition[x - ANIMATION_STEPS] \
+                            if len(green_transition) > x - ANIMATION_STEPS \
+                            else green_transition[len(green_transition) - 1] \
+                            if len(green_transition) > 0 else colors[index].g
 
-                    if len(animation_range) == 0:
-                        break
+                        blue = blue_transition[x - ANIMATION_STEPS] \
+                            if len(blue_transition) > x - ANIMATION_STEPS \
+                            else blue_transition[len(blue_transition) - 1] \
+                            if len(blue_transition) > 0 else colors[index].b
 
-                    for i in animation_range:
-                        for j in i:
-                            red = red_transition[x - ANIMATION_STEPS] \
-                                if len(red_transition) > x - ANIMATION_STEPS \
-                                else red_transition[len(red_transition) - 1] \
-                                if len(red_transition) > 0 else colors[index].r
+                        animation_range = self.select_range(index, colors)
 
-                            green = green_transition[x - ANIMATION_STEPS] \
-                                if len(green_transition) > x - ANIMATION_STEPS \
-                                else green_transition[len(green_transition) - 1] \
-                                if len(green_transition) > 0 else colors[index].g
+                        if len(animation_range) == 0:
+                            break
 
-                            blue = blue_transition[x - ANIMATION_STEPS] \
-                                if len(blue_transition) > x - ANIMATION_STEPS \
-                                else blue_transition[len(blue_transition) - 1] \
-                                if len(blue_transition) > 0 else colors[index].b
+                        for i in animation_range:
+                            for j in i:
+                                self.set_pixel_color(j, StripColor(red, green, blue))
 
-                            self.set_pixel_color(j, StripColor(red, green, blue))
+                    self.strip.show()
 
-                self.strip.show()
+                sleep_time = self.sleep_time / (ANIMATION_STEPS * 2) * step \
+                    - ((time_ns() // 1_000_000 - starting_time) / 1_000)
 
-                sleep(self.sleep_time / (ANIMATION_STEPS * 2) - ((time_ns() // 1_000_000 - starting_time) // 1_000))
+                if sleep_time > 0:
+                    sleep(sleep_time)
+                
                 starting_time = time_ns() // 1_000_000
