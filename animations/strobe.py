@@ -2,7 +2,7 @@ from animations.animation import Animation
 from color_sequence import ColorSequence
 from section import Section
 
-class Strobo(Animation):
+class Strobe(Animation):
     def animate(self):
         print('Flacka flacka flacka')
 
