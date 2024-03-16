@@ -16,7 +16,7 @@ interface ColorSequence {
 
 interface Color {
   id: number;
-  color_sequence_id: string;
+  color_sequence_id: number;
   position: number;
   red: number;
   green: number;
