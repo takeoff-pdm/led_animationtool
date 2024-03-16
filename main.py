@@ -184,7 +184,10 @@ async def stop_animate_section(id: Id):
 # Settings
 @app.get('/api/get/settings')
 async def get_settings():
-    return JSONResponse(content=strip.fetch_config())
+    config = strip.fetch_config()
+    config['brightness'] *= 100  # Convert to percentage
+    
+    return JSONResponse(content=config)
 
 
 @app.post('/api/update/brightness')
