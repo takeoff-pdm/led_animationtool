@@ -17,7 +17,11 @@ export const SortableItemContext = createContext<Context>({
   ref() {},
 });
 
-export const SortableColorItem: React.FC<{ color: Color }> = ({ color }) => {
+export const SortableColorItem: React.FC<{ 
+  color: Color;
+  colors: Color[];
+  setColors: (colors: Color[]) => void; 
+}> = ({ color, colors, setColors }) => {
   const {
     attributes,
     isDragging,
@@ -44,7 +48,7 @@ export const SortableColorItem: React.FC<{ color: Color }> = ({ color }) => {
   return (
     <SortableItemContext.Provider value={context}>
       <div ref={setNodeRef} style={style} className="">
-        <ColorItem color={color} />
+        <ColorItem color={color} colors={colors} setColors={setColors} />
       </div>
     </SortableItemContext.Provider>
   );
