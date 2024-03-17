@@ -10,9 +10,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSetupContext } from "../SetupContext/SetupContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Settings } from "@/api/types";
+import { getSettings, updateBrightness, updateLedCount } from "@/api/api-calls";
 
 const LabeledInput: React.FC<{
   value: any;
@@ -37,6 +38,17 @@ const LabeledInput: React.FC<{
 export const ConfigManager: React.FC = () => {
   const { settings, setSettings } = useSetupContext();
   const [tempSettings, setTempSettings] = useState<Settings>(settings);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      getSettings().then((settings) => {
+        setTempSettings({brightness: settings.brightness, led_count: settings.led_count});
+      });
+    };
+    fetchSections();
+  }, []);
+
+
   return (
     <Card className="max-w-4xl">
       <CardHeader>
@@ -57,63 +69,17 @@ export const ConfigManager: React.FC = () => {
           label="Brightness"
         />
         <LabeledInput
-          value={tempSettings.ledCount}
+          value={tempSettings.led_count}
           placeholder="Led Count"
           type="number"
           onChange={(value) =>
-            setTempSettings({ ...tempSettings, ledCount: parseInt(value) })
+            setTempSettings({ ...tempSettings, led_count: parseInt(value) })
           }
           label="Led Count"
         />
-        <LabeledInput
-          value={tempSettings.pin}
-          placeholder="Pin"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, pin: parseInt(value) })
-          }
-          label="Pin"
-        />
-        <LabeledInput
-          value={tempSettings.frequency}
-          placeholder="Frequency"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, frequency: parseInt(value) })
-          }
-          label="Frequency"
-        />
-        <LabeledInput
-          value={tempSettings.dma}
-          placeholder="DMA"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, dma: parseInt(value) })
-          }
-          label="DMA"
-        />
-
-        <LabeledInput
-          value={tempSettings.channel}
-          placeholder="Channel"
-          type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, channel: parseInt(value) })
-          }
-          label="Channel"
-        />
-        <div className="grid w-full gap-1.5">
-          <Label>Invert LED</Label>
-          <Switch
-            checked={tempSettings.led_invert}
-            onChange={(value) =>
-              setTempSettings({ ...tempSettings, invert: value })
-            }
-          />
-        </div>
       </CardContent>
       <CardFooter className="justify-end space-x-2">
-        <Button
+        {/* <Button
           onClick={() => {
             // TODO: Does not work
             setTempSettings(settings);
@@ -121,10 +87,12 @@ export const ConfigManager: React.FC = () => {
           variant={"ghost"}
         >
           Cancel
-        </Button>
+        </Button> */}
         <Button
           onClick={() => {
-            // TODO: SEND TO API
+            updateBrightness({ value: tempSettings['brightness'] })
+            updateLedCount({ value: tempSettings['led_count'] })
+            
             setSettings(tempSettings);
           }}
         >
