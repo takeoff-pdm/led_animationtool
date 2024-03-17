@@ -3,7 +3,7 @@ from color_sequence import ColorSequence
 from section import Section
 
 class Strobe(Animation):
-    def animate(self):
+    def animate(self, beat: int):
         print('Flacka flacka flacka')
 
         # color = Color(255, 255, 255)
