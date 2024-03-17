@@ -18,7 +18,7 @@ class Flow(Animation):
                                                  * (len(colors) - index)),
                                              int(self.end_led + 1
                                                  + animation_stage
-                                                 - (self.end_led - self.start_led))))  # TODO: Fix bug: Skips around 2-4 pixels (is quite fast) at beat change
+                                                 - (self.end_led - self.start_led))))
         
             case 1:
                 animation_range.append(range(int(self.start_led
