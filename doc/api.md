@@ -22,6 +22,10 @@ Sections:
     - Values: ``{ id: Integer, name: String, start_led: Integer, end_led: Integer }``
     - Returns: ``{ success: boolean }``
     - Method: ``POST``
+- ``/api/running_animation``
+    - Values: ``{ id: Integer }``
+    - Returns: ``{ animation_id: Integer, color_sequence_id: Integer }``
+    - Uses id of section and returns currently running animation
 
 Color Sequence:
 - ``/api/get/color_sequences``
