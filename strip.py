@@ -21,6 +21,7 @@ from animations.mono_color import MonoColor
 from animations.animation import Animation
 from animations.flow import Flow
 from animations.shooter import Shooter
+from animations.strobe import Strobe
 # Add more...
 
 
@@ -90,7 +91,7 @@ class Strip:
     def restart_strip(self):
         # Stop all running animations
         self.stop = True
-        sleep(self.sleep_time * 1.1)  # Wait for all animations to stop
+        sleep(self.sleep_time * 2.1)  # Wait for all animations to stop
 
         self.strip = None
 
@@ -451,6 +452,9 @@ class Strip:
 
             elif animation_id == 2:
                 self.add_animation(Shooter(id=2, section_id=section.id), section, color_sequence)
+            
+            elif animation_id == 3:
+                self.add_animation(Strobe(id=2, section_id=section.id), section, color_sequence)
 
             # Add more ...
         else:
