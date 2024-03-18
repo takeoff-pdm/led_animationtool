@@ -9,11 +9,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSetupContext } from "../SetupContext/SetupContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Settings } from "@/api/types";
+<<<<<<< HEAD
 import { updateBrightness, updateLedCount } from "@/api/api-calls";
 
+=======
+import { getSettings, updateBrightness, updateLedCount } from "@/api/api-calls";
+>>>>>>> 9319b58bb99f6eadba84cb7e99fe2ec6fc0afd39
 
 const LabeledInput: React.FC<{
   value: any;
@@ -49,6 +53,18 @@ const LabeledInput: React.FC<{
 
 export const ConfigManager: React.FC = () => {
   const { settings, setSettings } = useSetupContext();
+  const [tempSettings, setTempSettings] = useState<Settings>(settings);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      getSettings().then((settings) => {
+        setTempSettings({brightness: settings.brightness, led_count: settings.led_count});
+      });
+    };
+    fetchSections();
+  }, []);
+
+
   return (
     <Card className="max-w-4xl">
       <CardHeader>
@@ -73,20 +89,36 @@ export const ConfigManager: React.FC = () => {
           label="Brightness"
         />
         <LabeledInput
-          value={settings.ledCount}
+          value={tempSettings.led_count}
           placeholder="Led Count"
           type="number"
-          onChange={(value) => {
-            setSettings({
-              ...settings,
-              ledCount: parseInt(value)
-            });
-
-            updateLedCount(value);
-          }}
+          onChange={(value) =>
+            setTempSettings({ ...tempSettings, led_count: parseInt(value) })
+          }
           label="Led Count"
         />
       </CardContent>
+      <CardFooter className="justify-end space-x-2">
+        {/* <Button
+          onClick={() => {
+            // TODO: Does not work
+            setTempSettings(settings);
+          }}
+          variant={"ghost"}
+        >
+          Cancel
+        </Button> */}
+        <Button
+          onClick={() => {
+            updateBrightness({ value: tempSettings['brightness'] })
+            updateLedCount({ value: tempSettings['led_count'] })
+            
+            setSettings(tempSettings);
+          }}
+        >
+          Save
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

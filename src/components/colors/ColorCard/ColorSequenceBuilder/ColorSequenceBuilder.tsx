@@ -63,19 +63,24 @@ export const ColorSequenceBuilder: React.FC<{
       <SortableContext items={colors}>
         <div className="grid gap-2 grid-cols-5">
           {colors.map((color, index) => (
-            <SortableColorItem key={color.id} color={color} />
+            <SortableColorItem key={color.id} color={color} colors={colors} setColors={setColors} />
           ))}
           <AddColorButton
             addColor={async () => {
               const lastColor = colors[colors.length - 1];
               const newColor = {
                 id: Math.trunc(Math.random() * 1000000),
-                color_sequence_id: JSON.stringify(sequence.id),
-                position: lastColor.position + 1,
+                color_sequence_id: sequence.id,
+                position: 0,
                 red: Math.trunc(Math.random() * 255),
                 green: Math.trunc(Math.random() * 255),
                 blue: Math.trunc(Math.random() * 255),
               };
+              
+              if (lastColor !== undefined) {
+                newColor.position = lastColor.position + 1;
+              }
+
               const resp = await addColor(newColor);
               if (resp.success) {
                 setColors([...colors, newColor]);
@@ -85,7 +90,13 @@ export const ColorSequenceBuilder: React.FC<{
         </div>
       </SortableContext>
       <SortableColorItemOverlay>
-        {activeItem && <ColorItem color={activeItem} />}
+        {activeItem && 
+          <ColorItem
+            color={activeItem}
+            colors={colors}
+            setColors={setColors}
+          />
+        }
       </SortableColorItemOverlay>
     </DndContext>
   );

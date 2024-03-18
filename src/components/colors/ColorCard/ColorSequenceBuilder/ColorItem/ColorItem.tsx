@@ -6,7 +6,11 @@ import hexRgb from "hex-rgb";
 import { rgbaToHex } from "@uiw/react-color";
 import { updateColor } from "@/api/api-calls";
 
-export const ColorItem: React.FC<{ color: Color }> = ({ color }) => {
+export const ColorItem: React.FC<{ 
+  color: Color; 
+  colors: Color[];
+  setColors: (colors: Color[]) => void; 
+}> = ({ color, colors, setColors }) => {
   const [backgroundColor, setBackgroundColor] = useState<string>(
     `rgb(${color.red}, ${color.green}, ${color.blue})`
   );
@@ -25,12 +29,22 @@ export const ColorItem: React.FC<{ color: Color }> = ({ color }) => {
         setBackgroundColor(
           `rgb(${rgbCol.red}, ${rgbCol.green}, ${rgbCol.blue})`
         );
+        let newColor = color;
+        newColor.color_sequence_id = parseInt(color.color_sequence_id as unknown as string);
+
         updateColor({
-          ...color,
+          ...newColor,
           red: rgbCol.red,
           green: rgbCol.green,
           blue: rgbCol.blue,
         });
+
+        setColors(colors.map((item) =>
+          item.id === color.id
+          ? {...item, red: rgbCol.red, green: rgbCol.green, blue: rgbCol.blue}
+          : item
+        ));
+        console.log(colors)
       }}
     >
       <div

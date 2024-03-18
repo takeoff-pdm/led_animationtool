@@ -60,9 +60,9 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
       section_id: selectedSection.id,
       name: animation.name,
       description: animation.description,
-      variation: variation as unknown as number,
-      direction: direction as unknown as number,
-      offset: offset as unknown as number,
+      variation: parseInt(variation as string),
+      direction: parseInt(direction as string),
+      offset: parseInt(offset as string),
     });
     if (resp) {
       if (resp.success) {

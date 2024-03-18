@@ -32,6 +32,8 @@ async function sendRequest(
 // Section
 const getSections = () => sendRequest("get/sections", "GET");
 const addSection = (data: Section) => sendRequest("add/section", "POST", data);
+const updateSections = (data: Section[]) =>
+  data.forEach((section) => updateSection(section));
 const updateSection = (data: Section) =>
   sendRequest("update/section", "POST", data);
 const removeSection = (data: Section) =>
@@ -95,6 +97,7 @@ const updateBpm = (data: SettingsValueData) =>
 export {
   getSections,
   addSection,
+  updateSections,
   updateSection,
   removeSection,
   getColorSequences,
