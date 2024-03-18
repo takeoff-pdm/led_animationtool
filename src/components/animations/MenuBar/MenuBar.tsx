@@ -50,11 +50,16 @@ const SectionPauseResumeButton: React.FC = () => {
   );
 
   const getStateData = async (section_id: number) => {
+    if (section_id === undefined) {
+      return;
+    }
+
     const data = await getSectionData({ id: section_id });
 
-    if (!data.animation_id) {
+    if (data.animation_id === false) {
       setActive(false);
       setActiveAnimation({} as Animation);
+      return;
     }
 
     const animation = animations.find((a) => a.id == data.animation_id);
@@ -62,15 +67,11 @@ const SectionPauseResumeButton: React.FC = () => {
       return;
     }
 
-
     setActiveAnimation(animation);
     setActive(true);
   };
 
   useEffect(() => {
-    if (!selectedSection.id) {
-      return;
-    }
     getStateData(selectedSection.id);
   }, [selectedSection]);
 
@@ -101,7 +102,8 @@ const SectionPauseResumeButton: React.FC = () => {
   return (
     <div className="mt-5">
       <Button
-        disabled={!selectedSection.id}
+       // disabled={active}
+        //   disabled={selectedSection.id}
         variant={"default"}
         onClick={onClick}
         className="pr-5"
@@ -111,7 +113,9 @@ const SectionPauseResumeButton: React.FC = () => {
         ) : (
           <ResumeIcon className="h-4 w-4 sm:mr-2" />
         )}
-        <div className="hidden sm:block">{active ? "Pause" : "Resume"}</div>
+        <div className="hidden sm:block">
+          {active ? "Pause" : "Start"}
+        </div>
       </Button>
     </div>
   );
