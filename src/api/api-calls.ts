@@ -79,7 +79,7 @@ const stopAnimation = (data: RequestData) =>
   sendRequest("stop/animate", "POST", data);
 
 const getSectionData = (data: { section_id: number }) =>
-  sendRequest("/api/running_animation", "POST", data);
+  sendRequest("running_animation", "POST", data);
 
 // Settings
 
@@ -118,4 +118,5 @@ export {
   updateBrightness,
   updateLedCount,
   updateBpm,
+  getSectionData
 };

@@ -4,6 +4,7 @@ import {
   startAnimation,
   stopAnimation,
   updateBpm,
+  getSectionData
 } from "@/api/api-calls";
 import { ColorSequence, Section } from "@/api/types";
 import { Button } from "@/components/ui/button";
@@ -40,8 +41,23 @@ const SectionPauseResumeButton: React.FC = () => {
   const { selectedSection, activeAnimation, selectedSequence } =
     useAnimationsContext();
   const [active, setActive] = useState<boolean>(
-    selectedSection.isActive || false,
+    selectedSection.isActive || false
   );
+
+  useEffect(() => {
+    if (!selectedSection.id) {
+      return;
+    }
+    getSectionData({
+      id: selectedSection.id,
+    }).then((d) => {
+      if (d.running_animation) {
+        setActive(true);
+      } else {
+        setActive(false);
+      }
+    });
+  }, [selectedSection]);
 
   const onClick = async () => {
     if (active) {
@@ -70,7 +86,7 @@ const SectionPauseResumeButton: React.FC = () => {
   return (
     <div className="mt-5">
       <Button
-        //  disabled={!selectedSection.isActive}
+          disabled={!selectedSection.id}
         variant={"default"}
         onClick={onClick}
         className="pr-5"
