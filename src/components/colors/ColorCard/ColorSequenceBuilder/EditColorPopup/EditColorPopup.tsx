@@ -8,8 +8,8 @@ export const EditColorPopup: React.FC<{
   hex: string;
   setHex: (hex: string) => void;
   children: any;
-}> = ({ hex, setHex, children }) => {
-  // TODO: Save on change
+  onDelete: () => void
+}> = ({ hex, setHex, children, onDelete }) => {
 
   const [open, setOpen] = useState(false);
   const [color, setColor] = useState(hex);
@@ -37,7 +37,7 @@ export const EditColorPopup: React.FC<{
         <div className="w-full pt-5 h-12 items-center flex justify-between">
           <Button
             onClick={() => {
-              setColor(hex);
+              onDelete();
               setOpen(false);
             }}
             size={"icon"}
