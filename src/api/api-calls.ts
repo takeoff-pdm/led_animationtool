@@ -78,7 +78,7 @@ const startAnimation = (data: {
 const stopAnimation = (data: RequestData) =>
   sendRequest("stop/animate", "POST", data);
 
-const getSectionData = (data: { section_id: number }) =>
+const getSectionData = (data: { id: number }) =>
   sendRequest("running_animation", "POST", data);
 
 // Settings

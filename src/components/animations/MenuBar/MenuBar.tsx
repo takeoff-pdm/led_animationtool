@@ -4,9 +4,9 @@ import {
   startAnimation,
   stopAnimation,
   updateBpm,
-  getSectionData
+  getSectionData,
 } from "@/api/api-calls";
-import { ColorSequence, Section } from "@/api/types";
+import { Animation, ColorSequence, Section } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,25 +38,40 @@ export const MenuBar: React.FC = () => {
 };
 
 const SectionPauseResumeButton: React.FC = () => {
-  const { selectedSection, activeAnimation, selectedSequence } =
-    useAnimationsContext();
+  const {
+    selectedSection,
+    activeAnimation,
+    selectedSequence,
+    animations,
+    setActiveAnimation,
+  } = useAnimationsContext();
   const [active, setActive] = useState<boolean>(
     selectedSection.isActive || false
   );
+
+  const getStateData = async (section_id: number) => {
+    const data = await getSectionData({ id: section_id });
+
+    if (!data.animation_id) {
+      setActive(false);
+      setActiveAnimation({} as Animation);
+    }
+
+    const animation = animations.find((a) => a.id == data.animation_id);
+    if (!animation) {
+      return;
+    }
+
+
+    setActiveAnimation(animation);
+    setActive(true);
+  };
 
   useEffect(() => {
     if (!selectedSection.id) {
       return;
     }
-    getSectionData({
-      id: selectedSection.id,
-    }).then((d) => {
-      if (d.running_animation) {
-        setActive(true);
-      } else {
-        setActive(false);
-      }
-    });
+    getStateData(selectedSection.id);
   }, [selectedSection]);
 
   const onClick = async () => {
@@ -86,7 +101,7 @@ const SectionPauseResumeButton: React.FC = () => {
   return (
     <div className="mt-5">
       <Button
-          disabled={!selectedSection.id}
+        disabled={!selectedSection.id}
         variant={"default"}
         onClick={onClick}
         className="pr-5"

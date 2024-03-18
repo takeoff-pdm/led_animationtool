@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAnimationsContext } from "../Context/Context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Animation } from "@/api/types";
 import {
   Select,
@@ -66,15 +66,13 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
     });
     if (resp) {
       if (resp.success) {
-        toast({
-          title: "Updated Animation!",
-          duration: 5000,
-        });
+        toast("Updated Animation");
       } else {
         toast("Failed to update animation!");
       }
     }
   };
+
 
   return (
     <AnimationCardContext animation={animation}>
@@ -82,10 +80,10 @@ export const AnimationCard: React.FC<{ animation: Animation }> = ({
         <CardHeader className="">
           <div className="flex items-center justify-between">
             <CardTitle className="">{animation.name}</CardTitle>
-            {animation == activeAnimation ||
-              (false && (
-                <div className="h-3 w-3 animate-pulse rounded-full bg-green-400 "></div>
-              ))}
+
+            {animation.id === activeAnimation.id && (
+              <div className="h-3 w-3 animate-pulse rounded-full bg-green-400 "></div>
+            )}
           </div>
           <CardDescription>{animation.description}</CardDescription>
         </CardHeader>

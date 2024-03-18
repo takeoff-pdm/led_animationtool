@@ -7,7 +7,7 @@ interface AnimationsContextProps {
   setAnimations: (data: Animation[]) => void;
   animations: Animation[];
   loaded: boolean;
-  activeAnimation: Animation | null;
+  activeAnimation: Animation;
   setActiveAnimation: (animation: Animation) => void;
   selectedSection: Section;
   setSelectedSection: (section: Section) => void;
@@ -22,7 +22,7 @@ const AnimationsContext = createContext<AnimationsContextProps>({
   animations: [],
   setAnimations: () => {},
   loaded: false,
-  activeAnimation: null,
+  activeAnimation: {} as Animation,
   setActiveAnimation: () => {},
   selectedSequence: {} as ColorSequence,
   setSelectedSequence: () => {},
@@ -39,8 +39,8 @@ export const useAnimationsContext = () => {
 export const Context: React.FC<{ children: any }> = ({ children }) => {
   const [animations, setAnimations] = useState<Animation[]>([]);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [activeAnimation, setActiveAnimation] = useState<Animation | null>(
-    null
+  const [activeAnimation, setActiveAnimation] = useState<Animation>(
+    {} as Animation
   );
   const [selectedSection, setSelectedSection] = useState<Section>(
     {} as Section
