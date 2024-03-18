@@ -22,7 +22,6 @@ const LabeledInput: React.FC<{
   type?: string;
   label: string;
 }> = ({ value, placeholder, onChange, label, type }) => {
-
   const [value1, setValue1] = useState<string>(value);
 
   return (
@@ -35,14 +34,25 @@ const LabeledInput: React.FC<{
           placeholder={placeholder}
           onChange={(e) => setValue1(e.target.value)}
         />
-        <Button onChange={() => {
-          setValue1(value);
-        }} variant="secondary" size="sm" className="shrink-0 px-5">Cancel</Button>
-        <Button onClick={(e) => {
-          onChange(value1);
-        }} size="sm">Save</Button>
+        <Button
+          onChange={() => {
+            setValue1(value);
+          }}
+          variant="secondary"
+          size="sm"
+          className="shrink-0 px-5"
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={(e) => {
+            onChange(value1);
+          }}
+          size="sm"
+        >
+          Save
+        </Button>
       </div>
-      
     </div>
   );
 };
@@ -54,12 +64,14 @@ export const ConfigManager: React.FC = () => {
   useEffect(() => {
     const fetchSections = async () => {
       getSettings().then((settings) => {
-        setTempSettings({brightness: settings.brightness, led_count: settings.led_count});
+        setTempSettings({
+          brightness: settings.brightness,
+          led_count: settings.led_count,
+        });
       });
     };
     fetchSections();
   }, []);
-
 
   return (
     <Card className="max-w-4xl">
@@ -78,7 +90,7 @@ export const ConfigManager: React.FC = () => {
           onChange={(value) => {
             setSettings({
               ...settings,
-              brightness: parseInt(value)
+              brightness: parseInt(value),
             });
             updateBrightness(value);
           }}
@@ -88,33 +100,13 @@ export const ConfigManager: React.FC = () => {
           value={tempSettings.led_count}
           placeholder="Led Count"
           type="number"
-          onChange={(value) =>
-            setTempSettings({ ...tempSettings, led_count: parseInt(value) })
-          }
+          onChange={(value) => {
+            setTempSettings({ ...tempSettings, led_count: parseInt(value) });
+            updateLedCount(value);
+          }}
           label="Led Count"
         />
       </CardContent>
-      <CardFooter  className="justify-end space-x-2">
-        {/* <Button
-          onClick={() => {
-            // TODO: Does not work
-            setTempSettings(settings);
-          }}
-          variant={"ghost"}
-        >
-          Cancel
-        </Button> */}
-        <Button
-          onClick={() => {
-            updateBrightness({ value: tempSettings['brightness'] })
-            updateLedCount({ value: tempSettings['led_count'] })
-            
-            setSettings(tempSettings);
-          }}
-        >
-          Save
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
