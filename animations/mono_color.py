@@ -71,7 +71,7 @@ class MonoColor(Animation):
 
         return animation_range
 
-    def animate(self, beat: int, reverse: bool = False):
+    def animate(self, beat: int, show_strip_request, reverse: bool = False):
         match self.direction:
             case 4:
                 self.direction = 0
@@ -209,7 +209,7 @@ class MonoColor(Animation):
                     for j in i:
                         self.set_pixel_color(j, color)
 
-            self.strip.show()
+            show_strip_request()
 
         elif self.variation == 1:  # Soft transition color change
             starting_time = time_ns() // 1_000_000
@@ -267,7 +267,7 @@ class MonoColor(Animation):
                             for j in i:
                                 self.set_pixel_color(j, StripColor(red, green, blue))
 
-                    self.strip.show()
+                    show_strip_request()
 
                 sleep_time = self.sleep_time / (ANIMATION_STEPS * 2) * step \
                     - ((time_ns() // 1_000_000 - starting_time) / 1_000)

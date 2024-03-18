@@ -64,6 +64,8 @@ class Strip:
 
         self.stop = False  # Add variable to kill animation thread
         self.animating = None
+        
+        self.show_strip = False
 
     @staticmethod
     def fetch_config() -> dict:
@@ -380,10 +382,12 @@ class Strip:
                             animation.brightness = self.brightness
 
                 for animation in self.running_animations:
-                    Thread(target=animation.animate, args=(self.beat + animation.offset,)).start()
+                    Thread(target=animation.animate, args=(self.beat + animation.offset, self.show_strip_request)).start()
+                    
+                Thread(target=self.show_strip_handler).start()
 
-                if self.sleep_time - (((time_ns() // 1_000_000) - starting_time) // 1_000) > 0:
-                    sleep(self.sleep_time - (((time_ns() // 1_000_000) - starting_time) // 1_000))
+                if self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000) > 0:
+                    sleep(self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000))
 
                 else:
                     print('Code too slow!')
@@ -465,3 +469,17 @@ class Strip:
             self.animating.start()
 
         return True
+    
+    def show_strip_handler():
+        current_time = starting_time = time_ns() // 1_000_000
+        
+        while (current_time - starting_time) / 1000 >= self.sleep_time:
+            if self.show_strip == True:
+                self.show_strip = False
+                self.strip.show()
+            
+            sleep(.001)
+            current_time = time_ns() // 1_000_000
+
+    def show_strip_request():
+        self.show_strip = True

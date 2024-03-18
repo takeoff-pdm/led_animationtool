@@ -53,7 +53,7 @@ class Flow(Animation):
         
         return animation_range
 
-    def animate(self, beat: int):
+    def animate(self, beat: int, show_strip_request):
         if beat % 2 == 1:  # Start animation at every second beat
             return
         
@@ -83,7 +83,7 @@ class Flow(Animation):
 
                             self.set_pixel_color(j, color)
                 
-                self.strip.show()
+                show_strip_request()
 
                 if self.variation == 0:  # Consistend flow speed
                     sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \

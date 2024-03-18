@@ -54,7 +54,7 @@ class Shooter(Animation):
         return animation_range
 
 
-    def animate(self, beat: int):
+    def animate(self, beat: int, show_strip_request):
         if beat % 2 == 1:  # Start animation at every second beat
             return
         
@@ -120,7 +120,7 @@ class Shooter(Animation):
                                                                        fade_out_b[-position] if position < len(fade_out_b) else 0))
 
                 
-                self.strip.show()
+                show_strip_request()
 
                 sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
                             - ((time_ns() // 1_000_000 - starting_time) / 1_000)
