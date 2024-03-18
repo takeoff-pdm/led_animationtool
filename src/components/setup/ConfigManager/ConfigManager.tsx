@@ -4,6 +4,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardFooter,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,12 +13,7 @@ import { useSetupContext } from "../SetupContext/SetupContext";
 import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Settings } from "@/api/types";
-<<<<<<< HEAD
-import { updateBrightness, updateLedCount } from "@/api/api-calls";
-
-=======
 import { getSettings, updateBrightness, updateLedCount } from "@/api/api-calls";
->>>>>>> 9319b58bb99f6eadba84cb7e99fe2ec6fc0afd39
 
 const LabeledInput: React.FC<{
   value: any;
@@ -98,7 +94,7 @@ export const ConfigManager: React.FC = () => {
           label="Led Count"
         />
       </CardContent>
-      <CardFooter className="justify-end space-x-2">
+      <CardFooter  className="justify-end space-x-2">
         {/* <Button
           onClick={() => {
             // TODO: Does not work
