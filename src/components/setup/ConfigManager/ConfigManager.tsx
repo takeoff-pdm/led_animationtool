@@ -24,6 +24,11 @@ const LabeledInput: React.FC<{
 }> = ({ value, placeholder, onChange, label, type }) => {
   const [value1, setValue1] = useState<string>(value);
 
+  useEffect(() => {
+    setValue1(value)
+  }, [value])
+
+
   return (
     <div className="grid w-full gap-1.5">
       <Label>{label}</Label>
@@ -62,16 +67,8 @@ export const ConfigManager: React.FC = () => {
   const [tempSettings, setTempSettings] = useState<Settings>(settings);
 
   useEffect(() => {
-    const fetchSections = async () => {
-      getSettings().then((settings) => {
-        setTempSettings({
-          brightness: settings.brightness,
-          led_count: settings.led_count,
-        });
-      });
-    };
-    fetchSections();
-  }, []);
+    setTempSettings(settings);
+  }, [settings])
 
   return (
     <Card className="max-w-4xl">
@@ -84,15 +81,17 @@ export const ConfigManager: React.FC = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         <LabeledInput
-          value={settings.brightness}
+          value={tempSettings.brightness}
           placeholder="Brightness"
           type="number"
           onChange={(value) => {
             setSettings({
-              ...settings,
+              ...tempSettings,
               brightness: parseInt(value),
             });
-            updateBrightness(value);
+            updateBrightness({
+              value: parseInt(value),
+            });
           }}
           label="Brightness"
         />
@@ -102,7 +101,9 @@ export const ConfigManager: React.FC = () => {
           type="number"
           onChange={(value) => {
             setTempSettings({ ...tempSettings, led_count: parseInt(value) });
-            updateLedCount(value);
+            updateLedCount({
+              value: parseInt(value),
+            });
           }}
           label="Led Count"
         />
