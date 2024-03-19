@@ -9,10 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loading, Note } from "@geist-ui/core";
-import {
-  CheckIcon,
-  LightningBoltIcon,
-} from "@radix-ui/react-icons";
+import { CheckIcon, LightningBoltIcon, TrashIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { useScenesContext } from "../ScenesContext/ScenesContext";
 
@@ -35,6 +32,7 @@ export const SceneCard: React.FC<{
       setLoaded(true);
     }, 1000);
   };
+
   const onSave = async () => {
     setSaved(true);
     setLoaded(false);
@@ -46,18 +44,30 @@ export const SceneCard: React.FC<{
     }, 1000);
   };
 
+  const onDelete = async () => {
+    if (!confirm("Are you sure you want to delete this scene?")) {
+      return;
+    }
+  };
+
   return (
     <Card className="max-w-sm">
-      <CardHeader>
+      <CardHeader className="relative">
         <div className="flex items-center justify-between">
           <CardTitle className="">{scene.name}</CardTitle>
-
           {scene.id === activeScene.id && (
             <div className="h-3 w-3 animate-pulse rounded-full bg-green-400 "></div>
           )}
         </div>
-
         <CardDescription>{scene.description}</CardDescription>
+        <Button
+          onClick={onDelete}
+          className="absolute top-3 right-3"
+          size={"icon"}
+          variant="secondary"
+        >
+          <TrashIcon className="w-4 h-4" />
+        </Button>
       </CardHeader>
       <CardContent className="h-32">
         <div className="w-full h-full flex justify-center items-center">
@@ -86,13 +96,13 @@ export const SceneCard: React.FC<{
         </div>
       </CardContent>
       <CardFooter className="justify-between space-x-3">
-        <Button variant={"destructive"} className="grow" onClick={onCancel}>
+        <Button variant={"secondary"} className="grow" onClick={onCancel}>
           Cancel
         </Button>
-        <Button variant={"secondary"} className="grow" onClick={onSave}>
+        <Button variant={"default"} className="grow" onClick={onSave}>
           Save
         </Button>
-        <Button variant={"default"} className="grow" onClick={onLoad}>
+        <Button variant={"secondary"} className="grow" onClick={onLoad}>
           Load
         </Button>
       </CardFooter>
