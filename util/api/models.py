@@ -50,5 +50,11 @@ class SectionAnimation(BaseModel):
     animation_id: int
 
 
+class Scene(BaseModel):
+    id: int | None = None
+    name: str
+    description: str
+
+
 class Value(BaseModel):
     value: float
