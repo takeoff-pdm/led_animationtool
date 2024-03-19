@@ -98,7 +98,7 @@ export const SceneCard: React.FC<{
         <Button
           onClick={() => {
             setTempScene(scene);
-            setEditing(true);
+            setEditing(!editing);
           }}
           className="absolute top-3 right-14"
           size={"icon"}
