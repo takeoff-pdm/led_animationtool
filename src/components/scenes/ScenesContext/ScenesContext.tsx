@@ -1,6 +1,6 @@
 "use client";
 import { Scene } from "@/api/types";
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 const ScenesCtx = createContext<{
   scenes: Scene[];
@@ -13,6 +13,10 @@ const ScenesCtx = createContext<{
   activeScene: {} as Scene,
   setActiveScene: () => {},
 });
+
+export const useScenesContext = () => {
+  return useContext(ScenesCtx);
+};
 
 export const ScenesContext: React.FC<{
   children: any;
