@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loading, Note } from "@geist-ui/core";
-import { RocketIcon, UpdateIcon } from "@radix-ui/react-icons";
+import { CheckIcon, DiscIcon, LightningBoltIcon, ReloadIcon, RocketIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 
 export const SceneCard: React.FC<{
@@ -17,10 +17,12 @@ export const SceneCard: React.FC<{
 }> = ({ scene }) => {
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const onCancel = async () => {};
 
   const onLoad = async () => {
+    setSaved(false);
     setLoaded(false);
     setLoading(true);
     setTimeout(() => {
@@ -29,11 +31,13 @@ export const SceneCard: React.FC<{
     }, 1000);
   };
   const onSave = async () => {
+    setSaved(true);
     setLoaded(false);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
       setLoaded(true);
+      setSaved(true);
     }, 1000);
   };
 
@@ -42,20 +46,27 @@ export const SceneCard: React.FC<{
       <CardHeader>
         <CardTitle>{scene.name}</CardTitle>
         <CardDescription>{scene.description}</CardDescription>
-        <CardContent className="h-32">
+        <CardContent className="h-40">
           <div className="w-full h-full flex justify-center items-center">
             {loading && (
               <Loading scale={2}>
                 <div className="text-sm text-slate-700">Loading</div>
               </Loading>
             )}
-            {loaded && !loading && (
+            {loaded && !loading && !saved && (
               <div className="text-sm text-slate-700 flex items-center space-x-2">
-                <RocketIcon className="w-4 h-4" />
+                <LightningBoltIcon className="w-4 h-4" />
                 <span>Loaded</span>
               </div>
             )}
             {!loaded && !loading && <Note label={false}>Press <strong>Load</strong></Note>}
+            {loaded && saved && (
+              <div className="text-sm text-slate-700 flex items-center space-x-2">
+                <CheckIcon className="w-4 h-4" />
+                <span>Saved</span>
+              </div>
+            )}
+
           </div>
         </CardContent>
         <CardFooter className="justify-between space-x-3">
