@@ -1,4 +1,4 @@
-import { Animation, Color, ColorSequence, Section } from "./types";
+import { Animation, Color, ColorSequence, Scene, Section } from "./types";
 
 let RECEIVER_HOST: string = process.env.RECEIVER_HOSTNAME || "";
 
@@ -94,6 +94,13 @@ const updateLedCount = (data: SettingsValueData) =>
 const updateBpm = (data: SettingsValueData) =>
   sendRequest("update/bpm", "POST", data);
 
+// Scenes
+const getScenes = () => sendRequest("get/scenes", "GET");
+const updateScene = (scene: Scene) => sendRequest("update/scene", "POST", scene);
+const deleteScene = (data: {id:number}) => sendRequest("delete/scene", "POST", data);
+const loadScene = (data: {id:number}) => sendRequest("load/scene", "POST", data);
+
+
 export {
   getSections,
   addSection,
@@ -118,5 +125,9 @@ export {
   updateBrightness,
   updateLedCount,
   updateBpm,
-  getSectionData
+  getSectionData,
+  getScenes,
+  updateScene,
+  deleteScene,
+  loadScene
 };

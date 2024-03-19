@@ -12,11 +12,13 @@ import { Loading, Note } from "@geist-ui/core";
 import { CheckIcon, LightningBoltIcon, TrashIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { useScenesContext } from "../ScenesContext/ScenesContext";
+import { deleteScene, loadScene, updateScene } from "@/api/api-calls";
+import { toast } from "sonner";
 
 export const SceneCard: React.FC<{
   scene: Scene;
 }> = ({ scene }) => {
-  const { activeScene } = useScenesContext();
+  const { setActiveScene, activeScene, setScenes, scenes } = useScenesContext();
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -27,26 +29,51 @@ export const SceneCard: React.FC<{
     setSaved(false);
     setLoaded(false);
     setLoading(true);
-    setTimeout(() => {
+
+    const resp = await loadScene(scene);
+    if (!resp.success) {
+      toast("Failed to load scene!");
       setLoading(false);
-      setLoaded(true);
-    }, 1000);
+      return;
+    }
+
+    setActiveScene(scene);
+    setLoading(false);
+    setLoaded(true);
   };
 
   const onSave = async () => {
     setSaved(true);
     setLoaded(false);
     setLoading(true);
-    setTimeout(() => {
+
+    const resp = await updateScene(scene);
+    if (!resp.success) {
+      toast("Failed to save scene!");
+      setSaved(false);
       setLoading(false);
-      setLoaded(true);
-      setSaved(true);
-    }, 1000);
+      return;
+    }
+
+    setLoading(false);
+    setLoaded(true);
+    setSaved(true);
   };
 
   const onDelete = async () => {
     if (!confirm("Are you sure you want to delete this scene?")) {
       return;
+    }
+
+    const resp = await deleteScene(scene);
+    if (resp.success) {
+      toast("Scene deleted!");
+      setScenes(scenes.filter((s) => s.id !== scene.id));
+      if (scene.id === activeScene.id) {
+        setActiveScene({} as Scene);
+      }
+    } else {
+      toast("Failed to delete scene!");
     }
   };
 
