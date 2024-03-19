@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from util.api.models import Id, Section, ColorSequence, Color, Animation, Animate, SectionAnimation, Value
+from util.api.models import Id, Section, ColorSequence, Color, Animation, Animate, SectionAnimation, Scene, Value
 
 from util.database.database import Database
 from util.database.section import fetch_sections, fetch_section
@@ -12,6 +12,7 @@ from util.database.color_sequence import fetch_color_sequences, fetch_color_sequ
 from util.database.color import fetch_colors, fetch_colors_from_sequence, fetch_color
 from util.database.animation import fetch_animations, fetch_animation, add_animation, remove_animation
 from util.database.section_animation import fetch_section_animation, fetch_section_animations
+from util.database.scene import fetch_scenes, fetch_scene
 
 from strip import Strip
 
@@ -179,6 +180,42 @@ async def animate_section(animate: Animate):
 @app.post('/api/stop/animate')
 async def stop_animate_section(id: Id):
     return JSONResponse(content={'success': strip.stop_animate(id.id)})
+
+
+# Scenes
+@app.get('/api/get/scenes')
+async def get_scenes():
+    return JSONResponse(content={'scenes': fetch_scenes()})
+
+
+@app.post('/api/get/scene')
+async def get_scene(id: Id):
+    return JSONResponse(content={'scene': fetch_scene(id.id)})
+
+
+@app.post('/api/add/scene')
+async def add_scene(scene: Scene):
+    return JSONResponse(content={'success': strip.add_scene(scene.name, scene.description)})
+
+
+@app.post('/api/remove/scene')
+async def remove_scene(id: Id):
+    return JSONResponse(content={'success': strip.remove_scene(id.id)})
+
+
+@app.post('/api/update/scene')
+async def update_scene(scene: Scene):
+    return JSONResponse(content={'success': strip.update_scene(scene.id, scene.name, scene.description)})
+
+
+@app.post('/api/load/scene')
+async def load_scene(id: Id):
+    return JSONResponse(content={'success': strip.load_scene(id.id)})
+
+
+@app.post('/api/save/scene')
+async def save_scene(id: Id):
+    return JSONResponse(content={'success': strip.save_scene(id.id)})
 
 
 # Settings
