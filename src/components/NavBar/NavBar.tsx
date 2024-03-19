@@ -36,8 +36,8 @@ const NavBarItem: React.FC<NavBarItem> = ({ display_name, href }) => {
 
 const ITEMS_NAVBAR: NavBarItem[] = [
   {
-    display_name: "Dashboard",
-    href: "/dashboard",
+    display_name: "Scenes",
+    href: "/scenes",
   },
   {
     display_name: "Animations",

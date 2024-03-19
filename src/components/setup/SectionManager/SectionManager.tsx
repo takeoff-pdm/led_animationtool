@@ -71,9 +71,6 @@ export const SectionManager: React.FC = () => {
     updateSections(editedSections);
   };
 
-  const onCancel = () => {
-    setEditedSections(sections);
-  };
 
   return (
     <Card className="max-w-4xl min-h-72">
@@ -98,9 +95,6 @@ export const SectionManager: React.FC = () => {
         )}
       </CardContent>
       <CardFooter className="w-full justify-center flex space-x-3">
-        <Button onClick={onCancel} variant="ghost">
-          Cancel
-        </Button>
         <Button
           variant={"secondary"}
           onClick={addSectionOnClick}

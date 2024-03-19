@@ -38,4 +38,11 @@ interface Settings {
   led_count: number;
 }
 
-export type { Animation, Section, Color, ColorSequence, Settings };
+interface Scene {
+  id: number;
+  name: string;
+  description: string;
+}
+
+
+export type { Animation, Section, Color, ColorSequence, Settings, Scene };
