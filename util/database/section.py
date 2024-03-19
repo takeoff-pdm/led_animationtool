@@ -11,11 +11,12 @@ def recreate_section(section_data) -> dict:
     }
 
 
-def add_section(id: int, name: str, start_led: int, end_led: int) -> bool:
+def add_section(id: int, name: str, start_led: int, end_led: int, scene_id: int = -1) -> bool:
     # print((Database.fetchone_from_db('SELECT MAX(id) FROM sections', {}) 
-    #                                       if not None and not (None,) else -1) + 1)
-    if not Database.push_to_db('INSERT INTO sections VALUES(:id, :name, :start_led, :end_led)',
+    #                                       if not None and not (None,) else :scene_id) + 1)
+    if not Database.push_to_db('INSERT INTO sections VALUES(:scene_id, :id, :name, :start_led, :end_led)',
                                {
+                                   'scene_id': scene_id,
                                    'id': id,
                                    'name': name,
                                    'start_led': start_led,
@@ -29,26 +30,38 @@ def add_section(id: int, name: str, start_led: int, end_led: int) -> bool:
     return True
 
 
-def remove_section(id: int) -> bool:
-    if not Database.push_to_db('DELETE FROM sections Where id = :id', {'id': id}):
+def remove_section(id: int, scene_id: int = -1) -> bool:
+    if not Database.push_to_db('DELETE FROM sections WHERE scene_id = :scene_id AND id = :id',
+                               {
+                                   'id': id,
+                                   'scene_id': scene_id
+                               }):
         return False
 
     return True
 
 
-def update_section(id: int, name: str, start_led: int, end_led: int) -> bool:
+def update_section(id: int, name: str, start_led: int, end_led: int, scene_id: int = -1) -> bool:
     """Update section by name.
     """
     if not Database.push_to_db('UPDATE sections SET name = :name, start_led = :start_led, end_led = :end_led \
-                                WHERE id = :id',
-                               {'id': id, 'name': name, 'start_led': start_led, 'end_led': end_led}):
+                                WHERE scene_id = :scene_id AND id = :id',
+                               {
+                                   'id': id,
+                                   'name': name,
+                                   'start_led': start_led,
+                                   'end_led': end_led,
+                                    'scene_id': scene_id
+                               }):
         return False
 
     return True
 
 
-def fetch_sections() -> list | bool:
-    sections_data = Database.fetchall_from_db('SELECT id, name, start_led, end_led FROM sections', {})
+def fetch_sections(scene_id: int = -1) -> list | bool:
+    sections_data = Database.fetchall_from_db('SELECT id, name, start_led, end_led FROM sections \
+                                               WHERE scene_id = :scene_id',
+                                              {'scene_id': scene_id})
 
     if sections_data == None:
         return False
@@ -67,9 +80,13 @@ def fetch_sections() -> list | bool:
         return [recreate_section(sections_data)]
 
 
-def fetch_section(id: int) -> dict | bool:
+def fetch_section(id: int, scene_id: int = -1) -> dict | bool:
     section_data = Database.fetchone_from_db('SELECT id, name, start_led, end_led FROM sections \
-                                              WHERE id = :id', {'id': id})
+                                              WHERE scene_id = :scene_id AND id = :id',
+                                             {
+                                                 'id': id,
+                                                 'scene_id': scene_id
+                                             })
 
     if section_data == None:
         return False

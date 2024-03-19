@@ -10,45 +10,52 @@ def recreate_color(color_data) -> dict:
         'blue': color_data[5]
     }
 
-def add_color(id: int, color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
-    if not Database.push_to_db('INSERT INTO colors VALUES(:id, :color_sequence_id, :position, :red, :green, :blue)', 
+def add_color(id: int, color_sequence_id: int, position: int, red: int, green: int, blue: int, scene_id: int = -1) -> bool:
+    if not Database.push_to_db('INSERT INTO colors VALUES(:scene_id, :id, :color_sequence_id, :position, :red, :green, :blue)',
                                   {
                                       'id': id,
                                       'color_sequence_id': color_sequence_id,
                                       'position': position,
                                       'red': red, 
                                       'green': green,
-                                      'blue': blue
+                                      'blue': blue,
+                                      'scene_id': scene_id
                                   }):
         return False
     
     return True
 
-def remove_color(id: int) -> bool:
-    if not Database.push_to_db('DELETE FROM colors Where id = :id', {'id': id}):
+def remove_color(id: int, scene_id: int = -1) -> bool:
+    if not Database.push_to_db('DELETE FROM colors WHERE scene_id = :scene_id AND id = :id',
+                               {
+                                   'id': id,
+                                   'scene_id': scene_id
+                               }):
         return False
     
     return True
 
-def update_color(id: int, color_sequence_id: int, position: int, red: int, green: int, blue: int) -> bool:
-    '''Update color by id.
-    '''
+def update_color(id: int, color_sequence_id: int, position: int, red: int, green: int, blue: int, scene_id: int = -1) -> bool:
+    """Update color by id.
+    """
     if not Database.push_to_db('UPDATE colors SET color_sequence_id = :color_sequence_id, position = :position, \
-                                red = :red, green = :green, blue = :blue WHERE id = :id', 
+                                red = :red, green = :green, blue = :blue WHERE scene_id = :scene_id AND id = :id',
                                 {
                                     'id': id, 
                                     'color_sequence_id': color_sequence_id,
                                     'position': position, 
                                     'red': red, 
                                     'green': green, 
-                                    'blue': blue
+                                    'blue': blue,
+                                    'scene_id': scene_id
                                 }):
         return False
     
     return True
 
-def fetch_colors() -> list | bool:
-    colors_data = Database.fetchall_from_db('SELECT id, color_sequence_id, position, red, green, blue FROM colors', {})
+def fetch_colors(scene_id: int = -1) -> list | bool:
+    colors_data = Database.fetchall_from_db('SELECT id, color_sequence_id, position, red, green, blue FROM colors \
+                                             WHERE scene_id = :scene_id', {'scene_id': scene_id})
 
     if colors_data == None:
         return False
@@ -66,10 +73,14 @@ def fetch_colors() -> list | bool:
     else:
         return [ recreate_color(colors_data) ]
 
-def fetch_colors_from_sequence(id: int) -> list | bool:
+def fetch_colors_from_sequence(id: int, scene_id: int = -1) -> list | bool:
     colors_data = Database.fetchall_from_db('SELECT id, color_sequence_id, position, red, green, \
-                                             blue FROM colors WHERE color_sequence_id = :color_sequence_id', 
-                                             {'color_sequence_id': id})
+                                             blue FROM colors \
+                                             WHERE scene_id = :scene_id AND color_sequence_id = :color_sequence_id',
+                                            {
+                                                'color_sequence_id': id,
+                                                'scene_id': scene_id
+                                            })
 
     if not colors_data:
         return False
@@ -85,11 +96,15 @@ def fetch_colors_from_sequence(id: int) -> list | bool:
         return colors
     
     else:
-        return [ recreate_color(colors_data) ]
+        return [recreate_color(colors_data)]
 
-def fetch_color(id: int) -> dict | bool:
+def fetch_color(id: int, scene_id: int = -1) -> dict | bool:
     color_data = Database.fetchone_from_db('SELECT id, color_sequence_id, position, red, green, \
-                                            blue FROM colors WHERE id = :id', {'id': id})
+                                            blue FROM colors WHERE scene_id = :scene_id, scene_id: int = -1 AND id = :id',
+                                           {
+                                               'id': id,
+                                               'scene_id': scene_id
+                                           })
 
     if not color_data:
         return False

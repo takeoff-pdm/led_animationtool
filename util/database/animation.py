@@ -29,9 +29,10 @@ def remove_animation(id: int) -> bool:
 
 
 def update_animation(id: int, name: str, description: str) -> bool:
-    """Update animation by name.
+    """Update animation by id.
     """
-    if not Database.push_to_db('UPDATE animations SET name = :name, description = :description WHERE id = :id',
+    if not Database.push_to_db('UPDATE animations SET name = :name, description = :description \
+                                WHERE id = :id',
                                {
                                    'id': id,
                                    'name': name,

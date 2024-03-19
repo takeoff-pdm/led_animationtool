@@ -12,7 +12,7 @@ def recreate_section_animation(section_animation_data) -> dict:
     }
 
 
-def add_section_animations(section_id: int) -> bool:
+def add_section_animations(section_id: int, scene_id: int = -1) -> bool:
     animations = fetch_animations()
 
     if not animations:
@@ -25,51 +25,57 @@ def add_section_animations(section_id: int) -> bool:
     return True
 
 
-def add_section_animation(section_id: int, animation_id: int) -> bool:
-    if not Database.push_to_db('INSERT INTO section_animations VALUES(:section_id, :animation_id, 0, 0, 0)',
+def add_section_animation(section_id: int, animation_id: int, scene_id: int = -1) -> bool:
+    if not Database.push_to_db('INSERT INTO section_animations VALUES(:scene_id, :section_id, :animation_id, 0, 0, 0)',
                                {
                                    'section_id': section_id,
-                                   'animation_id': animation_id
+                                   'animation_id': animation_id,
+                                   'scene_id': scene_id
                                }):
         return False
 
     return True
 
 
-def remove_section_animation(section_id: int, animation_id: int) -> bool:
+def remove_section_animation(section_id: int, animation_id: int, scene_id: int = -1) -> bool:
     if not Database.push_to_db(
-            'DELETE FROM section_animations WHERE section_id = :section_id AND animation_id = :animation_id',
+            'DELETE FROM section_animations WHERE scene_id = :scene_id AND section_id = :section_id AND animation_id = :animation_id',
             {
                 'section_id': section_id,
-                'animation_id': animation_id
+                'animation_id': animation_id,
+                'scene_id': scene_id
             }):
         return False
 
     return True
 
 
-def update_section_animation(section_id: int, animation_id: int, variation: int, direction: int, offset: int) -> bool:
+def update_section_animation(section_id: int, animation_id: int, variation: int, direction: int, offset: int,
+                             scene_id: int = -1) -> bool:
     if not Database.push_to_db('UPDATE section_animations SET variation = :variation, direction = :direction, \
-                                offset = :offset WHERE section_id = :section_id AND animation_id = :animation_id',
+                                offset = :offset WHERE scene_id = :scene_id AND section_id = :section_id AND \
+                                animation_id = :animation_id',
                                {
                                    'section_id': section_id,
                                    'animation_id': animation_id,
                                    'variation': variation,
                                    'direction': direction,
-                                   'offset': offset
+                                   'offset': offset,
+                                   'scene_id': scene_id
                                }):
         return False
 
     return True
 
 
-def fetch_section_animation(section_id: int, animation_id: int) -> dict | bool:
+def fetch_section_animation(section_id: int, animation_id: int, scene_id: int = -1) -> dict | bool:
     section_animation_data = Database.fetchone_from_db(
         'SELECT section_id, animation_id, variation, direction, offset FROM section_animations \
-         WHERE section_id = :section_id AND animation_id = :animation_id',
+         WHERE scene_id = :scene_id AND section_id = :section_id AND animation_id = :animation_id',
         {
             'section_id': section_id,
-            'animation_id': animation_id
+            'animation_id': animation_id,
+            'scene_id': scene_id
         })
 
     if section_animation_data == None:
@@ -78,11 +84,13 @@ def fetch_section_animation(section_id: int, animation_id: int) -> dict | bool:
     return recreate_section_animation(section_animation_data)
 
 
-def fetch_section_animations(section_id: int) -> list | bool:
+def fetch_section_animations(section_id: int, scene_id: int = -1) -> list | bool:
     section_animations_data = Database.fetchall_from_db(
-        'SELECT section_id, animation_id, variation, direction, offset FROM section_animations WHERE section_id = :section_id',
+        'SELECT section_id, animation_id, variation, direction, offset FROM section_animations \
+         WHERE scene_id = :scene_id AND section_id = :section_id',
         {
-            'section_id': section_id
+            'section_id': section_id,
+            'scene_id': scene_id
         })
 
     if section_animations_data == None:
