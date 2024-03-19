@@ -1,5 +1,8 @@
+import { addScene } from "@/api/api-calls";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
+import { toast } from "sonner";
+import { useScenesContext } from "../ScenesContext/ScenesContext";
 
 export const ScenesMenuBar: React.FC = () => {
   return (
@@ -10,10 +13,24 @@ export const ScenesMenuBar: React.FC = () => {
 };
 
 const AddSceneButton: React.FC = () => {
-  const onClick = () => {};
+  const { scenes, setScenes } = useScenesContext();
+  const onAdd = async () => {
+    let newScene = {
+      name: "New Scene",
+      description: "New Scene Description",
+    };
+    const resp = await addScene(newScene);
+    if (!resp.success) {
+      toast("Failed to add scene!");
+      return;
+    }
+
+    setScenes([resp.scene, ...scenes]);
+    toast("Scene added!");
+  };
 
   return (
-    <Button onClick={onClick}>
+    <Button onClick={onAdd}>
       <PlusIcon className="w-4 h-4 mr-2" />
       Add Scene
     </Button>

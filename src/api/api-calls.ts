@@ -13,7 +13,7 @@ interface SettingsValueData {
 async function sendRequest(
   endpoint: string,
   method: "GET" | "POST",
-  data?: RequestData,
+  data?: RequestData
 ): Promise<any> {
   const url = `${RECEIVER_HOST}/api/${endpoint}`;
   const options: RequestInit = {
@@ -96,10 +96,14 @@ const updateBpm = (data: SettingsValueData) =>
 
 // Scenes
 const getScenes = () => sendRequest("get/scenes", "GET");
-const updateScene = (scene: Scene) => sendRequest("update/scene", "POST", scene);
-const deleteScene = (data: {id:number}) => sendRequest("delete/scene", "POST", data);
-const loadScene = (data: {id:number}) => sendRequest("load/scene", "POST", data);
-
+const updateScene = (scene: Scene) =>
+  sendRequest("update/scene", "POST", scene);
+const deleteScene = (data: { id: number }) =>
+  sendRequest("delete/scene", "POST", data);
+const loadScene = (data: { id: number }) =>
+  sendRequest("load/scene", "POST", data);
+const addScene = (data: { name: string; description: string }) =>
+  sendRequest("add/scene", "POST", data);
 
 export {
   getSections,
@@ -129,5 +133,6 @@ export {
   getScenes,
   updateScene,
   deleteScene,
-  loadScene
+  loadScene,
+  addScene,
 };
