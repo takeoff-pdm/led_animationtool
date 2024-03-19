@@ -1,6 +1,7 @@
 "use client";
+import { getScenes } from "@/api/api-calls";
 import { Scene } from "@/api/types";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ScenesCtx = createContext<{
   scenes: Scene[];
@@ -23,6 +24,12 @@ export const ScenesContext: React.FC<{
 }> = ({ children }) => {
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [activeScene, setActiveScene] = useState<Scene>({} as Scene);
+
+  useEffect(() => {
+    getScenes().then((res) => {
+      setScenes(res.scenes);
+    });
+  }, []);
 
   return (
     <ScenesCtx.Provider
