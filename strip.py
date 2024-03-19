@@ -10,12 +10,14 @@ from util.database.section import fetch_sections, fetch_section, remove_section
 from util.database.color_sequence import fetch_color_sequences, fetch_color_sequence, remove_color_sequence
 from util.database.color import fetch_color, remove_color, update_color
 from util.database.animation import fetch_animation, fetch_animations
+from util.database.scene import fetch_scenes, remove_scene
 
 from util.api.models import Color as ApiColor
 
 from section import Section
 from color_sequence import ColorSequence
 from color import Color
+from scene import Scene
 
 from animations.mono_color import MonoColor
 from animations.animation import Animation
@@ -52,6 +54,13 @@ class Strip:
                                                       color_sequence_data['description'],
                                                       color_sequence_data['selection'],
                                                       color_sequence_data['color_amount']))
+        
+        # Initialize scenes
+        self.scenes = []
+        scenes_data = fetch_scenes()
+
+        for scene_data in scenes_data:
+            self.scenes.append(Scene(scene_data['id'], scene_data['name'], scene_data['description']))
 
         self.running_animations = []
         self.beat = 0
@@ -480,3 +489,64 @@ class Strip:
 
     def show_strip_request(self):
         self.show_strip = True
+
+    # Scene handling
+    def add_scene(self, name: str, description: str) -> bool:
+        scene = Scene(name=name, description=description)
+
+        if not scene.sync_changes_to_db(new=True):
+            return False
+
+        self.scenes.append(scene)
+
+        return True
+    
+    def remove_scene(self, scene_id: int) -> bool:
+        for scene in self.scenes:
+            if scene.id == scene_id:
+                if not remove_scene(scene_id):
+                    return False
+                
+                self.scenes.remove(scene)
+                
+                return True
+        
+        return False
+    
+    def update_scene(self, id: int, name: str, description: str) -> bool:
+        for scene in self.scenes:
+            if scene.id == id:
+                scene.name = name
+                scene.description = description
+                
+                return scene.sync_changes_to_db()
+        
+        return False
+
+    def save_scene(self, scene_id: int) -> bool:
+        for scene in self.scenes:
+            if scene.id == scene_id:
+                return scene.save()
+        
+        return False
+    
+    def load_scene(self, scene_id: int) -> bool:
+        # Stop all running animations
+        self.stop = True
+        sleep(self.sleep_time * 1.1)  # Wait for all animations to stop
+        self.stop = False
+
+        for scene in self.scenes:
+            if scene.id == scene_id:
+                animations_data_to_run = scene.load()  # Load scene into workspace
+
+                if animations_data_to_run:
+                    for animation_data in animations_data_to_run:
+                        self.add_animation(Animation(id=animation_data['animation_id'], 
+                                                     section_id=animation_data['section_id']),
+                                                     Section(id=animation_data['section_id']),
+                                                     ColorSequence(id=animation_data['color_sequence_id']))
+
+                    return True
+        
+        return False
