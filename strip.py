@@ -365,6 +365,8 @@ class Strip:
 
     def animate(self, stop):
         try:
+            Thread(target=self.show_strip_handler, args=(stop,)).start()
+            
             while stop() == False:
                 starting_time = time_ns() // 1_000_000
 
@@ -383,8 +385,6 @@ class Strip:
 
                 for animation in self.running_animations:
                     Thread(target=animation.animate, args=(self.beat + animation.offset, self.show_strip_request)).start()
-                    
-                Thread(target=self.show_strip_handler).start()
 
                 if self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000) > 0:
                     sleep(self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000))
@@ -470,16 +470,13 @@ class Strip:
 
         return True
     
-    def show_strip_handler():
-        current_time = starting_time = time_ns() // 1_000_000
-        
-        while (current_time - starting_time) / 1000 >= self.sleep_time:
+    def show_strip_handler(self, stop):
+        while stop() == False:
             if self.show_strip == True:
                 self.show_strip = False
                 self.strip.show()
             
-            sleep(.001)
-            current_time = time_ns() // 1_000_000
+            sleep(.0001)
 
-    def show_strip_request():
+    def show_strip_request(self):
         self.show_strip = True
