@@ -1,11 +1,26 @@
 CREATE TABLE IF NOT EXISTS sections (
+    scene_id INT(32) NOT NULL,
     id INT(32) PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
     start_led INT(32) NOT NULL,
     end_led INT(32) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS scenes (
+    id INT(32) NOT NULL,
+    name VARCHAR(32) NOT NULL,
+    description VARCHAR(64) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS scene_animations (
+    scene_id INT(32) NOT NULL,
+    animation_id INT(32) NOT NULL,
+    section_id INT(32) NOT NULL,
+    color_sequence_id INT(32) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS section_animations (
+    scene_id INT(32) NOT NULL,
     section_id INT(32) NOT NULL,
     animation_id INT(32) NOT NULL,
     variation INT(32) NOT NULL DEFAULT 0, -- If multiple variations are possible
@@ -17,6 +32,7 @@ CREATE TABLE IF NOT EXISTS section_animations (
 );
 
 CREATE TABLE IF NOT EXISTS color_sequences (
+    scene_id INT(32) NOT NULL,
     id INT(32) PRIMARY KEY NOT NULL,
     name VARCHAR(32) NOT NULL,
     description VARCHAR(128) NOT NULL,
@@ -26,6 +42,7 @@ CREATE TABLE IF NOT EXISTS color_sequences (
 );
 
 CREATE TABLE IF NOT EXISTS colors (
+    scene_id INT(32) NOT NULL,
     id INT(32) PRIMARY KEY NOT NULL,
     color_sequence_id VARCHAR(32) NOT NULL,
     position INT(32) NOT NULL, -- Position in sequence
