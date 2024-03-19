@@ -125,3 +125,25 @@ Settings:
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
     - Method: ``POST``
+ 
+Scenes:
+- ``/api/get/scenes``
+    - Values: ``{}``
+    - Returns: ``{scenes: List}``
+    - Method: ``GET``
+- ``/api/update/scene``
+    - Values: ``{ id: Integer, name: String, description: String }
+    - Returns: ``{ success: boolean }``
+    - Method: ``POST``
+- ``/api/delete/scene``
+    - Values: ``{ id: Integer }``
+    - Returns: ``{ success: boolean }``
+    - Method: ``POST``
+- ``/api/load/scene``
+    - Values: ``{ id: Integer }``
+    - Returns: ``{ success: boolean }``
+    - Method: ``POST``
+- ``/api/add/scene``
+    - Values: ``{ name: String, description: String }``
+    - Returns: ``{ id: Integer }``
+    - Method: ``POST``
