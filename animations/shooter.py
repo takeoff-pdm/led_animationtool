@@ -119,7 +119,6 @@ class Shooter(Animation):
                                                                        fade_out_g[-position] if position < len(fade_out_g) else 0,
                                                                        fade_out_b[-position] if position < len(fade_out_b) else 0))
 
-                
                 show_strip_request()
 
                 sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
