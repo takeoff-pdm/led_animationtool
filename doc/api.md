@@ -106,6 +106,37 @@ Animations:
     - Returns: ``{ success: boolean }``
     - Method: ``POST``
 
+Scenes:
+- ``/api/get/scenes``
+    - Values: ``{}``
+    - Returns: ``{scenes: List}``
+    - Method: ``GET``
+- ``/api/get/scenes``
+    - Values: ``{ id: Integer }``
+    - Returns: ``{scene: Scene | bool}``
+    - Method: ``POST``
+- ``/api/add/scene``
+    - Values: ``{ name: String, description: String }``
+    - Returns: ``{ id: Integer }``
+    - Method: ``POST``
+- ``/api/remove/scene``
+    - Values: ``{ id: Integer }``
+    - Returns: ``{ success: boolean }``
+    - Method: ``POST``
+- ``/api/update/scene``
+    - Values: ``{ id: Integer, name: String, description: String }
+    - Returns: ``{ success: boolean }``
+    - Method: ``POST``
+- ``/api/load/scene``
+    - Values: ``{ id: Integer }``
+    - Returns: ``{ success: boolean }``
+    - Method: ``POST``
+- ``/api/save/scene``
+    - Values: ``{ id: Integer }``
+    - Returns: ``{ success: boolean }``
+    - Method: ``POST``
+
+
 Settings:
 - ``/api/get/settings``
     - Values: ``{ }``
@@ -124,26 +155,4 @@ Settings:
 - ``/api/update/bpm``
     - Values: ``{ value: Integer }``
     - Returns: ``{ success: boolean }``
-    - Method: ``POST``
- 
-Scenes:
-- ``/api/get/scenes``
-    - Values: ``{}``
-    - Returns: ``{scenes: List}``
-    - Method: ``GET``
-- ``/api/update/scene``
-    - Values: ``{ id: Integer, name: String, description: String }
-    - Returns: ``{ success: boolean }``
-    - Method: ``POST``
-- ``/api/delete/scene``
-    - Values: ``{ id: Integer }``
-    - Returns: ``{ success: boolean }``
-    - Method: ``POST``
-- ``/api/load/scene``
-    - Values: ``{ id: Integer }``
-    - Returns: ``{ success: boolean }``
-    - Method: ``POST``
-- ``/api/add/scene``
-    - Values: ``{ name: String, description: String }``
-    - Returns: ``{ id: Integer }``
     - Method: ``POST``
