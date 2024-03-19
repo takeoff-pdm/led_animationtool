@@ -143,3 +143,7 @@ Scenes:
     - Values: ``{ id: Integer }``
     - Returns: ``{ success: boolean }``
     - Method: ``POST``
+- ``/api/add/scene``
+    - Values: ``{ name: String, description: String }``
+    - Returns: ``{ id: Integer }``
+    - Method: ``POST``
