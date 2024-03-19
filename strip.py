@@ -476,7 +476,7 @@ class Strip:
                 self.show_strip = False
                 self.strip.show()
             
-            sleep(.0001)
+            sleep(1 / (self.frequency / self.led_count))
 
     def show_strip_request(self):
         self.show_strip = True
