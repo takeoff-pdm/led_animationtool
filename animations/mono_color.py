@@ -78,7 +78,7 @@ class MonoColor(Animation):
 
                 match (beat % 2):
                     case 0:
-                        self.animate(1, reverse=True)
+                        self.animate(1, show_strip_request, reverse=True)
 
                     case 1:
                         self.animate(0)
@@ -92,16 +92,16 @@ class MonoColor(Animation):
 
                 match (beat % 4):
                     case 0:
-                        self.animate(1)
+                        self.animate(1, show_strip_request)
 
                     case 1:
-                        self.animate(2, reverse=True)
+                        self.animate(2, show_strip_request, reverse=True)
 
                     case 2:
-                        self.animate(1, reverse=True)
+                        self.animate(1, show_strip_request, reverse=True)
 
                     case 3:
-                        self.animate(0)
+                        self.animate(0, show_strip_request)
 
                 self.direction = 5
 
@@ -112,28 +112,28 @@ class MonoColor(Animation):
 
                 match (beat % 8):
                     case 0:
-                        self.animate(1)
+                        self.animate(1, show_strip_request)
 
                     case 1:
-                        self.animate(2)
+                        self.animate(2, show_strip_request)
 
                     case 2:
-                        self.animate(3)
+                        self.animate(3, show_strip_request)
 
                     case 3:
-                        self.animate(4, reverse=True)
+                        self.animate(4, show_strip_request, reverse=True)
 
                     case 4:
-                        self.animate(3, reverse=True)
+                        self.animate(3, show_strip_request, reverse=True)
 
                     case 5:
-                        self.animate(2, reverse=True)
+                        self.animate(2, show_strip_request, reverse=True)
 
                     case 6:
-                        self.animate(1, reverse=True)
+                        self.animate(1, show_strip_request, reverse=True)
 
                     case 7:
-                        self.animate(0)
+                        self.animate(0, show_strip_request)
 
                 self.direction = 6
 
@@ -144,52 +144,52 @@ class MonoColor(Animation):
 
                 match (beat):
                     case 0:
-                        self.animate(1)
+                        self.animate(1, show_strip_request)
 
                     case 1:
-                        self.animate(2)
+                        self.animate(2, show_strip_request)
 
                     case 2:
-                        self.animate(3)
+                        self.animate(3, show_strip_request)
 
                     case 3:
-                        self.animate(4)
+                        self.animate(4, show_strip_request)
 
                     case 4:
-                        self.animate(5)
+                        self.animate(5, show_strip_request)
 
                     case 5:
-                        self.animate(6)
+                        self.animate(6, show_strip_request)
 
                     case 6:
-                        self.animate(7)
+                        self.animate(7, show_strip_request)
 
                     case 7:
-                        self.animate(8, reverse=True)
+                        self.animate(8, show_strip_request, reverse=True)
 
                     case 8:
-                        self.animate(7, reverse=True)
+                        self.animate(7, show_strip_request, reverse=True)
 
                     case 9:
-                        self.animate(6, reverse=True)
+                        self.animate(6, show_strip_request, reverse=True)
 
                     case 10:
-                        self.animate(5, reverse=True)
+                        self.animate(5, show_strip_request, reverse=True)
 
                     case 11:
-                        self.animate(4, reverse=True)
+                        self.animate(4, show_strip_request, reverse=True)
 
                     case 12:
-                        self.animate(3, reverse=True)
+                        self.animate(3, show_strip_request, reverse=True)
 
                     case 13:
-                        self.animate(2, reverse=True)
+                        self.animate(2, show_strip_request, reverse=True)
 
                     case 14:
-                        self.animate(1, reverse=True)
+                        self.animate(1, show_strip_request, reverse=True)
 
                     case 15:
-                        self.animate(0)
+                        self.animate(0, show_strip_request)
 
                 self.direction = 7
 
@@ -236,7 +236,7 @@ class MonoColor(Animation):
             for x in range(0, ANIMATION_STEPS * 2, step):
                 if x == 0:  # Show current/initial color
                     self.variation = 0
-                    self.animate(beat)
+                    self.animate(beat, show_strip_request)
                     self.variation = 1
 
                 if x > ANIMATION_STEPS:  # Transition to next color, when half the time has passed
