@@ -102,7 +102,7 @@ const SectionPauseResumeButton: React.FC = () => {
   return (
     <div className="mt-5">
       <Button
-       // disabled={active}
+        // disabled={active}
         //   disabled={selectedSection.id}
         variant={"default"}
         onClick={onClick}
@@ -113,9 +113,7 @@ const SectionPauseResumeButton: React.FC = () => {
         ) : (
           <ResumeIcon className="h-4 w-4 sm:mr-2" />
         )}
-        <div className="hidden sm:block">
-          {active ? "Pause" : "Start"}
-        </div>
+        <div className="hidden sm:block">{active ? "Pause" : "Start"}</div>
       </Button>
     </div>
   );
@@ -250,6 +248,15 @@ const BPMController: React.FC = () => {
   };
 
   const tapped = (e: any) => {
+
+    // if the last tap was more than 5 seconds ago, reset the tap count
+    if (e.timeStamp - lastTap > 5 * 1000) {
+      setTapCount(0);
+      setFirstTap(0);
+      setLastTap(0);
+      setBpmValue(0);
+    }
+
     setTapCount(tapCount + 1);
     setFirstTap(firstTap || e.timeStamp);
     setLastTap(e.timeStamp);
