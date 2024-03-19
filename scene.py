@@ -1,5 +1,5 @@
 from util.database.database import Database
-from util.database.scene import fetch_scene, add_scene, update_scene
+from util.database.scene import fetch_scene, add_scene, update_scene, load_scene, save_scene
 from util.database.scene_animation import fetch_scene_animations_from_scene
 
 
@@ -38,5 +38,15 @@ class Scene:
 
         return update_scene(self.id, self.name, self.description)
 
-    def load(self):
+    def load(self) -> list | False:
+        """Load scene into workspace and return running animations.
+        """
+        if not load_scene(self.id):
+            return False
 
+        return self.scene_animations
+
+    def save(self) -> bool:
+        """Save scene to database.
+        """
+        return save_scene(self.id, self.scene_animations)
