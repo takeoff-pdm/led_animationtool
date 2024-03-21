@@ -35,4 +35,8 @@ const AddSceneButton: React.FC = () => {
 
   return (
     <Button onClick={onAdd}>
-   
+      <PlusIcon className="w-4 h-4 mr-2" />
+      Add Scene
+    </Button>
+  );
+};

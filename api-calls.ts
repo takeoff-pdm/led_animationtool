@@ -106,10 +106,8 @@ const addScene = (data: { name: string; description: string }) =>
   sendRequest("add/scene", "POST", data);
 const getScene = (data:{id:number}) => sendRequest("get/scene", "POST", data);
 const getActiveScene = () => sendRequest("get/active_scene", "GET");
-const saveScene = (data:{id:number}) => sendRequest("save/scene", "POST", data);
 
 export {
-  saveScene,
   getSections,
   addSection,
   updateSections,

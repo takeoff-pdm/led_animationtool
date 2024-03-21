@@ -17,7 +17,7 @@ import {
 } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { useScenesContext } from "../ScenesContext/ScenesContext";
-import { deleteScene, loadScene, updateScene } from "@/api/api-calls";
+import { deleteScene, loadScene, saveScene, updateScene } from "@/api/api-calls";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -57,7 +57,7 @@ export const SceneCard: React.FC<{
     setLoaded(false);
     setLoading(true);
 
-    const resp = await updateScene(scene);
+    const resp = await saveScene(scene);
     if (!resp.success) {
       toast("Failed to save scene!");
       setSaved(false);

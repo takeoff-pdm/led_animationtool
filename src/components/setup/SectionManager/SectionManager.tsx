@@ -42,9 +42,14 @@ export const SectionManager: React.FC = () => {
       end_led: -1,
     };
 
-    addSection(newSection);
+    const resp =await addSection(newSection);
+    if (!resp.success) {
+      toast("Failed to add section");
+      return
+    }
 
-    setEditedSections([...editedSections, newSection]);
+    const resp1 = await getSections();
+    setEditedSections(resp1.sections);
   };
 
   const onChange = (section: Section) => {
