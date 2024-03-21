@@ -6,9 +6,7 @@ export const ScenesWrapper: React.FC = () => {
   return (
     <div className="w-full sm:px-14 px-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
       {scenes.map((scene) => (
-        <SceneCard
-          scene={scene}
-        />
+        <SceneCard scene={scene} />
       ))}
     </div>
   );

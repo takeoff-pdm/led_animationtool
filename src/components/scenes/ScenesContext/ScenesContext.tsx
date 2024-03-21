@@ -1,5 +1,5 @@
 "use client";
-import { getScenes } from "@/api/api-calls";
+import { getScenes , getActiveScene} from "@/api/api-calls";
 import { Scene } from "@/api/types";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -28,7 +28,13 @@ export const ScenesContext: React.FC<{
   useEffect(() => {
     getScenes().then((res) => {
       setScenes(res.scenes);
-    });
+      getActiveScene().then(scene => {
+        if (scene.id == -1) return;
+        let activeSceneApi = res.scenes.find(s => s.id === scene.id);
+        if (!activeSceneApi) return;
+        setActiveScene(activeSceneApi);
+      });  
+    });    
   }, []);
 
   return (

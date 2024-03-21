@@ -5,13 +5,21 @@ import { FlowAnimation } from "@/components/animations/AnimationPreview/FlowAnim
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <AnimationPreview brightness={100} led_count={60}>
+      <AnimationPreview brightness={100} led_count={30}>
         <FlowAnimation
           colors={[
             {
               id: 1,
               blue: 0,
               green: 255,
+              red: 0,
+              color_sequence_id: 1,
+              position: 0,
+            },
+            {
+              id: 8,
+              blue: 0,
+              green: 0,
               red: 0,
               color_sequence_id: 1,
               position: 0,
@@ -25,6 +33,14 @@ export default function Home() {
               position: 0,
             },
             {
+              id: 7,
+              blue: 0,
+              green: 0,
+              red: 0,
+              color_sequence_id: 1,
+              position: 0,
+            },
+            {
               id: 3,
               blue: 0,
               green: 10,
@@ -33,10 +49,26 @@ export default function Home() {
               position: 0,
             },
             {
+              id: 6,
+              blue: 0,
+              green: 0,
+              red: 0,
+              color_sequence_id: 1,
+              position: 0,
+            },
+            {
               id: 4,
               blue: 52,
               green: 13,
               red: 100,
+              color_sequence_id: 1,
+              position: 0,
+            },
+            {
+              id: 5,
+              blue: 0,
+              green: 0,
+              red: 0,
               color_sequence_id: 1,
               position: 0,
             },

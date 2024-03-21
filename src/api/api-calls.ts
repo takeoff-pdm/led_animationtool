@@ -99,11 +99,13 @@ const getScenes = () => sendRequest("get/scenes", "GET");
 const updateScene = (scene: Scene) =>
   sendRequest("update/scene", "POST", scene);
 const deleteScene = (data: { id: number }) =>
-  sendRequest("delete/scene", "POST", data);
+  sendRequest("remove/scene", "POST", data);
 const loadScene = (data: { id: number }) =>
   sendRequest("load/scene", "POST", data);
 const addScene = (data: { name: string; description: string }) =>
   sendRequest("add/scene", "POST", data);
+const getScene = (data:{id:number}) => sendRequest("get/scene", "POST", data);
+const getActiveScene = () => sendRequest("get/active_scene", "GET");
 
 export {
   getSections,
@@ -125,14 +127,4 @@ export {
   updateAnimation,
   startAnimation,
   stopAnimation,
-  getSettings,
-  updateBrightness,
-  updateLedCount,
-  updateBpm,
-  getSectionData,
-  getScenes,
-  updateScene,
-  deleteScene,
-  loadScene,
-  addScene,
-};
+  getSe

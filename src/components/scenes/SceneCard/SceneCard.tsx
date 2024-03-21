@@ -30,10 +30,11 @@ export const SceneCard: React.FC<{
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [editing, setEditing] = useState(true);
+  const [editing, setEditing] = useState(false);
   const [tempScene, setTempScene] = useState<Scene>(scene);
 
   const onLoad = async () => {
+    if (!confirm("Are you sure you want to load the scene?")) return;
     setSaved(false);
     setLoaded(false);
     setLoading(true);
@@ -51,6 +52,7 @@ export const SceneCard: React.FC<{
   };
 
   const onSave = async () => {
+    if (!confirm("Are you sure you want to update the scene?")) return;
     setSaved(true);
     setLoaded(false);
     setLoading(true);
@@ -86,14 +88,9 @@ export const SceneCard: React.FC<{
   };
 
   return (
-    <Card className="max-w-sm">
+    <Card className={`max-w-sm ${scene.id === activeScene.id && "border-green-400 border-2"}`}>
       <CardHeader className="relative">
-        <div className="flex items-center justify-between">
-          <CardTitle className="">{scene.name}</CardTitle>
-          {scene.id === activeScene.id && (
-            <div className="h-3 w-3 animate-pulse rounded-full bg-green-400 "></div>
-          )}
-        </div>
+        <CardTitle className="">{scene.name}</CardTitle>
         <CardDescription>{scene.description}</CardDescription>
         <Button
           onClick={() => {
@@ -200,16 +197,13 @@ export const SceneCard: React.FC<{
             </Button>
             <Button
               onClick={async () => {
-                setEditing(false);
                 setLoading(true);
-                setLoaded(false);
                 const resp = await updateScene(tempScene);
                 if (!resp.success) {
                   toast("Failed to update scene!");
                   return;
                 }
 
-                setLoaded(true);
                 setLoading(false);
                 setScene(tempScene);
               }}

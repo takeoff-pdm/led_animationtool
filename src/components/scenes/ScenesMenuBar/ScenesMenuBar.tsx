@@ -1,4 +1,4 @@
-import { addScene } from "@/api/api-calls";
+import { addScene, getScenes } from "@/api/api-calls";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ export const ScenesMenuBar: React.FC = () => {
 const AddSceneButton: React.FC = () => {
   const { scenes, setScenes } = useScenesContext();
   const onAdd = async () => {
+    console.log("Adding scene")
     let newScene = {
       name: "New Scene",
       description: "New Scene Description",
@@ -25,14 +26,13 @@ const AddSceneButton: React.FC = () => {
       return;
     }
 
-    setScenes([resp.scene, ...scenes]);
+    getScenes().then((resp) => {
+      setScenes(resp.scenes);
+    });
+    
     toast("Scene added!");
   };
 
   return (
     <Button onClick={onAdd}>
-      <PlusIcon className="w-4 h-4 mr-2" />
-      Add Scene
-    </Button>
-  );
-};
+   
