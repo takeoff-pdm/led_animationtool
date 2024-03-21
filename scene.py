@@ -38,7 +38,7 @@ class Scene:
 
         return update_scene(self.id, self.name, self.description)
 
-    def load(self) -> list | False:
+    def load(self) -> list | bool:
         """Load scene into workspace and return running animations.
         """
         if not load_scene(self.id):

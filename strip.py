@@ -11,6 +11,7 @@ from util.database.color_sequence import fetch_color_sequences, fetch_color_sequ
 from util.database.color import fetch_color, remove_color, update_color
 from util.database.animation import fetch_animation, fetch_animations
 from util.database.scene import fetch_scenes, remove_scene
+from util.database.scene_animation import remove_scene_animations
 
 from util.api.models import Color as ApiColor
 
@@ -61,6 +62,8 @@ class Strip:
 
         for scene_data in scenes_data:
             self.scenes.append(Scene(scene_data['id'], scene_data['name'], scene_data['description']))
+        
+        self.active_scene: int = -1
 
         self.running_animations = []
         self.beat = 0
@@ -507,6 +510,8 @@ class Strip:
                 if not remove_scene(scene_id):
                     return False
                 
+                remove_scene_animations(scene_id)
+                
                 self.scenes.remove(scene)
                 
                 return True
@@ -547,6 +552,8 @@ class Strip:
                                                      Section(id=animation_data['section_id']),
                                                      ColorSequence(id=animation_data['color_sequence_id']))
 
-                    return True
+                self.active_scene = scene_id
+                
+                return True
         
         return False

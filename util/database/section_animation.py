@@ -53,14 +53,14 @@ def remove_section_animation(section_id: int, animation_id: int, scene_id: int =
 def update_section_animation(section_id: int, animation_id: int, variation: int, direction: int, offset: int,
                              scene_id: int = -1) -> bool:
     if not Database.push_to_db('UPDATE section_animations SET variation = :variation, direction = :direction, \
-                                offset = :offset WHERE scene_id = :scene_id AND section_id = :section_id AND \
+                                off_set = :off_set WHERE scene_id = :scene_id AND section_id = :section_id AND \
                                 animation_id = :animation_id',
                                {
                                    'section_id': section_id,
                                    'animation_id': animation_id,
                                    'variation': variation,
                                    'direction': direction,
-                                   'offset': offset,
+                                   'off_set': offset,
                                    'scene_id': scene_id
                                }):
         return False
@@ -70,7 +70,7 @@ def update_section_animation(section_id: int, animation_id: int, variation: int,
 
 def fetch_section_animation(section_id: int, animation_id: int, scene_id: int = -1) -> dict | bool:
     section_animation_data = Database.fetchone_from_db(
-        'SELECT section_id, animation_id, variation, direction, offset FROM section_animations \
+        'SELECT section_id, animation_id, variation, direction, off_set FROM section_animations \
          WHERE scene_id = :scene_id AND section_id = :section_id AND animation_id = :animation_id',
         {
             'section_id': section_id,
@@ -86,7 +86,7 @@ def fetch_section_animation(section_id: int, animation_id: int, scene_id: int = 
 
 def fetch_section_animations(section_id: int, scene_id: int = -1) -> list | bool:
     section_animations_data = Database.fetchall_from_db(
-        'SELECT section_id, animation_id, variation, direction, offset FROM section_animations \
+        'SELECT section_id, animation_id, variation, direction, off_set FROM section_animations \
          WHERE scene_id = :scene_id AND section_id = :section_id',
         {
             'section_id': section_id,
