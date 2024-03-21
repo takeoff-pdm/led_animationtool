@@ -111,7 +111,7 @@ Scenes:
     - Values: ``{}``
     - Returns: ``{scenes: List}``
     - Method: ``GET``
-- ``/api/get/scenes``
+- ``/api/get/scene``
     - Values: ``{ id: Integer }``
     - Returns: ``{scene: Scene | bool}``
     - Method: ``POST``
