@@ -115,7 +115,7 @@ Scenes:
     - Values: ``{ id: Integer }``
     - Returns: ``{scene: Scene | bool}``
     - Method: ``POST``
-- ``/api/get/active-scene``
+- ``/api/get/active_scene``
     - Values: ``{}``
     - Returns: ``{ id: Integer }``
     - Method: ``GET``
