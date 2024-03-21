@@ -193,6 +193,11 @@ async def get_scene(id: Id):
     return JSONResponse(content={'scene': fetch_scene(id.id)})
 
 
+@app.get('/api/get/active_scene')
+async def update_scene():
+    return JSONResponse(content={'id': strip.active_scene})
+
+
 @app.post('/api/add/scene')
 async def add_scene(scene: Scene):
     return JSONResponse(content={'success': strip.add_scene(scene.name, scene.description)})
