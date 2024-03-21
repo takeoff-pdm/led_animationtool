@@ -99,13 +99,12 @@ def fetch_colors_from_sequence(id: int, scene_id: int = -1) -> list | bool:
         return [recreate_color(colors_data)]
 
 def fetch_color(id: int, scene_id: int = -1) -> dict | bool:
-    color_data = Database.fetchone_from_db('SELECT id, color_sequence_id, position, red, green, \
-                                            blue FROM colors WHERE scene_id = :scene_id, scene_id: int = -1 AND id = :id',
+    color_data = Database.fetchone_from_db('SELECT id, color_sequence_id, position, red, green, blue \
+                                            FROM colors WHERE scene_id = :scene_id OR scene_id = -1 AND id = :id',
                                            {
                                                'id': id,
                                                'scene_id': scene_id
                                            })
-
     if not color_data:
         return False
 
