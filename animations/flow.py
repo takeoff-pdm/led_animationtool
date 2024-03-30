@@ -109,7 +109,29 @@ class Flow(Animation):
         
         elif self.variation == 2:  # Smooth transition between colors?
             pass
-
+        
+        
+    '''def animate(self, beat:int, show_strip_request):
+        if beat % 2 == 1:
+            return
+        
+        starting_time = time_ns() // 1_000_000
+        colors = self.select_colors(beat)
+        step = max(1, (self.end_led - self.start_led+1)//60)
+        
+        for animation_stage in range(0, (self.end_led - self.start_led) * 2+1, step):
+            for index, color in enumerate(colors):
+                animation_ranges = self.select_range(animation_stage, index, colors)
+                
+                for range_set in animation_ranges:
+                    for j in range_set:
+                        self.set_pixel_color(j, color)
+                        
+            show_strip_request()
+            sleep_time = max(0, self.sleep_time-((time_ns() // 1_000_000 - starting_time) / 1_000))
+            if sleep_time > 0:
+                sleep(sleep_time/3)
+            starting_time = time_ns() // 1_000_000'''
         # print('whoooooohw de floooohw')
 
         # first_led = int((self.end_led - self.start_led) / 2)
