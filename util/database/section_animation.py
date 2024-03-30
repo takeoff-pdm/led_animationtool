@@ -25,12 +25,15 @@ def add_section_animations(section_id: int, scene_id: int = -1) -> bool:
     return True
 
 
-def add_section_animation(section_id: int, animation_id: int, scene_id: int = -1) -> bool:
-    if not Database.push_to_db('INSERT INTO section_animations VALUES(:scene_id, :section_id, :animation_id, 0, 0, 0)',
+def add_section_animation(section_id: int, animation_id: int, scene_id: int = -1, variation: int = 0, direction: int = 0, off_set: int = 0) -> bool:
+    if not Database.push_to_db('INSERT INTO section_animations VALUES(:scene_id, :section_id, :animation_id, :variation, :direction, :off_set)',
                                {
                                    'section_id': section_id,
                                    'animation_id': animation_id,
-                                   'scene_id': scene_id
+                                   'scene_id': scene_id,
+                                   'variation': variation,
+                                   'direction': direction,
+                                   'off_set': off_set
                                }):
         return False
 

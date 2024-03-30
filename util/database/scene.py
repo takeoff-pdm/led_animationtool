@@ -148,7 +148,7 @@ def load_scene(scene_id: int) -> bool:
         success = True
 
         for section_animation in workspace_section_animations:
-            remove_section_animation(section_animation['id'])
+            remove_section_animation(section_animation['section_id'], section_animation['animation_id'])
 
     section_animations = fetch_section_animations(scene_id)  # Fetch section animations with scene_id
 
@@ -166,64 +166,6 @@ def save_scene(scene_id: int) -> bool:
     """Saves all data from workspace to scene with id = scene_id
     """
     success = False
-
-    # Sections
-    # Remove all section from scene with id = scene_id
-    sections = fetch_sections(scene_id)
-
-    if sections != False:
-        success = True
-
-        for section in sections:
-            remove_section(section['id'])
-
-    # Add fetched sections to scene with id = scene_id
-    workspace_sections = fetch_sections(-1)  # Workspace is scene with id = -1
-
-    if workspace_sections != False:
-        success = True
-
-        for section in workspace_sections:
-            add_section(section['id'], section['name'], section['start_led'], section['end_led'])
-    
-    # Color Sequences
-    # Remove all color sequences from scene with id = scene_id
-    color_sequences = fetch_color_sequences(scene_id)
-
-    if color_sequences != False:
-        success = True
-
-        for color_sequence in color_sequences:
-            remove_color_sequence(color_sequence['id'])
-
-    # Add fetched color sequences to scene with id = scene_id
-    workspace_color_sequences = fetch_color_sequences(-1)
-
-    if workspace_color_sequences != False:
-        success = True
-
-        for color_sequence in workspace_color_sequences:
-            add_color_sequence(color_sequence['id'], color_sequence['name'], color_sequence['description'], 
-                                color_sequence['selection'], color_sequence['color_amount'])
-    
-    # Colors
-    # Remove all colors from scene with id = scene_id
-    colors = fetch_colors(scene_id)
-
-    if colors != False:
-        success = True
-
-        for color in colors:
-            remove_color(color['id'])
-
-    # Add fetched colors to scene with id = scene_id
-    workspace_colors = fetch_colors(-1)
-    
-    if workspace_colors != False:
-        success = True
-
-        for color in workspace_colors:
-            add_color(color['id'], color['color_sequence_id'], color['color'], color['position'])
     
     # Section Animations
     # Remove all section animations from scene with id = scene_id
@@ -233,16 +175,75 @@ def save_scene(scene_id: int) -> bool:
         success = True
 
         for section_animation in section_animations:
-            remove_section_animation(section_animation['id'])
+            remove_section_animation(section_animation['section_id'], section_animation['animation_id'], scene_id)
 
-    # Add fetched section animations to scene with id = scene_id
-    workspace_section_animations = fetch_section_animations(-1)
+    # Sections
+    # Remove all section from scene with id = scene_id
+    sections = fetch_sections(scene_id)
 
-    if workspace_section_animations != False:
+    if sections != False:
         success = True
 
-        for section_animation in workspace_section_animations:
-            add_section_animation(section_animation['id'], section_animation['section_id'], 
-                                    section_animation['color_sequence_id'], section_animation['animation_id'])
+        for section in sections:
+            remove_section(section['id'], scene_id)
+
+    # Add fetched sections to scene with id = scene_id
+    workspace_sections = fetch_sections(-1)  # Workspace is scene with id = -1
+
+    if workspace_sections != False:
+        success = True
+
+        for section in workspace_sections:
+            add_section(section['id'], section['name'], section['start_led'], section['end_led'], scene_id)
+            
+            # Add fetched section animations to scene with id = scene_id
+            workspace_section_animations = fetch_section_animations(section['id'], scene_id=-1)
+
+            if workspace_section_animations != False:
+                success = True
+
+                for section_animation in workspace_section_animations:
+                    add_section_animation(section_animation['section_id'], section_animation['animation_id'], scene_id, 
+                                          section_animation['variation'], section_animation['direction'], section_animation['off_set'])
+    
+    # Color Sequences
+    # Remove all color sequences from scene with id = scene_id
+    color_sequences = fetch_color_sequences(scene_id)
+
+    if color_sequences != False:
+        success = True
+
+        for color_sequence in color_sequences:
+            remove_color_sequence(color_sequence['id'], scene_id)
+
+    # Add fetched color sequences to scene with id = scene_id
+    workspace_color_sequences = fetch_color_sequences(-1)
+
+    if workspace_color_sequences != False:
+        success = True
+
+        for color_sequence in workspace_color_sequences:
+            add_color_sequence(color_sequence['id'], color_sequence['name'], color_sequence['description'], 
+                                color_sequence['selection'], color_sequence['color_amount'], scene_id)
+    
+    # Colors
+    # Remove all colors from scene with id = scene_id
+    colors = fetch_colors(scene_id)
+
+    if colors != False:
+        success = True
+
+        for color in colors:
+            remove_color(color['id'], scene_id)
+
+    # Add fetched colors to scene with id = scene_id
+    workspace_colors = fetch_colors(-1)
+    
+    if workspace_colors != False:
+        success = True
+
+        for color in workspace_colors:
+            add_color(color['id'], color['color_sequence_id'], color['red'], 
+                      color['green'], color['blue'], color['position'], scene_id)
 
     return success

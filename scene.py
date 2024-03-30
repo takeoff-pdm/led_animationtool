@@ -1,6 +1,6 @@
 from util.database.database import Database
 from util.database.scene import fetch_scene, add_scene, update_scene, load_scene, save_scene
-from util.database.scene_animation import fetch_scene_animations_from_scene
+from util.database.scene_animation import fetch_scene_animations_from_scene, remove_scene_animations, add_scene_animation
 
 
 class Scene:
@@ -46,7 +46,27 @@ class Scene:
 
         return self.scene_animations
 
-    def save(self) -> bool:
+    def save(self, running_animations: list) -> bool:
         """Save scene to database.
         """
-        return save_scene(self.id, self.scene_animations)
+        remove_scene_animations(self.id)
+        
+        for animation in running_animations:
+            # 'scene_id': scene_animation_data[0],
+            # 'animation_id': scene_animation_data[1],
+            # 'section_id': scene_animation_data[2],
+            # 'color_sequence_id': scene_animation_data[3]
+            if animation.color_sequence == None:
+                continue
+            
+            add_scene_animation(self.id, animation.id, animation.section_id, animation.color_sequence.id)
+            
+        if len(self.scene_animations) == 0:  # Fetch animations to run
+            scene_animations_data = fetch_scene_animations_from_scene(self.id)
+
+            if scene_animations_data:
+                self.scene_animations = scene_animations_data
+        
+        print(self.scene_animations)
+        
+        return save_scene(self.id)
