@@ -488,7 +488,7 @@ class Strip:
                 self.show_strip = False
                 self.strip.show()
             
-            sleep(1 / (self.frequency / self.led_count))
+            sleep(0.08)
 
     def show_strip_request(self):
         self.show_strip = True
@@ -531,7 +531,7 @@ class Strip:
     def save_scene(self, scene_id: int) -> bool:
         for scene in self.scenes:
             if scene.id == scene_id:
-                return scene.save()
+                return scene.save(self.running_animations)
         
         return False
     
@@ -551,6 +551,8 @@ class Strip:
                                                      section_id=animation_data['section_id']),
                                                      Section(id=animation_data['section_id']),
                                                      ColorSequence(id=animation_data['color_sequence_id']))
+                    
+                    print('Loaded animations')
 
                 self.active_scene = scene_id
                 
