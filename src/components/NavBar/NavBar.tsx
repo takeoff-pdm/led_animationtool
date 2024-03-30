@@ -76,6 +76,7 @@ const MobileNavbar: React.FC = () => {
       <div className="flex-1">
         {ITEMS_NAVBAR.map((item) => (
           <div
+            key={item.href}
             className={`${pathname.startsWith(item.href) ? "flex" : "hidden"}`}
           >
             <NavBarItem key={item.href} {...item} />
@@ -91,7 +92,7 @@ const MobileNavbar: React.FC = () => {
         <DropdownMenuContent className="w-56">
           <DropdownMenuGroup>
             {ITEMS_NAVBAR.map((item) => (
-              <Link href={item.href}>
+              <Link href={item.href} key={item.href}>
                 <DropdownMenuItem key={item.href}>
                   {item.display_name}
                 </DropdownMenuItem>
