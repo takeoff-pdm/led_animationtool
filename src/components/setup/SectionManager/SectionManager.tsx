@@ -35,14 +35,14 @@ export const SectionManager: React.FC = () => {
   const addSectionOnClick = async () => {
     let id = Math.trunc(Math.random() * 1000000);
     let newSection = {
-      id: id,
+      id: -1,  // Is never used by add/section!
       name: "Section " + id,
       isActive: false,
-      start_led: -1,
-      end_led: -1,
+      start_led: 0,
+      end_led: 0,
     };
 
-    const resp =await addSection(newSection);
+    const resp = await addSection(newSection);
     if (!resp.success) {
       toast("Failed to add section");
       return
