@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS scene_animations (
     animation_id INT(32) NOT NULL,
     section_id INT(32) NOT NULL,
     color_sequence_id INT(32) NOT NULL
-); 
+);
 
 CREATE TABLE IF NOT EXISTS section_animations (
     scene_id INT(32) NOT NULL,
