@@ -93,9 +93,9 @@ class Shooter(Animation):
                         if self.variation == 1:  # TODO: Get variation 1 to work --> looks exactly like variation 0, although it should fade out
                             fade_out_step = color.r // len(i) if color.r // len(i) != 0 else 1
 
-                            fade_out_r = list(reversed(range(0, color.r, fade_out_step)))
-                            fade_out_g = list(reversed(range(0, color.g, fade_out_step)))
-                            fade_out_b = list(reversed(range(0, color.b, fade_out_step)))
+                            fade_out_r = list(reversed(range(0, color.r + fade_out_step, fade_out_step)))
+                            fade_out_g = list(reversed(range(0, color.g + fade_out_step, fade_out_step)))
+                            fade_out_b = list(reversed(range(0, color.b + fade_out_step, fade_out_step)))
                             
                         for position, j in enumerate(i):
                             if j not in strip_section:
