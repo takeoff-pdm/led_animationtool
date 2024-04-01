@@ -11,7 +11,7 @@ class MonoColor(Animation):
         animation_range = []
 
         match self.direction:
-            case 0:
+            case 0:  # Normal
                 animation_range.append(range(int(self.start_led + 1 / len(colors)
                                                  * (self.end_led - self.start_led)
                                                  * index),
@@ -20,7 +20,7 @@ class MonoColor(Animation):
                                                  * (self.end_led - self.start_led)
                                                  * (len(colors) - index - 1))))
 
-            case 1:
+            case 1:  # Reverse
                 animation_range.append(range(int(self.start_led + 1 / len(colors)
                                                  * (self.end_led - self.start_led)
                                                  * (len(colors) - index - 1)),
@@ -73,7 +73,7 @@ class MonoColor(Animation):
 
     def animate(self, beat: int, show_strip_request, reverse: bool = False):
         match self.direction:
-            case 4:
+            case 4:  # Normal and reverse
                 self.direction = 0
 
                 match (beat % 2):
@@ -87,7 +87,7 @@ class MonoColor(Animation):
 
                 return
 
-            case 5:
+            case 5:  # 2x Normal and 2x reverse
                 self.direction = 0
 
                 match (beat % 4):
@@ -107,7 +107,7 @@ class MonoColor(Animation):
 
                 return
 
-            case 6:
+            case 6:  # 4x Normal and 4x reverse
                 self.direction = 0
 
                 match (beat % 8):
@@ -139,7 +139,7 @@ class MonoColor(Animation):
 
                 return
 
-            case 7:
+            case 7:  # 8x Normal and 8x reverse
                 self.direction = 0
 
                 match (beat):
@@ -194,7 +194,7 @@ class MonoColor(Animation):
                 self.direction = 7
 
                 return
-        
+
         # Split strip up into slices for the different sections
         colors = self.select_colors(beat)
 
@@ -217,19 +217,22 @@ class MonoColor(Animation):
 
             if reverse == True:
                 next_colors = self.select_colors(beat - 1 if beat > 0 else 15)
-            
+
             red_transitions = []
             green_transitions = []
             blue_transitions = []
-            
+
             for color, next_color in zip(colors, next_colors):
                 red_transitions.append(self.color_transition(color.r, next_color.r))
                 green_transitions.append(self.color_transition(color.g, next_color.g))
                 blue_transitions.append(self.color_transition(color.b, next_color.b))
-            
+
             step = 2 if (self.end_led - self.start_led) + 1 > 120 \
-                   else 3 if (self.end_led - self.start_led) + 1 > 240 \
-                   else 4 if (self.end_led - self.start_led) + 1 > 480 else 1  # Avoid having too slow code by skipping some pixels
+                else 3 if (self.end_led - self.start_led) + 1 > 240 \
+                else 4 if (self.end_led - self.start_led) + 1 > 360 \
+                else 5 if (self.end_led - self.start_led) + 1 > 480 \
+                else 6 if (self.end_led - self.start_led) + 1 > 600 \
+                else 1  # Avoid having too slow code by skipping some pixels
 
             # The number of transitions until next color is reached 
             # (Wait half the time to still show this color)
@@ -242,7 +245,7 @@ class MonoColor(Animation):
                 if x > ANIMATION_STEPS:  # Transition to next color, when half the time has passed
                     for index, (red_transition, green_transition, blue_transition) \
                             in enumerate(zip(red_transitions, green_transitions, blue_transitions)):
-                        
+
                         red = red_transition[x - ANIMATION_STEPS] \
                             if len(red_transition) > x - ANIMATION_STEPS \
                             else red_transition[len(red_transition) - 1] \
@@ -270,9 +273,9 @@ class MonoColor(Animation):
                     show_strip_request()
 
                 sleep_time = self.sleep_time / (ANIMATION_STEPS * 2) * step \
-                    - ((time_ns() // 1_000_000 - starting_time) / 1_000)
+                             - ((time_ns() // 1_000_000 - starting_time) / 1_000)
 
                 if sleep_time > 0:
                     sleep(sleep_time)
-                
+
                 starting_time = time_ns() // 1_000_000
