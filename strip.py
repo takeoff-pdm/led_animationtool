@@ -25,6 +25,9 @@ from animations.animation import Animation
 from animations.flow import Flow
 from animations.shooter import Shooter
 from animations.strobe import Strobe
+from animations.squeeze import Squeeze
+
+
 # Add more...
 
 
@@ -55,14 +58,14 @@ class Strip:
                                                       color_sequence_data['description'],
                                                       color_sequence_data['selection'],
                                                       color_sequence_data['color_amount']))
-        
+
         # Initialize scenes
         self.scenes = []
         scenes_data = fetch_scenes()
 
         for scene_data in scenes_data:
             self.scenes.append(Scene(scene_data['id'], scene_data['name'], scene_data['description']))
-        
+
         self.active_scene: int = -1
 
         self.running_animations = []
@@ -76,7 +79,7 @@ class Strip:
 
         self.stop = False  # Add variable to kill animation thread
         self.animating = None
-        
+
         self.show_strip = False
 
     @staticmethod
@@ -101,7 +104,7 @@ class Strip:
 
         for animation in self.running_animations:
             animation.strip = self.strip
-    
+
     def restart_strip(self):
         # Stop all running animations
         self.stop = True
@@ -115,7 +118,7 @@ class Strip:
 
         # Restart all animations
         self.stop = False
-        self.animating = Thread(target=self.animate, args=(lambda : self.stop,))
+        self.animating = Thread(target=self.animate, args=(lambda: self.stop,))
         self.animating.start()
 
     def create_animations(self):
@@ -159,7 +162,7 @@ class Strip:
 
         self.brightness = brightness / 100
         self.update_config('brightness', self.brightness)
-        
+
         # Update brightness in every running animation
         for animation in self.running_animations:
             animation.brightness = self.brightness
@@ -195,11 +198,6 @@ class Strip:
 
         if not section.sync_changes_to_db(new=True):
             return False
-
-        # Duplicate
-        # for animation in ANIMATION_DATA:
-        #     Database.push_to_db('INSERT INTO section_animations VALUES(:section_id, :animation_id)',
-        #                         {'section_id': section.id, 'animation_id': animation['id']})
 
         self.sections.append(section)
 
@@ -277,7 +275,7 @@ class Strip:
                 animation.color_sequence.description = description
                 animation.color_sequence.selection = selection
                 animation.color_sequence.color_amount = color_amount
-            
+
         for color_sequence in self.color_sequences:
             if color_sequence.id == id:
                 color_sequence.name = name
@@ -311,7 +309,9 @@ class Strip:
                     if color_in_list.id == color.id:
                         color_sequence.color_list.remove(color_in_list)
 
-                # TODO: Update positions of colors in sequence
+                    elif color_in_list.position > color.position:  # Rearrange color positions
+                        color_in_list.position -= 1
+                        color_in_list.sync_changes_to_db()
 
                 for animation in self.running_animations:
                     if animation.color_sequence.id == color_sequence.id:
@@ -378,7 +378,7 @@ class Strip:
     def animate(self, stop):
         try:
             Thread(target=self.show_strip_handler, args=(stop,)).start()
-            
+
             while stop() == False:
                 starting_time = time_ns() // 1_000_000
 
@@ -396,7 +396,8 @@ class Strip:
                             animation.brightness = self.brightness
 
                 for animation in self.running_animations:
-                    Thread(target=animation.animate, args=(self.beat + animation.offset, self.show_strip_request)).start()
+                    Thread(target=animation.animate,
+                           args=(self.beat + animation.offset, self.show_strip_request)).start()
 
                 if self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000) > 0:
                     sleep(self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000))
@@ -468,26 +469,29 @@ class Strip:
 
             elif animation_id == 2:
                 self.add_animation(Shooter(id=2, section_id=section.id), section, color_sequence)
-            
+
             elif animation_id == 3:
-                self.add_animation(Strobe(id=2, section_id=section.id), section, color_sequence)
+                self.add_animation(Strobe(id=3, section_id=section.id), section, color_sequence)
+
+            elif animation_id == 4:
+                self.add_animation(Squeeze(id=4, section_id=section.id), section, color_sequence)
 
             # Add more ...
         else:
             self.add_animation(animation, section, color_sequence)
 
         if self.animating == None:
-            self.animating = Thread(target=self.animate, args=(lambda : self.stop,))
+            self.animating = Thread(target=self.animate, args=(lambda: self.stop,))
             self.animating.start()
 
         return True
-    
+
     def show_strip_handler(self, stop):
         while stop() == False:
             if self.show_strip == True:
                 self.show_strip = False
                 self.strip.show()
-            
+
             sleep(0.08)
 
     def show_strip_request(self):
@@ -503,38 +507,38 @@ class Strip:
         self.scenes.append(scene)
 
         return True
-    
+
     def remove_scene(self, scene_id: int) -> bool:
         for scene in self.scenes:
             if scene.id == scene_id:
                 if not remove_scene(scene_id):
                     return False
-                
+
                 remove_scene_animations(scene_id)
-                
+
                 self.scenes.remove(scene)
-                
+
                 return True
-        
+
         return False
-    
+
     def update_scene(self, id: int, name: str, description: str) -> bool:
         for scene in self.scenes:
             if scene.id == id:
                 scene.name = name
                 scene.description = description
-                
+
                 return scene.sync_changes_to_db()
-        
+
         return False
 
     def save_scene(self, scene_id: int) -> bool:
         for scene in self.scenes:
             if scene.id == scene_id:
                 return scene.save(self.running_animations)
-        
+
         return False
-    
+
     def load_scene(self, scene_id: int) -> bool:
         # Stop all running animations
         self.stop = True
@@ -547,15 +551,15 @@ class Strip:
 
                 if animations_data_to_run:
                     for animation_data in animations_data_to_run:
-                        self.add_animation(Animation(id=animation_data['animation_id'], 
+                        self.add_animation(Animation(id=animation_data['animation_id'],
                                                      section_id=animation_data['section_id']),
-                                                     Section(id=animation_data['section_id']),
-                                                     ColorSequence(id=animation_data['color_sequence_id']))
-                    
+                                           Section(id=animation_data['section_id']),
+                                           ColorSequence(id=animation_data['color_sequence_id']))
+
                     print('Loaded animations')
 
                 self.active_scene = scene_id
-                
+
                 return True
-        
+
         return False
