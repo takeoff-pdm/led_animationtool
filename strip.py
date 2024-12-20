@@ -227,13 +227,15 @@ class Strip:
         for section in self.sections:
             if section.id == id:
                 section.name = name
-                section.start_led = start_led
-                section.end_led = end_led
+                
+                if section.start_led != start_led or section.end_led != end_led:
+                    section.start_led = start_led
+                    section.end_led = end_led
 
-                # Check if any animation is running on the section
-                for animation in self.running_animations:
-                    if animation.section_id == section.id:
-                        animation.color_wipe(0)
+                    # Check if any animation is running on the section
+                    for animation in self.running_animations:
+                        if animation.section_id == section.id:
+                            animation.color_wipe(0)
 
                         animation.start_led = start_led
                         animation.end_led = end_led
@@ -540,23 +542,17 @@ class Strip:
         return False
 
     def load_scene(self, scene_id: int) -> bool:
-        # Stop all running animations
-        self.stop = True
-        sleep(self.sleep_time * 1.1)  # Wait for all animations to stop
-        self.stop = False
-
         for scene in self.scenes:
             if scene.id == scene_id:
                 animations_data_to_run = scene.load()  # Load scene into workspace
 
+                self.running_animations = []  # Stop all running animations
+
                 if animations_data_to_run:
                     for animation_data in animations_data_to_run:
-                        self.add_animation(Animation(id=animation_data['animation_id'],
-                                                     section_id=animation_data['section_id']),
-                                           Section(id=animation_data['section_id']),
-                                           ColorSequence(id=animation_data['color_sequence_id']))
-
-                    print('Loaded animations')
+                        self.start_animate(color_sequence_id=animation_data['color_sequence_id'],
+                                           animation_id=animation_data['animation_id'],
+                                           section_id=animation_data['section_id'])
 
                 self.active_scene = scene_id
 

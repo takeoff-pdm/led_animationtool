@@ -138,7 +138,8 @@ def load_scene(scene_id: int) -> bool:
         success = True
 
         for color in colors:
-            add_color(color['id'], color['color_sequence_id'], color['color'], color['position'])
+            add_color(color['id'], color['color_sequence_id'], color['red'], color['green'], 
+                      color['blue'], color['position'])
 
     # Section Animations
     # Remove all section animations from scene with id = -1
@@ -204,7 +205,7 @@ def save_scene(scene_id: int) -> bool:
 
                 for section_animation in workspace_section_animations:
                     add_section_animation(section_animation['section_id'], section_animation['animation_id'], scene_id, 
-                                          section_animation['variation'], section_animation['direction'], section_animation['off_set'])
+                                          section_animation['variation'], section_animation['direction'], section_animation['offset'])
     
     # Color Sequences
     # Remove all color sequences from scene with id = scene_id

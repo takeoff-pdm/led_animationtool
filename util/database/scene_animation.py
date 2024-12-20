@@ -80,7 +80,7 @@ def fetch_scene_animations() -> list:
 
 
 def fetch_scene_animations_from_scene(scene_id: int) -> dict:
-    scene_animations_data = Database.fetchone_from_db('SELECT scene_id, animation_id, section_id, color_sequence_id \
+    scene_animations_data = Database.fetchall_from_db('SELECT scene_id, animation_id, section_id, color_sequence_id \
                                                        FROM scene_animations WHERE scene_id = :scene_id',
                                                       {'scene_id': scene_id})
 
