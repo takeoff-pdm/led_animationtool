@@ -222,6 +222,9 @@ async def load_scene(id: Id):
 async def save_scene(id: Id):
     return JSONResponse(content={'success': strip.save_scene(id.id)})
 
+# Music Detection
+# TODO: Api calls for setup and activation
+
 
 # Settings
 @app.get('/api/get/settings')
@@ -245,6 +248,8 @@ async def update_led_count(led_count: Value):
 @app.post('/api/update/bpm')
 async def update_bpm(bpm: Value):
     return JSONResponse(content={'success': strip.set_bpm(bpm.value)})
+
+# TODO: Set IP of music detection sys
 
 
 def main():
