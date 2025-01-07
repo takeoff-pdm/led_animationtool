@@ -54,11 +54,10 @@ class Flow(Animation):
 
         return animation_range
 
-    def animate(self, beat: int, show_strip_request):
+    def animate(self, beat: int, step: int):
         if beat % 2 == 1:  # Start animation at every second beat
             return
-
-        starting_time = time_ns() // 1_000_000
+        
         colors = self.select_colors(beat)
 
         if self.variation == 0 or self.variation == 1:
@@ -87,28 +86,26 @@ class Flow(Animation):
 
                             self.set_pixel_color(j, color)
 
-                show_strip_request()
+                # if self.variation == 0:  # Consistent flow speed
+                #     sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
+                #                  - ((time_ns() // 1_000_000 - starting_time) / 1_000)
 
-                if self.variation == 0:  # Consistent flow speed
-                    sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
-                                 - ((time_ns() // 1_000_000 - starting_time) / 1_000)
+                # elif self.variation == 1:  # Slowing down until middle, then speeding up again  # TODO: Fix the animation (looks awful at the moment)
+                #     if animation_stage < (self.end_led - self.start_led):
+                #         speed_variance = ((self.end_led - self.start_led) - animation_stage) \
+                #                          / ((self.end_led - self.start_led) * 2)
 
-                elif self.variation == 1:  # Slowing down until middle, then speeding up again  # TODO: Fix the animation (looks awful at the moment)
-                    if animation_stage < (self.end_led - self.start_led):
-                        speed_variance = ((self.end_led - self.start_led) - animation_stage) \
-                                         / ((self.end_led - self.start_led) * 2)
+                #     else:
+                #         speed_variance = (animation_stage - (self.end_led - self.start_led)) \
+                #                          / ((self.end_led - self.start_led) * 2)
 
-                    else:
-                        speed_variance = (animation_stage - (self.end_led - self.start_led)) \
-                                         / ((self.end_led - self.start_led) * 2)
-
-                    sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
-                                 * speed_variance \
-                                 - ((time_ns() // 1_000_000 - starting_time) / 1_000)
+                #     sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \
+                #                  * speed_variance \
+                #                  - ((time_ns() // 1_000_000 - starting_time) / 1_000)
 
                 # * (1.5 if animation_stage > ((self.end_led - self.start_led) * 2 + 1) / 2 else .75) \ # After '* step'
 
-                if sleep_time > 0:
-                    sleep(sleep_time)
+                # if sleep_time > 0:
+                #     sleep(sleep_time)
 
-                starting_time = time_ns() // 1_000_000
+                # starting_time = time_ns() // 1_000_000

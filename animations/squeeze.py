@@ -71,7 +71,7 @@ class Squeeze(Animation):
 
         return animation_range
 
-    def animate(self, beat: int, show_strip_request):
+    def animate(self, beat: int, step: int):
         starting_time = time_ns() // 1_000_000
 
         match self.direction:
@@ -80,7 +80,7 @@ class Squeeze(Animation):
 
                 match (beat % 2):
                     case 0:
-                        self.animate(1, show_strip_request)
+                        self.animate(1)
 
                     case 1:
                         self.animate(0)
@@ -94,16 +94,16 @@ class Squeeze(Animation):
 
                 match (beat % 4):
                     case 0:
-                        self.animate(1, show_strip_request)
+                        self.animate(1)
 
                     case 1:
-                        self.animate(2, show_strip_request)
+                        self.animate(2)
 
                     case 2:
-                        self.animate(1, show_strip_request)
+                        self.animate(1)
 
                     case 3:
-                        self.animate(0, show_strip_request)
+                        self.animate(0)
 
                 self.direction = 5
 
@@ -114,28 +114,28 @@ class Squeeze(Animation):
 
                 match (beat % 8):
                     case 0:
-                        self.animate(1, show_strip_request)
+                        self.animate(1)
 
                     case 1:
-                        self.animate(2, show_strip_request)
+                        self.animate(2)
 
                     case 2:
-                        self.animate(3, show_strip_request)
+                        self.animate(3)
 
                     case 3:
-                        self.animate(4, show_strip_request)
+                        self.animate(4)
 
                     case 4:
-                        self.animate(3, show_strip_request)
+                        self.animate(3)
 
                     case 5:
-                        self.animate(2, show_strip_request)
+                        self.animate(2)
 
                     case 6:
-                        self.animate(1, show_strip_request)
+                        self.animate(1)
 
                     case 7:
-                        self.animate(0, show_strip_request)
+                        self.animate(0)
 
                 self.direction = 6
 
@@ -146,52 +146,52 @@ class Squeeze(Animation):
 
                 match (beat):
                     case 0:
-                        self.animate(1, show_strip_request)
+                        self.animate(1)
 
                     case 1:
-                        self.animate(2, show_strip_request)
+                        self.animate(2)
 
                     case 2:
-                        self.animate(3, show_strip_request)
+                        self.animate(3)
 
                     case 3:
-                        self.animate(4, show_strip_request)
+                        self.animate(4)
 
                     case 4:
-                        self.animate(5, show_strip_request)
+                        self.animate(5)
 
                     case 5:
-                        self.animate(6, show_strip_request)
+                        self.animate(6)
 
                     case 6:
-                        self.animate(7, show_strip_request)
+                        self.animate(7)
 
                     case 7:
-                        self.animate(8, show_strip_request)
+                        self.animate(8)
 
                     case 8:
-                        self.animate(7, show_strip_request)
+                        self.animate(7)
 
                     case 9:
-                        self.animate(6, show_strip_request)
+                        self.animate(6)
 
                     case 10:
-                        self.animate(5, show_strip_request)
+                        self.animate(5)
 
                     case 11:
-                        self.animate(4, show_strip_request)
+                        self.animate(4)
 
                     case 12:
-                        self.animate(3, show_strip_request)
+                        self.animate(3)
 
                     case 13:
-                        self.animate(2, show_strip_request)
+                        self.animate(2)
 
                     case 14:
-                        self.animate(1, show_strip_request)
+                        self.animate(1)
 
                     case 15:
-                        self.animate(0, show_strip_request)
+                        self.animate(0)
 
                 self.direction = 7
 
@@ -211,74 +211,71 @@ class Squeeze(Animation):
                     for j in i:
                         self.set_pixel_color(j, color)
 
-            show_strip_request()
+            # step = 2 if (self.end_led - self.start_led) + 1 > 120 \
+            #     else 3 if (self.end_led - self.start_led) + 1 > 240 \
+            #     else 4 if (self.end_led - self.start_led) + 1 > 360 \
+            #     else 5 if (self.end_led - self.start_led) + 1 > 480 \
+            #     else 6 if (self.end_led - self.start_led) + 1 > 600 \
+            #     else 1  # Avoid having too slow code by skipping some pixels
 
-            step = 2 if (self.end_led - self.start_led) + 1 > 120 \
-                else 3 if (self.end_led - self.start_led) + 1 > 240 \
-                else 4 if (self.end_led - self.start_led) + 1 > 360 \
-                else 5 if (self.end_led - self.start_led) + 1 > 480 \
-                else 6 if (self.end_led - self.start_led) + 1 > 600 \
-                else 1  # Avoid having too slow code by skipping some pixels
+            # sleep_time = self.sleep_time / ANIMATION_STEPS \
+            #              - ((time_ns() // 1_000_000 - starting_time) / 1_000)
 
-            sleep_time = self.sleep_time / ANIMATION_STEPS * step \
-                         - ((time_ns() // 1_000_000 - starting_time) / 1_000)
+            # if sleep_time > 0:
+            #     sleep(sleep_time)
 
-            if sleep_time > 0:
-                sleep(sleep_time)
-
-            starting_time = time_ns() // 1_000_000
+            # starting_time = time_ns() // 1_000_000
 
             reduce_per_step = (self.end_led - self.start_led) / ANIMATION_STEPS
             original_start_led = self.start_led
             original_end_led = self.end_led
 
-            for x in range(1, ANIMATION_STEPS, step):
-                match self.direction:
-                    case 0:  # Normal -> Only reduce the end_led
-                        self.end_led = int(original_end_led - reduce_per_step * x)
+            match self.direction:
+                case 0:  # Normal -> Only reduce the end_led
+                    self.end_led = int(original_end_led - reduce_per_step * step)
 
-                    case 1:  # Reverse -> Only reduce the start_led
-                        self.start_led = int(original_start_led + reduce_per_step * x)
+                case 1:  # Reverse -> Only reduce the start_led
+                    self.start_led = int(original_start_led + reduce_per_step * step)
 
-                    case 2:  # Inner to outer -> Reduce both start_led and end_led
-                        self.start_led = int(original_start_led + reduce_per_step * x)
-                        self.end_led = int(original_end_led - reduce_per_step * x)
+                case 2:  # Inner to outer -> Reduce both start_led and end_led
+                    self.start_led = int(original_start_led + reduce_per_step * step)
+                    self.end_led = int(original_end_led - reduce_per_step * step)
 
-                    case 3:  # ? Reduce from middle
-                        pass
+                case 3:  # ? Reduce from middle
+                    pass
 
-                # Set the colors
-                for index, color in enumerate(colors):
-                    animation_range = self.select_range(index, colors)
+            # Set the colors
+            for index, color in enumerate(colors):
+                animation_range = self.select_range(index, colors)
 
-                    if len(animation_range) == 0:
-                        break
+                if len(animation_range) == 0:
+                    break
 
-                    for i in animation_range:
-                        for j in i:
-                            self.set_pixel_color(j, color)
+                for i in animation_range:
+                    for j in i:
+                        self.set_pixel_color(j, color)
 
-                # Remove old colors
-                if self.direction != 3:
-                    if self.direction != 0:
-                        for i in range(original_start_led, self.start_led):
-                            self.set_pixel_color(i, StripColor(0, 0, 0))
+            # Remove old colors
+            if self.direction != 3:
+                if self.direction != 0:
+                    for i in range(original_start_led, self.start_led):
+                        self.set_pixel_color(i, StripColor(0, 0, 0))
 
-                    if self.direction != 1:
-                        for i in range(self.end_led + 1, original_end_led + 1):
-                            self.set_pixel_color(i, StripColor(0, 0, 0))
+                if self.direction != 1:
+                    for i in range(self.end_led + 1, original_end_led + 1):
+                        self.set_pixel_color(i, StripColor(0, 0, 0))
 
-                if x + step >= ANIMATION_STEPS:
-                    self.start_led = original_start_led
-                    self.end_led = original_end_led
+            if step >= ANIMATION_STEPS:
+                self.start_led = original_start_led
+                self.end_led = original_end_led
 
-                sleep_time = self.sleep_time / ANIMATION_STEPS * step \
-                             - ((time_ns() // 1_000_000 - starting_time) / 1_000)
+            # sleep_time = self.sleep_time / ANIMATION_STEPS * step \
+            #                 - ((time_ns() // 1_000_000 - starting_time) / 1_000)
 
-                if sleep_time > 0:
-                    sleep(sleep_time)
+            # if sleep_time > 0:
+            #     sleep(sleep_time)
 
-                starting_time = time_ns() // 1_000_000
+            # starting_time = time_ns() // 1_000_000
 
         elif self.variation == 1:  # Do not squeeze, but just blackout more and more
             pass  # TODO: Add this when first variation is tested!

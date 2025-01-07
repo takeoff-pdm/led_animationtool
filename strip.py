@@ -3,7 +3,7 @@ from time import time_ns, sleep
 from rpi_ws281x import Adafruit_NeoPixel
 from threading import Thread
 
-from __init__ import CONFIG_FILE, ANIMATION_DATA
+from __init__ import CONFIG_FILE, ANIMATION_DATA, ANIMATION_STEPS
 
 from util.database.database import Database
 from util.database.section import fetch_sections, fetch_section, remove_section
@@ -14,6 +14,7 @@ from util.database.scene import fetch_scenes, remove_scene
 from util.database.scene_animation import remove_scene_animations
 
 from util.api.models import Color as ApiColor
+from util.udp.udp import UDP
 
 from section import Section
 from color_sequence import ColorSequence
@@ -26,8 +27,6 @@ from animations.flow import Flow
 from animations.shooter import Shooter
 from animations.strobe import Strobe
 from animations.squeeze import Squeeze
-
-
 # Add more...
 
 
@@ -40,6 +39,7 @@ class Strip:
         self.frequency = config['frequency']  # LED signal frequency in hertz (usually 800khz)
 
         self.bpm = config['bpm']  # Animation speed (Beats per minute)
+        self.step = 0
 
         # Initialize sections
         self.sections = []
@@ -70,6 +70,8 @@ class Strip:
 
         self.running_animations = []
         self.beat = 0
+
+        self.udp_server = UDP('0.0.0.0', 5005)
 
         self.init_animations()
 
@@ -380,6 +382,7 @@ class Strip:
     def animate(self, stop):
         try:
             Thread(target=self.show_strip_handler, args=(stop,)).start()
+            Thread(target=self.udp_server.receive, args=(stop,)).start()
 
             while stop() == False:
                 starting_time = time_ns() // 1_000_000
@@ -399,17 +402,33 @@ class Strip:
 
                 for animation in self.running_animations:
                     Thread(target=animation.animate,
-                           args=(self.beat + animation.offset, self.show_strip_request)).start()
+                           args=(self.beat + animation.offset, self.step)).start()
+                    
+                self.show_strip_request()
 
-                if self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000) > 0:
-                    sleep(self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000))
+                if self.udp_server.data_received:
+                    self.udp_server.data_received = False
+
+                    print(self.udp_server.data)
+                    # TODO: Implement UDP data handling
+                    # 1st Byte: BPM; 2nd Byte: Color Sequence To Select
+
+                sleep_time_adjusted = self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000)
+
+                if sleep_time_adjusted > 0:
+                    sleep(sleep_time_adjusted / 100)
 
                 else:
                     print('Code too slow!')
 
-                self.beat += 1
-                if self.beat == 16:
-                    self.beat = 0
+                self.step += 1
+
+                if self.step % ANIMATION_STEPS == 0:
+                    self.beat += 1
+                    if self.beat == 16:
+                        self.beat = 0
+
+                    self.step = 0
 
         except:
             self.color_wipe(0)

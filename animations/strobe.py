@@ -5,54 +5,58 @@ from animations.animation import Animation
 
 
 class Strobe(Animation):
-    def animate(self, beat: int, show_strip_request):
-        starting_time = time_ns() // 1_000_000
-        print('Flacka flacka flacka')
+    def animate(self, beat: int, step: int):
+        # NEEDS COMPLETE RENEWAL!!!!
+        # (Reformat old code by using step to determine the current state of the animation)
+        pass
 
-        # Select colors and therefore the amount of blinks
-        colors = self.select_colors(beat)
+        # starting_time = time_ns() // 1_000_000
+        # print('Flacka flacka flacka')
 
-        animation_range = range(self.start_led, self.end_led + 1)
+        # # Select colors and therefore the amount of blinks
+        # colors = self.select_colors(beat)
 
-        if self.variation == 0:  # Do all the blinking shortly after each other
-            for color in colors:
-                for i in animation_range:
-                    self.set_pixel_color(i, color)
+        # animation_range = range(self.start_led, self.end_led + 1)
 
-                show_strip_request()
+        # if self.variation == 0:  # Do all the blinking shortly after each other
+        #     for color in colors:
+        #         for i in animation_range:
+        #             self.set_pixel_color(i, color)
 
-                sleep(self.sleep_time * (0.2 / len(colors))
-                      - (time_ns() // 1_000_000 - starting_time) / 1_000)  # Wait until blink shuts off
+        #         show_strip_request()
 
-                starting_time = time_ns() // 1_000_000
+        #         sleep(self.sleep_time * (0.2 / len(colors))
+        #               - (time_ns() // 1_000_000 - starting_time) / 1_000)  # Wait until blink shuts off
 
-                for i in animation_range:
-                    self.set_pixel_color(i, StripColor(0, 0, 0))
+        #         starting_time = time_ns() // 1_000_000
 
-                show_strip_request()
+        #         for i in animation_range:
+        #             self.set_pixel_color(i, StripColor(0, 0, 0))
 
-                sleep(self.sleep_time * (0.3 / len(colors))
-                      - (time_ns() // 1_000_000 - starting_time) / 1_000)  # Wait until it's time to blink again
+        #         show_strip_request()
 
-        elif self.variation == 1:  # Do all the blinking equally distributed
-            for color in colors:
-                for i in animation_range:
-                    self.set_pixel_color(i, color)
+        #         sleep(self.sleep_time * (0.3 / len(colors))
+        #               - (time_ns() // 1_000_000 - starting_time) / 1_000)  # Wait until it's time to blink again
 
-                show_strip_request()
+        # elif self.variation == 1:  # Do all the blinking equally distributed
+        #     for color in colors:
+        #         for i in animation_range:
+        #             self.set_pixel_color(i, color)
 
-                sleep(self.sleep_time / len(colors) * (1/3)
-                      - (time_ns() // 1_000_000 - starting_time) / 1_000)
+        #         show_strip_request()
 
-                starting_time = time_ns() // 1_000_000
+        #         sleep(self.sleep_time / len(colors) * (1/3)
+        #               - (time_ns() // 1_000_000 - starting_time) / 1_000)
 
-                for i in animation_range:
-                    self.set_pixel_color(i, StripColor(0, 0, 0))
+        #         starting_time = time_ns() // 1_000_000
 
-                show_strip_request()
+        #         for i in animation_range:
+        #             self.set_pixel_color(i, StripColor(0, 0, 0))
 
-                sleep(self.sleep_time / len(colors) * (2/3)
-                      - (time_ns() // 1_000_000 - starting_time) / 1_000)
+        #         show_strip_request()
+
+        #         sleep(self.sleep_time / len(colors) * (2/3)
+        #               - (time_ns() // 1_000_000 - starting_time) / 1_000)
 
         # color = Color(255, 255, 255)
         # speed = 4
