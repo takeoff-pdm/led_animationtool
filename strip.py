@@ -383,10 +383,9 @@ class Strip:
         try:
             Thread(target=self.show_strip_handler, args=(stop,)).start()
             Thread(target=self.udp_server.receive, args=(stop,)).start()
+            starting_time = time_ns() // 1_000_000
 
             while stop() == False:
-                starting_time = time_ns() // 1_000_000
-
                 if len(self.running_animations) > 0:
                     # Check if bpm of animations is off
                     if self.running_animations[0].bpm != self.bpm:
@@ -403,13 +402,11 @@ class Strip:
                 for animation in self.running_animations:
                     Thread(target=animation.animate,
                            args=(self.beat + animation.offset, self.step)).start()
-                    
-                self.show_strip_request()
 
                 if self.udp_server.data_received:
                     self.udp_server.data_received = False
 
-                    print(self.udp_server.data)
+                    print(f"Server echoed: {self.udp_server.data.decode()}")
                     # TODO: Implement UDP data handling
                     # 1st Byte: BPM; 2nd Byte: Color Sequence To Select
 
@@ -420,6 +417,10 @@ class Strip:
 
                 else:
                     print('Code too slow!')
+                
+                starting_time = time_ns() // 1_000_000
+
+                self.show_strip_request()
 
                 self.step += 1
 
