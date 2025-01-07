@@ -161,5 +161,5 @@ class Animation:
 
     #     self.sync_changes_to_db()
 
-    def animate(self, beat: int, show_strip_request):
+    def animate(self, beat: int, step: int):
         pass
