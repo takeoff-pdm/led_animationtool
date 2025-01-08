@@ -67,6 +67,4 @@ class Scene:
             if scene_animations_data:
                 self.scene_animations = scene_animations_data
         
-        print(self.scene_animations)
-        
         return save_scene(self.id)
