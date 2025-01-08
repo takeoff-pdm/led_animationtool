@@ -54,3 +54,10 @@ CREATE TABLE IF NOT EXISTS animations (
     name VARCHAR(32) NOT NULL,
     description VARCHAR(128) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS frequency_color (
+    scene_id INT(32) NOT NULL,
+    color_sequence_id_1 INT(32) NOT NULL,
+    color_sequence_id_2 INT(32) NOT NULL,
+    color_sequence_id_3 INT(32) NOT NULL,
+);

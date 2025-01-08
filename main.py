@@ -222,8 +222,11 @@ async def load_scene(id: Id):
 async def save_scene(id: Id):
     return JSONResponse(content={'success': strip.save_scene(id.id)})
 
+
 # Music Detection
-# TODO: Api calls for setup and activation
+@app.get('/api/get/frequency-color-sequences')
+async def get_frequency_color_sequences():
+    return JSONResponse(content={'color_sequences': strip.frequency_color_sequences})
 
 
 # Settings
@@ -248,9 +251,6 @@ async def update_led_count(led_count: Value):
 @app.post('/api/update/bpm')
 async def update_bpm(bpm: Value):
     return JSONResponse(content={'success': strip.set_bpm(bpm.value)})
-
-# TODO: Set IP of music detection sys
-
 
 def main():
     run_api("main:app", host='0.0.0.0', port=8000, log_level="info")

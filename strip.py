@@ -18,6 +18,7 @@ from util.udp.udp import UDP
 
 from section import Section
 from color_sequence import ColorSequence
+from frequency_colors import FrequencyColors
 from color import Color
 from scene import Scene
 
@@ -58,6 +59,9 @@ class Strip:
                                                       color_sequence_data['description'],
                                                       color_sequence_data['selection'],
                                                       color_sequence_data['color_amount']))
+            
+        # Initialze freqency color sequences
+        self.frequency_colors = FrequencyColors(-1)
 
         # Initialize scenes
         self.scenes = []
@@ -493,7 +497,7 @@ class Strip:
                 self.add_animation(Shooter(id=2, section_id=section.id), section, color_sequence)
 
             elif animation_id == 3:
-                self.add_animation(Strobe(id=3, section_id=section.id), section, color_sequence)
+                self.add_animation(Squeeze(id=3, section_id=section.id), section, color_sequence)
 
             elif animation_id == 4:
                 self.add_animation(Squeeze(id=4, section_id=section.id), section, color_sequence)
@@ -579,3 +583,10 @@ class Strip:
                 return True
 
         return False
+
+    def get_frequency_color_sequences(self):
+        return {
+            'color_sequence_id_1': self.frequency_colors.color_sequence_id_1,
+            'color_sequence_id_2': self.frequency_colors.color_sequence_id_2,
+            'color_sequence_id_3': self.frequency_colors.color_sequence_id_3
+        }
