@@ -17,7 +17,6 @@ import {
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
@@ -35,70 +34,13 @@ interface FrequencyColorResponse {
     color_sequence_id_3: number;
 }
 
-const ColorSequenceSelector: any = (selectedSequence: ColorSequence, setSelectedSequence: any) => {
-    const [sequences, setSequences] = useState<ColorSequence[]>([]);
-  
-    useEffect(() => {
-      const fetchColorSequences = async () => {
-        try {
-          const data: ColorSequencesResponse = await getColorSequences();
-          // Check if 'data' is not null and 'color_sequences' is present
-          if (data && data.color_sequences) {
-            // Directly use 'data.color_sequences' to ensure type correctness
-            setSequences(data.color_sequences);
-          }
-        } catch (error) {
-          console.error("Failed to fetch color sequences:", error);
-          // Handle error (e.g., setting state, showing a message to the user)
-        }
-      };
-  
-      fetchColorSequences();
-    }, []);
-  
-    const onSelect = (section_name: string) => {
-      const section = sequences.find((s) => s.id === parseInt(section_name));
-      if (!section) {
-        throw new Error("section not found");
-      }
-      setSelectedSequence(section);
-    };
-  
-    return (
-      <div className="grid w-full gap-1.5 lg:w-fit">
-        <Label>Sequence</Label>
-  
-        <Select
-          value={JSON.stringify(selectedSequence?.id)}
-          onValueChange={onSelect}
-        >
-          <SelectTrigger className="w-full lg:w-56">
-            <SelectValue placeholder="Sequence"></SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {sequences.map((sequence) => (
-              <SelectItem value={JSON.stringify(sequence.id)}>
-                {sequence.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-    );
-  };
-
 export const FrequencyColorCard: React.FC<{}> = ({}) => {
-    const [tab, setTab] = useState<"settings" | "preview">("preview");
-    const [editMode, setEditMode] = useState<boolean>(false);
     const [frequencyColor, setFrequencyColor] = useState<FrequencyColor>({
         scene_id: -1,
         color_sequence_id_1: 0,
         color_sequence_id_2: 0,
         color_sequence_id_3: 0,
     });
-    const [selectedSequence1, setSelectedSequence1] = useState<ColorSequence>();
-    const [selectedSequence2, setSelectedSequence2] = useState<ColorSequence>();
-    const [selectedSequence3, setSelectedSequence3] = useState<ColorSequence>();
 
     useEffect(() => {
         getFrequencyColors(-1).then((a: { frequencyColor: FrequencyColor }) => {
@@ -108,25 +50,113 @@ export const FrequencyColorCard: React.FC<{}> = ({}) => {
     }, []);
 
     const onUpdate = async () => {
+
         const success = await updateFrequencyColors(frequencyColor);
         toast(success ? "Color sequence updated" : "Failed to update");
+    };
+    interface aId {
+        id: number;
+    }
+
+    const ColorSequenceSelector: any = (props: aId) => {
+        const [sequences, setSequences] = useState<ColorSequence[]>([]);
+      
+        useEffect(() => {
+          const fetchColorSequences = async () => {
+            try {
+              const data: ColorSequencesResponse = await getColorSequences();
+              // Check if 'data' is not null and 'color_sequences' is present
+              if (data && data.color_sequences) {
+                // Directly use 'data.color_sequences' to ensure type correctness
+                setSequences(data.color_sequences);
+              }
+            } catch (error) {
+              console.error("Failed to fetch color sequences:", error);
+              // Handle error (e.g., setting state, showing a message to the user)
+            }
+          };
+      
+          fetchColorSequences();
+        }, []);
+      
+        const onSelect = (sequenceIdString: string) => {
+          const sequenceId = parseInt(sequenceIdString)
+          const sequence = sequences.find((s) => s.id === sequenceId);
+          if (!sequence) {
+            throw new Error("section not found");
+          }
+
+          if (props.id == 1) {
+                const freqColTemp: FrequencyColor = { 
+                    scene_id: frequencyColor.scene_id, 
+                    color_sequence_id_1: sequenceId, 
+                    color_sequence_id_2: frequencyColor.color_sequence_id_2, 
+                    color_sequence_id_3: frequencyColor.color_sequence_id_3 
+                }
+
+                setFrequencyColor(freqColTemp);
+          }
+          else if (props.id == 2) {
+                const freqColTemp2: FrequencyColor = { 
+                    scene_id: frequencyColor.scene_id, 
+                    color_sequence_id_1: frequencyColor.color_sequence_id_1, 
+                    color_sequence_id_2: sequenceId, 
+                    color_sequence_id_3: frequencyColor.color_sequence_id_3 
+                }
+
+                setFrequencyColor(freqColTemp2);
+          }
+          else {
+                const freqColTemp3: FrequencyColor = {
+                    scene_id: frequencyColor.scene_id, 
+                    color_sequence_id_1: frequencyColor.color_sequence_id_1, 
+                    color_sequence_id_2: frequencyColor.color_sequence_id_2, 
+                    color_sequence_id_3: sequenceId 
+                }
+                setFrequencyColor(freqColTemp3);
+          }
+        };
+      
+        return (
+          <div className="grid w-full gap-1.5 lg:w-fit">
+            <Label>Sequence</Label>
+      
+            <Select
+              value={JSON.stringify(props.id == 1 ? frequencyColor.color_sequence_id_1 : 
+                                    props.id == 2 ? 
+                                    frequencyColor.color_sequence_id_2 : 
+                                    frequencyColor.color_sequence_id_3)}
+              onValueChange={onSelect}
+            >
+              <SelectTrigger className="w-full lg:w-56">
+                <SelectValue placeholder="Sequence"></SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {sequences.map((sequence) => (
+                  <SelectItem value={JSON.stringify(sequence.id)}>
+                    {sequence.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        );
     };
 
     return (
         <Card className="max-w-sm min-w-[384px] min-h-[330px] w-full">
         <CardHeader className="">
             <CardTitle
-            contentEditable={editMode}
             className=""
             >
             Frequency Colors
             </CardTitle>
         </CardHeader>
         <CardContent>
+            <ColorSequenceSelector id={1} />
+            <ColorSequenceSelector id={2} />
+            <ColorSequenceSelector id={3} />
 
-            <ColorSequenceSelector selectedSequence={selectedSequence1} setSelectedSequence={setSelectedSequence1} />
-            <ColorSequenceSelector selectedSequence={selectedSequence2} setSelectedSequence={setSelectedSequence2} />
-            <ColorSequenceSelector selectedSequence={selectedSequence3} setSelectedSequence={setSelectedSequence3} />
             {/* {tab === "preview" ? (
             <div className="w-full h-40">
                 <ColorsPreview colors={colors} />
@@ -177,9 +207,8 @@ export const FrequencyColorCard: React.FC<{}> = ({}) => {
             )}*/}
         </CardContent>
         <CardFooter
-        className={`flex ${editMode && "mt-8"} justify-between space-x-3`}
+        className={`flex justify-between space-x-3`}
         >
-        
             <Button onClick={onUpdate} className="" variant={"default"}>
                 Update
             </Button>
