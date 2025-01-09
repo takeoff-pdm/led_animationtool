@@ -1,4 +1,4 @@
-import { Animation, Color, ColorSequence, Scene, Section } from "./types";
+import { Animation, FrequencyColor, Color, ColorSequence, Scene, Section } from "./types";
 
 let RECEIVER_HOST: string = process.env.RECEIVER_HOSTNAME || "";
 
@@ -104,6 +104,10 @@ const loadScene = (data: { id: number }) =>
   sendRequest("load/scene", "POST", data);
 const addScene = (data: { name: string; description: string }) =>
   sendRequest("add/scene", "POST", data);
+const getFrequencyColors = (data: {}) =>
+                          sendRequest("/api/get/frequency-color-sequences", "GET", data);
+const updateFrequencyColors = (data: FrequencyColor) =>
+                                      sendRequest("/api/update/frequency-color-sequences", "POST", data);
 const getScene = (data:{id:number}) => sendRequest("get/scene", "POST", data);
 const getActiveScene = () => sendRequest("get/active_scene", "GET");
 const saveScene = (data:{id:number}) => sendRequest("save/scene", "POST", data);
@@ -134,6 +138,8 @@ export {
   updateLedCount,
   updateBpm,
   getSectionData,
+  getFrequencyColors,
+  updateFrequencyColors,
   getScenes,
   updateScene,
   deleteScene,

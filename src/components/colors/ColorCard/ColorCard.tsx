@@ -124,17 +124,6 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
                 <SelectTrigger className="w-1/2">
                   <SelectValue placeholder="Selection"></SelectValue>
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0">Skip all selected</SelectItem>
-                  <SelectItem value="1">Skip One</SelectItem>
-                  <SelectItem value="2">Skip Two</SelectItem>
-                  <SelectItem value="3">Skip Three</SelectItem>
-                  <SelectItem value="4">Skip Four</SelectItem>
-                  <SelectItem value="5">Skip Five</SelectItem>
-                  <SelectItem value="6">Skip Six</SelectItem>
-                  <SelectItem value="7">Skip Seven</SelectItem>
-                  <SelectItem value="8">Skip Eight</SelectItem>
-                </SelectContent>
               </Select>
               <Select onValueChange={(e) => setColorSequenceTemp({
                   ...colorSequenceTemp,

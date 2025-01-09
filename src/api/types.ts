@@ -6,6 +6,13 @@ interface Section {
   isActive?: boolean;
 }
 
+interface FrequencyColor {
+  scene_id: number;
+  color_sequence_id_1: number;
+  color_sequence_id_2: number;
+  color_sequence_id_3: number;
+}
+
 interface ColorSequence {
   id: number;
   name: string;
@@ -45,4 +52,4 @@ interface Scene {
 }
 
 
-export type { Animation, Section, Color, ColorSequence, Settings, Scene };
+export type { Animation, Section, FrequencyColor, Color, ColorSequence, Settings, Scene };
