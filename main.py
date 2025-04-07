@@ -26,7 +26,8 @@ app.add_middleware(
 )
 
 database = Database()
-strip = Strip()
+
+app.state.strip = Strip()
 
 
 # API
@@ -43,23 +44,23 @@ async def get_section(id: Id):
 
 @app.post('/api/add/section')
 async def add_section(section: Section):
-    return JSONResponse(content={'success': strip.add_section(section.name, section.start_led, section.end_led)})
+    return JSONResponse(content={'success': app.state.strip.add_section(section.name, section.start_led, section.end_led)})
 
 
 @app.post('/api/remove/section')
 async def remove_section(id: Id):
-    return JSONResponse(content={'success': strip.remove_section(id.id)})
+    return JSONResponse(content={'success': app.state.strip.remove_section(id.id)})
 
 
 @app.post('/api/update/section')
 async def update_section(section: Section):
-    return JSONResponse(content={'success': strip.update_section(section.id, section.name,
+    return JSONResponse(content={'success': app.state.strip.update_section(section.id, section.name,
                                                                  section.start_led, section.end_led)})
 
 
 @app.post('/api/running_animation')
 async def get_animation(id: Id):
-    for animation in strip.running_animations:
+    for animation in app.state.strip.running_animations:
         if animation.section_id == id.id:
             return JSONResponse(content={'animation_id': animation.id, 'color_sequence_id': animation.color_sequence.id})
     
@@ -79,7 +80,7 @@ async def get_color_sequence(id: Id):
 
 @app.post('/api/add/color_sequence')
 async def add_color_sequence(color_sequence: ColorSequence):
-    return JSONResponse(content={'success': strip.add_color_sequence(color_sequence.name, color_sequence.description,
+    return JSONResponse(content={'success': app.state.strip.add_color_sequence(color_sequence.name, color_sequence.description,
                                                                      color_sequence.selection,
                                                                      color_sequence.color_amount)})
 
@@ -91,15 +92,15 @@ async def remove_color_sequence(id: Id):
 
     if colors:
         for color in colors:
-            if not strip.remove_color(color['id']):
+            if not app.state.strip.remove_color(color['id']):
                 return JSONResponse(content={'success': False})
 
-    return JSONResponse(content={'success': strip.remove_color_sequence(id.id)})
+    return JSONResponse(content={'success': app.state.strip.remove_color_sequence(id.id)})
 
 
 @app.post('/api/update/color_sequence')
 async def update_color_sequence(color_sequence: ColorSequence):
-    return JSONResponse(content={'success': strip.update_color_sequence(color_sequence.id, color_sequence.name,
+    return JSONResponse(content={'success': app.state.strip.update_color_sequence(color_sequence.id, color_sequence.name,
                                                                         color_sequence.description,
                                                                         color_sequence.selection,
                                                                         color_sequence.color_amount)})
@@ -124,17 +125,17 @@ async def get_color(id: Id):
 @app.post('/api/add/color')
 async def add_color(color: Color):
     return JSONResponse(
-        content={'success': strip.add_color(color.color_sequence_id, color.red, color.green, color.blue)})
+        content={'success': app.state.strip.add_color(color.color_sequence_id, color.red, color.green, color.blue)})
 
 
 @app.post('/api/remove/color')
 async def remove_color(id: Id):
-    return JSONResponse(content={'success': strip.remove_color(id.id)})
+    return JSONResponse(content={'success': app.state.strip.remove_color(id.id)})
 
 
 @app.post('/api/update/color')
 async def update_color(color: Color):
-    return JSONResponse(content={'success': strip.update_color(color)})
+    return JSONResponse(content={'success': app.state.strip.update_color(color)})
 
 
 # Animation
@@ -165,21 +166,21 @@ async def update_anim(animation: Animation):
         return JSONResponse(content={'success': False})
 
     return JSONResponse(content={
-        'success': strip.update_animation(animation.id, animation.section_id, animation.name, animation.description,
+        'success': app.state.strip.update_animation(animation.id, animation.section_id, animation.name, animation.description,
                                           animation.variation, animation.direction, animation.offset)
     })
 
 
 @app.post('/api/start/animate')
 async def animate_section(animate: Animate):
-    return JSONResponse(content={'success': strip.start_animate(color_sequence_id=animate.color_sequence_id,
+    return JSONResponse(content={'success': app.state.strip.start_animate(color_sequence_id=animate.color_sequence_id,
                                                                 animation_id=animate.animation_id,
                                                                 section_id=animate.section_id)})
 
 
 @app.post('/api/stop/animate')
 async def stop_animate_section(id: Id):
-    return JSONResponse(content={'success': strip.stop_animate(id.id)})
+    return JSONResponse(content={'success': app.state.strip.stop_animate(id.id)})
 
 
 # Scenes
@@ -195,44 +196,48 @@ async def get_scene(id: Id):
 
 @app.get('/api/get/active_scene')
 async def update_scene():
-    return JSONResponse(content={'id': strip.active_scene})
+    return JSONResponse(content={'id': app.state.strip.active_scene})
 
 
 @app.post('/api/add/scene')
 async def add_scene(scene: Scene):
-    return JSONResponse(content={'success': strip.add_scene(scene.name, scene.description)})
+    return JSONResponse(content={'success': app.state.strip.add_scene(scene.name, scene.description)})
 
 
 @app.post('/api/remove/scene')
 async def remove_scene(id: Id):
-    return JSONResponse(content={'success': strip.remove_scene(id.id)})
+    return JSONResponse(content={'success': app.state.strip.remove_scene(id.id)})
 
 
 @app.post('/api/update/scene')
 async def update_scene(scene: Scene):
-    return JSONResponse(content={'success': strip.update_scene(scene.id, scene.name, scene.description)})
+    return JSONResponse(content={'success': app.state.strip.update_scene(scene.id, scene.name, scene.description)})
 
 
 @app.post('/api/load/scene')
 async def load_scene(id: Id):
-    return JSONResponse(content={'success': strip.load_scene(id.id)})
+    return JSONResponse(content={'success': app.state.strip.load_scene(id.id)})
 
 
 @app.post('/api/save/scene')
 async def save_scene(id: Id):
-    return JSONResponse(content={'success': strip.save_scene(id.id)})
+    return JSONResponse(content={'success': app.state.strip.save_scene(id.id)})
 
 
 # Music Detection
 @app.get('/api/get/frequency-color-sequences')
 async def get_frequency_color_sequences():
-    return JSONResponse(content={'color_sequences': strip.frequency_color_sequences})
+    return JSONResponse(content={'color_sequences': app.state.strip.frequency_color_sequences})
+
+@app.get('/api/update/frequency-color-sequences')
+async def get_frequency_color_sequences():
+    return JSONResponse(content={'success': app.state.strip.update_frequency_color_sequences()})
 
 
 # Settings
 @app.get('/api/get/settings')
 async def get_settings():
-    config = strip.fetch_config()
+    config = app.state.strip.fetch_config()
     config['brightness'] *= 100  # Convert to percentage
     
     return JSONResponse(content=config)
@@ -240,17 +245,18 @@ async def get_settings():
 
 @app.post('/api/update/brightness')
 async def update_brightness(brightness: Value):
-    return JSONResponse(content={'success': strip.set_brightness(brightness.value)})
+    return JSONResponse(content={'success': app.state.strip.set_brightness(brightness.value)})
 
 
 @app.post('/api/update/led-count')
 async def update_led_count(led_count: Value):
-    return JSONResponse(content={'success': strip.set_led_count(led_count.value)})
+    return JSONResponse(content={'success': app.state.strip.set_led_count(led_count.value)})
 
 
 @app.post('/api/update/bpm')
 async def update_bpm(bpm: Value):
-    return JSONResponse(content={'success': strip.set_bpm(bpm.value)})
+    return JSONResponse(content={'success': app.state.strip.set_bpm(bpm.value)})
+
 
 def main():
     run_api("main:app", host='0.0.0.0', port=8000, log_level="info")

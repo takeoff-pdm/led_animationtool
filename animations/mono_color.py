@@ -194,20 +194,24 @@ class MonoColor(Animation):
                 self.direction = 7
 
                 return
+        
+        if step != 0 and self.variation == 0:
+            return
 
         # Split strip up into slices for the different sections
         colors = self.select_colors(beat)
 
         if self.variation == 0:  # No transition color change
-            for index, color in enumerate(colors):
-                animation_range = self.select_range(index, colors)
+            if step == 0:
+                for index, color in enumerate(colors):
+                    animation_range = self.select_range(index, colors)
 
-                if len(animation_range) == 0:
-                    break
+                    if len(animation_range) == 0:
+                        break
 
-                for i in animation_range:
-                    for j in i:
-                        self.set_pixel_color(j, color)
+                    for i in animation_range:
+                        for j in i:
+                            self.set_pixel_color(j, color)
 
 
         elif self.variation == 1:  # Soft transition color change

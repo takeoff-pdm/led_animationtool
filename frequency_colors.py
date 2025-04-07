@@ -16,11 +16,12 @@ class FrequencyColors:
             frequency_color_data = fetch_frequency_color(self.scene_id)
 
             if not frequency_color_data:
-                self.sync_changes_to_db(new=True)
-                
                 self.color_sequence_id_1 = 0
                 self.color_sequence_id_2 = 0
                 self.color_sequence_id_3 = 0
+
+                self.sync_changes_to_db(new=True)
+                return
 
             self.color_sequence_id_1 = frequency_color_data['color_sequence_id_1']
             self.color_sequence_id_2 = frequency_color_data['color_sequence_id_2']

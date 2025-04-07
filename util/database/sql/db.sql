@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS color_sequences (
                                                 -- (also skips given amount of colors to next color-set)
 );
 
+INSERT INTO color_sequences VALUES(-1, -1, "", "", 0, 0);
+
 CREATE TABLE IF NOT EXISTS colors (
     scene_id INT(32) NOT NULL,
     id INT(32) NOT NULL,
@@ -55,9 +57,9 @@ CREATE TABLE IF NOT EXISTS animations (
     description VARCHAR(128) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS frequency_color (
+CREATE TABLE IF NOT EXISTS frequency_colors (
     scene_id INT(32) NOT NULL,
     color_sequence_id_1 INT(32) NOT NULL,
     color_sequence_id_2 INT(32) NOT NULL,
-    color_sequence_id_3 INT(32) NOT NULL,
+    color_sequence_id_3 INT(32) NOT NULL
 );

@@ -4,6 +4,7 @@ from rpi_ws281x import Color
 from animations.animation import Animation
 from color_sequence import ColorSequence
 from section import Section
+from __init__ import ANIMATION_STEPS
 
 
 class Flow(Animation):
@@ -61,30 +62,32 @@ class Flow(Animation):
         colors = self.select_colors(beat)
 
         if self.variation == 0 or self.variation == 1:
-            step = 2 if (self.end_led - self.start_led) + 1 > 60 \
-                else 3 if (self.end_led - self.start_led) + 1 > 240 \
-                else 4 if (self.end_led - self.start_led) + 1 > 360 \
-                else 5 if (self.end_led - self.start_led) + 1 > 480 \
-                else 6 if (self.end_led - self.start_led) + 1 > 600 \
-                else 1  # Avoid having too slow code by skipping some pixels
+            # steps = 2 if (self.end_led - self.start_led) + 1 > 60 \
+            #     else 3 if (self.end_led - self.start_led) + 1 > 240 \
+            #     else 4 if (self.end_led - self.start_led) + 1 > 360 \
+            #     else 5 if (self.end_led - self.start_led) + 1 > 480 \
+            #     else 6 if (self.end_led - self.start_led) + 1 > 600 \
+            #     else 1  # Avoid having too slow code by skipping some pixels
 
-            step = int(step * (self.bpm / 100 + 1))  # Adjust speed to bpm
+            # steps = int(steps * (self.bpm / 100 + 1))  # Adjust speed to bpm
 
             strip_section = range(self.start_led, self.end_led + 1)
 
-            for animation_stage in range(0, (self.end_led - self.start_led) * 2 + 1, step):
-                for index, color in enumerate(colors):
-                    animation_range = self.select_range(animation_stage, index, colors)
+            #for animation_stage in range(0, (self.end_led - self.start_led) * 2 + 1, steps):
+            animation_stages = range(0, (self.end_led - self.start_led) * 2 + 1, int((self.end_led - self.start_led) * 2 + 1/ANIMATION_STEPS))
 
-                    if len(animation_range) == 0:
-                        break
+            for index, color in enumerate(colors):
+                animation_range = self.select_range(animation_stages[step], index, colors)
 
-                    for i in animation_range:
-                        for j in i:
-                            if j not in strip_section:
-                                continue
+                if len(animation_range) == 0:
+                    break
 
-                            self.set_pixel_color(j, color)
+                for i in animation_range:
+                    for j in i:
+                        if j not in strip_section:
+                            continue
+
+                        self.set_pixel_color(j, color)
 
                 # if self.variation == 0:  # Consistent flow speed
                 #     sleep_time = self.sleep_time * 2 / (self.end_led - self.start_led) * step \

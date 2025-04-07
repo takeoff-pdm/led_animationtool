@@ -1,22 +1,19 @@
 # Communicate over UDP to Mik's Music Detection Sys
-from socket import socket
+from socket import socket, AF_INET, SOCK_DGRAM
 
 class UDP:
-    def __init__(self, ip, port):
-        self.ip = ip
-        self.port = port
-        self.sock = socket()
-        self.sock.connect((self.ip, self.port))
+    def __init__(self, ip, port): # ip and port useless
+        self.sock = socket(AF_INET, SOCK_DGRAM)
+        self.sock.bind(("", 33333))
         self.data_received = False
         self.latest_data = None
 
-    def receive(self, stop):
+    def receive(self, stop, set_data):
         while not stop():
             data = self.sock.recv(512)
 
             if data:
-                self.data_received = True
-                self.latest_data = data
+                set_data(data)
 
     def close(self):
         self.sock.close()

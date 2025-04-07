@@ -79,7 +79,7 @@ def fetch_frequency_colors(scene_id: int = -1):
 
 def fetch_frequency_color(id: int, scene_id: int = -1):
     frequency_color_data = Database.fetchone_from_db(
-        'SELECTscene_id, color_sequence_id_1, color_sequence_id_2, color_sequence_id_3 \
+        'SELECT scene_id, color_sequence_id_1, color_sequence_id_2, color_sequence_id_3 \
          FROM frequency_colors WHERE scene_id = :scene_id',
         {
             'scene_id': scene_id

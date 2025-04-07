@@ -40,6 +40,17 @@ class Strip:
         self.frequency = config['frequency']  # LED signal frequency in hertz (usually 800khz)
 
         self.bpm = config['bpm']  # Animation speed (Beats per minute)
+
+        self.data_received = False
+        self.data = []
+        self.bpm_detection = False
+        self.color_sequence_id = 0
+
+        if self.bpm == -1:
+            self.bpm_detection = True  # Controls frequency detection as well
+            self.bpm = 128
+            self.color_sequence_id = 1
+
         self.step = 0
 
         # Initialize sections
@@ -61,7 +72,7 @@ class Strip:
                                                       color_sequence_data['color_amount']))
             
         # Initialze freqency color sequences
-        self.frequency_colors = FrequencyColors(-1)
+        self.frequency_colors = FrequencyColors(scene_id=-1)
 
         # Initialize scenes
         self.scenes = []
@@ -339,6 +350,15 @@ class Strip:
                 return success
 
         return False
+    
+    def update_frequency_color_sequences(self, scene_id: int, color_sequence_id_1: int, 
+                                         color_sequence_id_2: int, color_sequence_id_3: int) -> bool:
+        # update depending on Scene ID not included
+        self.frequency_colors.color_sequence_id_1 = color_sequence_id_1
+        self.frequency_colors.color_sequence_id_2 = color_sequence_id_2
+        self.frequency_colors.color_sequence_id_3 = color_sequence_id_3
+
+        return self.frequency_colors.sync_changes_to_db()
 
     # Animations
     @property
@@ -383,10 +403,14 @@ class Strip:
 
         self.running_animations.append(animation)
 
+    def set_data(self, data):
+        self.data = data.decode('utf-8')
+        self.data_received = True
+
     def animate(self, stop):
         try:
             Thread(target=self.show_strip_handler, args=(stop,)).start()
-            Thread(target=self.udp_server.receive, args=(stop,)).start()
+            Thread(target=self.udp_server.receive, args=(stop, self.set_data,)).start()
             starting_time = time_ns() // 1_000_000
 
             while stop() == False:
@@ -404,20 +428,47 @@ class Strip:
                             animation.brightness = self.brightness
 
                 for animation in self.running_animations:
+                    if self.bpm_detection: # Handles frequency detection currently
+                        match self.color_sequence_id:
+                            case 1:
+                                animation.color_sequence = fetch_color_sequence(self.frequency_colors.color_sequence_id_1)
+                            case 2:
+                                animation.color_sequence = fetch_color_sequence(self.frequency_colors.color_sequence_id_2)
+                            case 3:
+                                animation.color_sequence = fetch_color_sequence(self.frequency_colors.color_sequence_id_3)
+
                     Thread(target=animation.animate,
                            args=(self.beat + animation.offset, self.step)).start()
 
-                if self.udp_server.data_received:
-                    self.udp_server.data_received = False
+                    if self.data_received and self.bpm_detection:
+                        self.data_received = False
 
-                    print(f"Server echoed: {self.udp_server.data.decode()}")
-                    # TODO: Implement UDP data handling
-                    # 1st Byte: BPM; 2nd Byte: Color Sequence To Select
+                        print(f"Server echoed: {self.data}")
+
+                        if self.data[:1] == 'B':
+                            self.bpm = int(self.data[1:])
+
+                        elif self.data[:2] == 'D0':
+                            print("Breakdown")
+                            self.color_sequence_id = 1
+
+                        elif self.data[:2] == 'D1':
+                            print("Drop")
+                            self.color_sequence_id = 2
+                        
+                        elif self.data[:2] == 'D2':
+                            print("andere Section")
+                            self.color_sequence_id = 3
+
+                        else:
+                            print('Was diese?')
+
+                        # 1st Byte: BPM; 2nd Byte: Color Sequence To Select
 
                 sleep_time_adjusted = self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000)
 
                 if sleep_time_adjusted > 0:
-                    sleep(sleep_time_adjusted / 100)
+                    sleep(sleep_time_adjusted / ANIMATION_STEPS)
 
                 else:
                     print('Code too slow!')
@@ -477,10 +528,12 @@ class Strip:
 
         # Find out which color sequence is meant
         color_sequence = None
-
-        for possible_sequence in self.color_sequences:
-            if possible_sequence.id == color_sequence_id:
-                color_sequence = possible_sequence
+        if color_sequence_id == -1:
+            print("Set to frequence detection sys")
+        else:
+            for possible_sequence in self.color_sequences:
+                if possible_sequence.id == color_sequence_id:
+                    color_sequence = possible_sequence
 
         if not color_sequence:
             return False
