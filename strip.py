@@ -409,6 +409,8 @@ class Strip:
         self.data_received = True
 
     def animate(self, stop):
+        avg = 0
+
         try:
             Thread(target=self.show_strip_handler, args=(stop,)).start()
             Thread(target=self.udp_server.receive, args=(stop, self.set_data,)).start()
@@ -439,8 +441,7 @@ class Strip:
                             case 3:
                                 animation.color_sequence = fetch_color_sequence(self.frequency_colors.color_sequence_id_3)
 
-                    Thread(target=animation.animate,
-                           args=(self.beat + animation.offset, self.step)).start()
+                    animation.animate(self.beat + animation.offset, self.step)
 
                     if self.data_received and self.bpm_detection:
                         self.data_received = False
@@ -470,7 +471,8 @@ class Strip:
 
                         # 1st Byte: BPM; 2nd Byte: Color Sequence To Select
 
-                sleep_time_adjusted = (self.sleep_time - (((perf_counter()) - starting_time))) / ANIMATION_STEPS
+                sleep_time_adjusted = (self.sleep_time / ANIMATION_STEPS - (((perf_counter()) - starting_time)))
+                avg += sleep_time_adjusted
 
                 if sleep_time_adjusted > 0:
                     while(perf_counter() - starting_time < sleep_time_adjusted):
@@ -479,7 +481,6 @@ class Strip:
                 else:
                     print('Code too slow!')
                 
-                starting_time = perf_counter()
                 starting_time = perf_counter()
 
                 self.show_strip_request()
@@ -490,8 +491,10 @@ class Strip:
                     self.beat += 1
                     if self.beat == 16:
                         self.beat = 0
-
+                    
                     self.step = 0
+                    print(avg/ANIMATION_STEPS)
+                    avg = 0
 
         except:
             self.color_wipe(0)
