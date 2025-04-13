@@ -364,7 +364,6 @@ class Strip:
     # Animations
     @property
     def sleep_time(self) -> float:
-    def sleep_time(self) -> float:
         return 60 / self.bpm
 
     def color_wipe(self, color):
