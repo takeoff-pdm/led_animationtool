@@ -1,5 +1,5 @@
 from json import load, dump
-from time import time_ns, sleep
+from time import perf_counter, sleep
 from rpi_ws281x import Adafruit_NeoPixel
 from threading import Thread
 
@@ -362,7 +362,7 @@ class Strip:
 
     # Animations
     @property
-    def sleep_time(self):
+    def sleep_time(self) -> float:
         return 60 / self.bpm
 
     def color_wipe(self, color):
@@ -411,7 +411,7 @@ class Strip:
         try:
             Thread(target=self.show_strip_handler, args=(stop,)).start()
             Thread(target=self.udp_server.receive, args=(stop, self.set_data,)).start()
-            starting_time = time_ns() // 1_000_000
+            starting_time = perf_counter()
 
             while stop() == False:
                 if len(self.running_animations) > 0:
@@ -465,7 +465,7 @@ class Strip:
 
                         # 1st Byte: BPM; 2nd Byte: Color Sequence To Select
 
-                sleep_time_adjusted = self.sleep_time - (((time_ns() // 1_000_000) - starting_time) / 1_000)
+                sleep_time_adjusted = self.sleep_time - (((perf_counter()) - starting_time))
 
                 if sleep_time_adjusted > 0:
                     sleep(sleep_time_adjusted / ANIMATION_STEPS)
@@ -473,7 +473,7 @@ class Strip:
                 else:
                     print('Code too slow!')
                 
-                starting_time = time_ns() // 1_000_000
+                starting_time = perf_counter()
 
                 self.show_strip_request()
 
@@ -550,7 +550,7 @@ class Strip:
                 self.add_animation(Shooter(id=2, section_id=section.id), section, color_sequence)
 
             elif animation_id == 3:
-                self.add_animation(Squeeze(id=3, section_id=section.id), section, color_sequence)
+                self.add_animation(Strobe(id=3, section_id=section.id), section, color_sequence)
 
             elif animation_id == 4:
                 self.add_animation(Squeeze(id=4, section_id=section.id), section, color_sequence)

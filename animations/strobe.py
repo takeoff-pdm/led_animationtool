@@ -72,11 +72,15 @@ class Strobe(Animation):
     
     def animate(self, beat: int, step: int):
         colors = self.select_colors(beat)
+        third = round(ANIMATION_STEPS * .33)
+        half = round(ANIMATION_STEPS * .5)
+        two_third = round(ANIMATION_STEPS * .66)
+        half_third = round(ANIMATION_STEPS * .125)
 
         # Direction is used to determine how often a flash occurs
         if self.direction == 0 or (self.direction == 1 and beat % 2 == 0) or \
            (self.direction == 2 and beat % 4 == 0) or (self.direction == 3 and beat % 8 == 0):
-            if self.variation == 1:  # Flash on the beat and turn off after 1/3 of the beat
+            if self.variation == 0:  # Flash on the beat and turn off after 1/3 of the beat
                 if step == 0:
                     # Set the color of the strip to the beat color
                     for index, color in enumerate(colors):
@@ -89,13 +93,13 @@ class Strobe(Animation):
                             for j in i:
                                 self.set_pixel_color(j, color)
                 
-                elif step == round(ANIMATION_STEPS * .33):
+                elif step == third:
                     # Turn off the strip
                     for i in range(self.start_led, self.end_led + 1):
                         self.set_pixel_color(i, StripColor(0, 0, 0))
             
-            elif self.variation == 2:  # Flash twice per beat and each flash turns off after 1/6 of the beat
-                if step == 0 or step == round(ANIMATION_STEPS * .5):
+            elif self.variation == 1:  # Flash twice per beat and each flash turns off after 1/6 of the beat
+                if step == 0 or step == half:
                     # Set the color of the strip to the beat color
                     for index, color in enumerate(colors):
                         animation_range = self.select_range(index, colors)
@@ -107,13 +111,13 @@ class Strobe(Animation):
                             for j in i:
                                 self.set_pixel_color(j, color)
                 
-                elif step == round(ANIMATION_STEPS * .16) or step == round(ANIMATION_STEPS * .66):
+                elif step == half_third or step == round(ANIMATION_STEPS * .66):
                     # Turn off the strip
                     for i in range(self.start_led, self.end_led + 1):
                         self.set_pixel_color(i, StripColor(0, 0, 0))
 
-            elif self.variation == 3:  # Flash three times per beat and each flash turns off after 1/8 of the beat
-                if step == 0 or step == round(ANIMATION_STEPS * .33) or step == round(ANIMATION_STEPS * .66):
+            elif self.variation == 2:  # Flash three times per beat and each flash turns off after 1/8 of the beat
+                if step == 0 or step == third or step == two_third:
                     # Set the color of the strip to the beat color
                     for index, color in enumerate(colors):
                         animation_range = self.select_range(index, colors)
@@ -125,7 +129,7 @@ class Strobe(Animation):
                             for j in i:
                                 self.set_pixel_color(j, color)
 
-                elif step == round(ANIMATION_STEPS * .125) or step == round(ANIMATION_STEPS * .455) or step == round(ANIMATION_STEPS * .875):
+                elif step == half_third or step == third + half_third or step == two_third + half_third:
                     # Turn off the strip
                     for i in range(self.start_led, self.end_led + 1):
                         self.set_pixel_color(i, StripColor(0, 0, 0))
