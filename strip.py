@@ -1,5 +1,6 @@
 from json import load, dump
 from time import perf_counter, sleep
+from time import perf_counter, sleep
 from rpi_ws281x import Adafruit_NeoPixel
 from threading import Thread
 
@@ -363,6 +364,7 @@ class Strip:
     # Animations
     @property
     def sleep_time(self) -> float:
+    def sleep_time(self) -> float:
         return 60 / self.bpm
 
     def color_wipe(self, color):
@@ -412,6 +414,7 @@ class Strip:
             Thread(target=self.show_strip_handler, args=(stop,)).start()
             Thread(target=self.udp_server.receive, args=(stop, self.set_data,)).start()
             starting_time = perf_counter()
+            starting_time = perf_counter()
 
             while stop() == False:
                 if len(self.running_animations) > 0:
@@ -459,27 +462,32 @@ class Strip:
                         elif self.data[:2] == 'D2':
                             print("andere Section")
                             self.color_sequence_id = 3
+                        
+                        elif self.data[:1] == 'N':  # Beat starts, so start a new beat in the animation
+                            self.step = ANIMATION_STEPS - 1
 
                         else:
                             print('Was diese?')
 
                         # 1st Byte: BPM; 2nd Byte: Color Sequence To Select
 
-                sleep_time_adjusted = self.sleep_time - (((perf_counter()) - starting_time))
+                sleep_time_adjusted = (self.sleep_time - (((perf_counter()) - starting_time))) / ANIMATION_STEPS
 
                 if sleep_time_adjusted > 0:
-                    sleep(sleep_time_adjusted / ANIMATION_STEPS)
+                    while(perf_counter() - starting_time < sleep_time_adjusted):
+                        sleep(0)
 
                 else:
                     print('Code too slow!')
                 
+                starting_time = perf_counter()
                 starting_time = perf_counter()
 
                 self.show_strip_request()
 
                 self.step += 1
 
-                if self.step % ANIMATION_STEPS == 0:
+                if self.step == ANIMATION_STEPS:
                     self.beat += 1
                     if self.beat == 16:
                         self.beat = 0
@@ -530,6 +538,7 @@ class Strip:
         color_sequence = None
         if color_sequence_id == -1:
             print("Set to frequence detection sys")
+
         else:
             for possible_sequence in self.color_sequences:
                 if possible_sequence.id == color_sequence_id:
@@ -567,11 +576,13 @@ class Strip:
 
     def show_strip_handler(self, stop):
         while stop() == False:
+            starting_time = perf_counter()
             if self.show_strip == True:
                 self.show_strip = False
                 self.strip.show()
 
-            sleep(0.08)
+            if self.led_count * 0.0003 + starting_time < perf_counter() - starting_time:
+                sleep(0)
 
     def show_strip_request(self):
         self.show_strip = True
