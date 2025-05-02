@@ -94,7 +94,7 @@ class Animation:
             return StripColor(0, pos * 3, 255 - pos * 3)
 
     def select_colors(self, beat: int) -> list:
-        if len(self.color_sequence.colors) == 0:  # Make sure, there are colors
+        if len(self.color_sequence.colors()) == 0:  # Make sure, there are colors
             return []
 
         colors = []
@@ -102,12 +102,12 @@ class Animation:
         for x in range(self.color_sequence.color_amount):  # Select the required colors
             color = None
             if self.color_sequence.selection == 0:
-                color = self.color_sequence.colors[(x + beat * self.color_sequence.color_amount)
-                                                   % len(self.color_sequence.colors)]
+                color = self.color_sequence.colors()[(x + beat * self.color_sequence.color_amount)
+                                                   % len(self.color_sequence.colors())]
 
             else:
-                color = self.color_sequence.colors[(x + beat * self.color_sequence.selection)
-                                                   % len(self.color_sequence.colors)]
+                color = self.color_sequence.colors()[(x + beat * self.color_sequence.selection)
+                                                   % len(self.color_sequence.colors())]
 
             colors.append(StripColor(color.red, color.green, color.blue))
 
@@ -129,37 +129,6 @@ class Animation:
                                    (color - next_color) // ANIMATION_STEPS 
                                    if (color - next_color) // ANIMATION_STEPS != 0 
                                    else 1)))
-
-    # def set_name(self, name) -> bool:
-    #     # Check if section with this name already exists
-    #     if fetch_animation(name) != None:
-    #         return False
-
-    #     if not remove_animation(self.name):
-    #         return False
-
-    #     self.name = name
-
-    #     if not add_animation(self.name, self.description, self.variation, 
-    #                          self.direction):
-    #         return False
-
-    #     return True
-
-    # def set_description(self, description: str):
-    #     self.description = description
-
-    #     self.sync_changes_to_db()
-
-    # def set_variation(self, variation: int):
-    #     self.variation = variation
-
-    #     self.sync_changes_to_db()
-
-    # def set_direction(self, direction: int):
-    #     self.direction = direction
-
-    #     self.sync_changes_to_db()
 
     def animate(self, beat: int, step: int):
         pass

@@ -47,7 +47,7 @@ class ColorSequence:
         colors = []
 
         for color_data in colors_data:
-            colors.append(Color(color_data['id'], self.name, color_data['position'], color_data['red'], 
+            colors.append(Color(color_data['id'], self.id, color_data['position'], color_data['red'], 
                              color_data['green'], color_data['blue']))
         
         self.color_list = colors

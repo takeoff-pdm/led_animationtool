@@ -1,0 +1,11 @@
+{
+    "brightness": 1.0,
+    "led_count": 60,
+    "element_length": 60,
+    "pin": 18,
+    "frequency": 800000,
+    "dma": 10,
+    "led_invert": false,
+    "channel": 0,
+    "bpm": 128
+}
