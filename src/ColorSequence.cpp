@@ -72,7 +72,7 @@ std::vector<Color>& ColorSequence::colors() {
     auto colors_data = ColorDB::fetch_colors_from_sequence(this->id);
 
     for (const auto& data : colors_data) {
-        color_list.emplace_back(Color(-1,
+        color_list.emplace_back(Color(std::nullopt,
                                     data.color_sequence_id,
                                     data.position,
                                     data.red,
@@ -90,8 +90,6 @@ void ColorSequence::update_colors() {
 
 bool ColorSequence::add_color(Color color) {
     auto& current_colors = colors();
-
-    color.position = static_cast<int>(current_colors.size());
 
     if (!color.sync_changes_to_db(true)) {
         return false;

@@ -29,14 +29,6 @@ ColorSequenceDB ColorSequenceDB::recreate_color_sequence(const std::vector<std::
     color_sequence.color_amount = std::stoi(color_sequence_data[4]);
     // color_sequence.scene_id = std::stoi(color_sequence_data[5]);
 
-    // Print all values for debugging
-    std::cout << "[ColorSequenceDB] Recreated ColorSequenceDB: " << std::endl;
-    std::cout << "ID: " << color_sequence.id << std::endl;
-    std::cout << "Name: " << color_sequence.name << std::endl;
-    std::cout << "Description: " << color_sequence.description << std::endl;
-    std::cout << "Selection: " << color_sequence.selection << std::endl;
-    std::cout << "Color Amount: " << color_sequence.color_amount << std::endl;
-
     return color_sequence;
 }
 

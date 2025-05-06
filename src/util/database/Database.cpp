@@ -31,18 +31,18 @@ bool Database::push_to_db(const std::string& sql_command, const std::unordered_m
     sqlite3_open(DATABASE_FILE, &db);
 
     // Print SQL command for debugging
-    // std::cout << "[Database::push_to_db] SQL Command: " << sql_command << "\n";
-    // std::cout << "[Database::push_to_db] SQL Data:\n";
+    std::cout << "[Database::push_to_db] SQL Command: " << sql_command << "\n";
+    std::cout << "[Database::push_to_db] SQL Data:\n";
     for (const auto& pair : sql_data) {
-        // std::cout << pair.first << ": " 
-        //          << (std::holds_alternative<int>(pair.second) ? std::to_string(std::get<int>(pair.second)) : std::get<std::string>(pair.second)) 
-        //          << "\n";
+        std::cout << pair.first << ": " 
+                 << (std::holds_alternative<int>(pair.second) ? std::to_string(std::get<int>(pair.second)) : std::get<std::string>(pair.second)) 
+                 << "\n";
     }
 
     try {
         execute_sql(db, sql_command, sql_data, "");
     } catch (...) {
-        // std::cout << "[Database] Error while pushing to the database." << std::endl;
+        std::cout << "[Database] Error while pushing to the database." << std::endl;
         sqlite3_close(db);
         return false;
     }

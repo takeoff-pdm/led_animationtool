@@ -6,14 +6,23 @@
 
 // Helper function to recreate a color object from the database result
 ColorDB ColorDB::recreate_color(const std::vector<std::string>& color_data) {
-    return ColorDB(
-        std::stoi(color_data[0]), // id
-        std::stoi(color_data[1]), // color_sequence_id
-        std::stoi(color_data[2]), // position
-        std::stoi(color_data[3]), // red
-        std::stoi(color_data[4]), // green
-        std::stoi(color_data[5])  // blue
-    );
+    // return ColorDB(
+    //     std::stoi(color_data[0]), // id
+    //     std::stoi(color_data[1]), // color_sequence_id
+    //     std::stoi(color_data[2]), // position
+    //     std::stoi(color_data[3]), // red
+    //     std::stoi(color_data[4]), // green
+    //     std::stoi(color_data[5])  // blue
+    // );
+
+    ColorDB color;
+    color.id = std::stoi(color_data[0]);
+    color.color_sequence_id = std::stoi(color_data[1]);
+    color.position = std::stoi(color_data[2]);
+    color.red = std::stoi(color_data[3]);
+    color.green = std::stoi(color_data[4]);
+    color.blue = std::stoi(color_data[5]);
+    return color;
 }
 
 // Add a new color to the database
@@ -103,7 +112,15 @@ ColorDB ColorDB::fetch_color(int id, int scene_id) {
         "SELECT id, color_sequence_id, position, red, green, blue FROM colors WHERE scene_id = :scene_id OR scene_id = -1 AND id = :id", data);
 
     if (color_data.empty()) {
-        return ColorDB(-1, -1, -1, -1, -1, -1); // return an invalid color if not found
+        ColorDB color;
+        color.id = -1; // Set an invalid id to indicate not found
+        color.color_sequence_id = -1; // Set an invalid color_sequence_id to indicate not found
+        color.position = -1; // Set an invalid position to indicate not found
+        color.red = -1; // Set an invalid red value to indicate not found
+        color.green = -1; // Set an invalid green value to indicate not found
+        color.blue = -1; // Set an invalid blue value to indicate not found
+
+        return color; // return an invalid color if not found
     }
 
     return recreate_color(color_data);

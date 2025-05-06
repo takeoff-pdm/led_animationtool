@@ -541,6 +541,11 @@ bool Strip::start_animate(int color_sequence_id, std::optional<Animation*> anima
                           int section_id, std::optional<int> animation_id) {
     auto section_data = SectionDB::fetch_section(section_id);
 
+    // Check if section exists
+    if (section_data.empty()) {
+        return false; // Section not found
+    }
+
     Section section(
         std::get<int>(section_data.at("id")),
         std::get<std::string>(section_data.at("name")),

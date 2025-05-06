@@ -27,6 +27,13 @@ Animation::Animation(int id, int section_id, std::string name, std::string descr
         }
 
         auto section_animation_data = SectionAnimationDB::fetch_section_animation(section_id, this->id);
+
+        if (section_animation_data.empty()) {
+            this->variation = 0;
+            this->direction = 0;
+            this->offset = 0;
+            return;
+        }
         
         this->variation = section_animation_data.at("variation");
         this->direction = section_animation_data.at("direction");

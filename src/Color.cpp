@@ -1,6 +1,7 @@
 #include "Color.hpp"
 #include "util/database/ColorDB.hpp"
 #include "util/database/Database.hpp"
+#include <iostream>
 
 Color::Color(std::optional<int> id, 
              std::optional<int> color_sequence_id, 
@@ -28,16 +29,40 @@ Color::Color(std::optional<int> id,
 
 bool Color::sync_changes_to_db(bool is_new) {
     if (is_new) {
-        auto response = Database::fetchone_from_db("SELECT MAX(id) FROM color_sequence_colors;", {});
+        auto response = Database::fetchone_from_db("SELECT MAX(id) FROM colors;", {});
         if (!response.empty()) {
-            int max_id = std::stoi(response[0]);
+            int max_id;
+            if (response[0] == "NULL") {
+                max_id = -1; // Start from 0 if no colors exist
+            } else {
+                max_id = std::stoi(response[0]);
+            }
 
             if (max_id < 0) {
-                max_id = 0;
+                max_id = -1;
             }
             this->id = max_id + 1;
         } else {
             this->id = 0; // Start from 0 if no colors exist
+        }
+
+        // Set position to the next available position in the color sequence
+        auto pos_response = Database::fetchone_from_db(
+            "SELECT MAX(position) FROM colors WHERE color_sequence_id = :color_sequence_id;",
+            {{"color_sequence_id", this->color_sequence_id}}
+        );
+
+        if (!pos_response.empty()) {
+            int max_position;
+            if (pos_response[0] == "NULL") {
+                max_position = -1; // Start from 0 if no colors exist in the sequence
+            } else {
+                max_position = std::stoi(pos_response[0]);
+            }
+
+            this->position = max_position + 1;
+        } else {
+            this->position = 0; // Start from 0 if no colors exist in the sequence
         }
         
         return ColorDB::add_color(this->id, this->color_sequence_id, this->position, this->red, this->green, this->blue);
