@@ -10,23 +10,52 @@ interface SettingsValueData {
   value: number;
 }
 
+type RequestData = Record<string, any>;
+
 async function sendRequest(
   endpoint: string,
   method: "GET" | "POST",
   data?: RequestData
 ): Promise<any> {
   const url = `${RECEIVER_HOST}/api/${endpoint}`;
-  const options: RequestInit = {
-    method: method,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
   };
-  if (method === "GET") {
-    delete options.body;
+
+  const options: RequestInit = {
+    method,
+    headers,
+    credentials: "include", // include cookies if needed
+  };
+
+  // Add body for POST requests only
+  if (method === "POST" && data) {
+    options.body = JSON.stringify(data);
   }
-  const response = await fetch(url, options);
-  const json = await response.json();
-  return json;
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Request failed:", response.status, errorText);
+      throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+    }
+
+    const contentType = response.headers.get("Content-Type") || "";
+    if (contentType.includes("application/json")) {
+      const json = await response.json();
+      return json;
+    } else {
+      const text = await response.text();
+      return text;
+    }
+
+  } catch (error) {
+    console.error("Fetch error:", error);
+    throw error;
+  }
 }
 
 // Section
@@ -105,9 +134,9 @@ const loadScene = (data: { id: number }) =>
 const addScene = (data: { name: string; description: string }) =>
   sendRequest("add/scene", "POST", data);
 const getFrequencyColors = (data: {}) =>
-                          sendRequest("/api/get/frequency-color-sequences", "GET", data);
+                          sendRequest("get/frequency-color-sequences", "GET", data);
 const updateFrequencyColors = (data: FrequencyColor) =>
-                                      sendRequest("/api/update/frequency-color-sequences", "POST", data);
+                                      sendRequest("update/frequency-color-sequences", "POST", data);
 const getScene = (data:{id:number}) => sendRequest("get/scene", "POST", data);
 const getActiveScene = () => sendRequest("get/active_scene", "GET");
 const saveScene = (data:{id:number}) => sendRequest("save/scene", "POST", data);
