@@ -133,10 +133,10 @@ export const ColorCard: React.FC<{ colorSequence: ColorSequence }> = ({
                   <SelectValue placeholder="Color Amount"></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">One</SelectItem>
-                  <SelectItem value="2">Two</SelectItem>
-                  <SelectItem value="4">Four</SelectItem>
-                  <SelectItem value="5">Five</SelectItem>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
                 </SelectContent>
               </Select>
             </div>
