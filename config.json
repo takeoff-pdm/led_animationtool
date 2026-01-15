@@ -1,6 +1,6 @@
 {
     "brightness": 1.0,
-    "led_count": 60,
+    "led_count": 120,
     "element_length": 60,
     "pin": 18,
     "frequency": 800000,
@@ -10,10 +10,10 @@
     "bpm": 128,
     "artnet": {
         "port": 6454,
-        "universe": 0,
-        "start_address": 1,
+        "universe": 1,
+        "start_address": 100,
         "strip_start_led": 0,
-        "strip_end_led": 59,
-        "debug": true
+        "strip_end_led": 120,
+        "debug": false
     }
 }
