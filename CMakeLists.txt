@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Include directories
 include_directories(
     ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/animation
     ${CMAKE_SOURCE_DIR}/src/util/configuration
     ${CMAKE_SOURCE_DIR}/src/util/database
@@ -44,6 +45,9 @@ set(SOURCES
     src/util/udp/UDP.cpp
 )
 
+set(BUILD_TEST OFF CACHE BOOL "Disable rpi_ws281x test binary" FORCE)
+add_subdirectory(rpi_ws281x)
+
 # Add the executable
 add_executable(LEDAnimationtool ${SOURCES})
 
@@ -57,6 +61,13 @@ include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(LEDAnimationtool
     PRIVATE
     ${Boost_LIBRARIES}
+)
+
+# Find and link nlohmann_json
+find_package(nlohmann_json REQUIRED)
+target_link_libraries(LEDAnimationtool
+    PRIVATE
+    nlohmann_json::nlohmann_json
 )
 
 # Find and link SQLite3

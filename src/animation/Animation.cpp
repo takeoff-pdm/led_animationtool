@@ -1,4 +1,6 @@
 #include "Animation.hpp"
+#include <iostream>
+#include <algorithm>
 #include "../Strip.hpp"
 #include "../util/database/SectionAnimationDB.hpp"
 #include "../util/database/AnimationDB.hpp"

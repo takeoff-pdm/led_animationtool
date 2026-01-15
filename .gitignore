@@ -1,1 +1,5 @@
 db.db
+build
+LEDAnimationtool
+rpi_ws281x
+CMakeFiles/

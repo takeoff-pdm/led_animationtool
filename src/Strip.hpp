@@ -4,7 +4,13 @@
 #include <thread>
 #include <atomic>
 #include <nlohmann/json.hpp>
+#if __has_include(<ws2811.h>)
 #include <ws2811.h>
+#elif __has_include("rpi_ws281x/ws2811.h")
+#include "rpi_ws281x/ws2811.h"
+#else
+#error "ws2811.h header not found. Ensure rpi_ws281x is available."
+#endif
 #include "util/udp/UDP.hpp"
 #include "util/database/ColorDB.hpp"
 #include "util/database/SectionDB.hpp"
