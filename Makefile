@@ -57,10 +57,10 @@ RM = cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/mik/work/private/led_animationtool
+CMAKE_SOURCE_DIR := $(shell readlink -f .)
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/mik/work/private/led_animationtool
+CMAKE_BINARY_DIR := $(shell readlink -f .)
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -132,9 +132,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/mik/work/private/led_animationtool/CMakeFiles /home/mik/work/private/led_animationtool//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start ./CMakeFiles ./CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/mik/work/private/led_animationtool/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start ./CMakeFiles 0
 .PHONY : all
 
 # The main clean target
