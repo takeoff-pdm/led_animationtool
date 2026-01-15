@@ -150,9 +150,12 @@ void Strip::update_config(const std::string& key, const nlohmann::json& value) {
 }
 
 void Strip::initialize_artnet_settings() {
-    nlohmann::json artnet_cfg = config.contains("artnet")
-        ? config["artnet"]
-        : nlohmann::json::object();
+    nlohmann::json artnet_cfg;
+    if (config.count("artnet") != 0) {
+        artnet_cfg = config["artnet"];
+    } else {
+        artnet_cfg = nlohmann::json::object();
+    }
 
     artnet_settings.port = artnet_cfg.value("port", 6454);
     artnet_settings.universe = static_cast<uint16_t>(artnet_cfg.value("universe", 0));
@@ -216,6 +219,7 @@ void Strip::restart_strip() {
 
 void Strip::set_pixel_color(int pixel, int red, int green, int blue) {
     if (pixel < 0 || pixel >= led_count) return;
+    if (!led_string.channel[0].leds) return;
 
     // Invert colors if your LED strip treats 0 as full-on white
     int inv_red   = 255 - static_cast<int>(red * brightness);
@@ -534,6 +538,9 @@ void Strip::set_data(const std::vector<char>& new_data) {
 void Strip::show_strip_handler(std::function<bool()> stop) {
     while (!stop()) {
         if (show_strip.exchange(false)) {
+            if (!led_string.channel[0].leds) {
+                continue;
+            }
             std::lock_guard<std::mutex> lock(led_mutex);  // protect rendering
             int status = ws2811_render(&led_string);
             if (status != WS2811_SUCCESS) {
