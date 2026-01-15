@@ -176,16 +176,13 @@ void Strip::initialize_artnet_settings() {
 void Strip::init_strip() {
     config = fetch_config();
 
-    ws2811_channel_t channels[2];
+    ws2811_channel_t channels[2]{};
 
     channels[0].gpionum = static_cast<int>(config["pin"]);
     channels[0].invert = static_cast<int>(config["led_invert"]);
     channels[0].count = static_cast<int>(config["led_count"]);
     channels[0].brightness = 255;
     channels[0].strip_type = WS2811_STRIP_GRB;
-
-    // Zero-initialize second channel
-    std::memset(&channels[1], 0, sizeof(ws2811_channel_t));
 
     led_string.freq = static_cast<int>(config["frequency"]);
     led_string.dmanum = static_cast<int>(config["dma"]);

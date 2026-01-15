@@ -77,9 +77,12 @@ target_link_libraries(LEDAnimationtool
     SQLite::SQLite3
 )
 
+find_package(Threads REQUIRED)
+
 # Link against ws2811 and stdc++fs
 target_link_libraries(LEDAnimationtool
     PRIVATE
+    Threads::Threads
     ws2811
     stdc++fs
 )
