@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>
+#include <optional>
 #include "util/database/ColorDB.hpp"
 #include "util/database/SectionDB.hpp"
 #include "util/database/SceneDB.hpp"
@@ -15,6 +16,7 @@
 #include "util/database/SceneAnimationDB.hpp"
 #include "util/database/AnimationDB.hpp"
 #include "util/udp/UDP.hpp"
+#include "util/udp/ArtNetPacket.hpp"
 #include "Animation.hpp"
 #include "FrequencyColors.hpp"
 #include "Color.hpp"
@@ -34,24 +36,32 @@
 
 using namespace std;
 
-Strip::Strip() {
+Strip::Strip() : artnet_animation(nullptr) {
     config = fetch_config();
 
-    brightness = config["brightness"];
-    led_count = config["led_count"];
-    frequency = config["frequency"];
-    bpm = config["bpm"];
+    brightness = config.value("brightness", 1.0f);
+    led_count = config.value("led_count", 60);
+    frequency = config.value("frequency", 800000);
+    bpm = config.value("bpm", 128);
 
-    data_received = false;
-    bpm_detection = bpm == -1;
-    color_sequence_id = bpm_detection ? 1 : 0;
-    if (bpm_detection) bpm = 128;
+    data_received.store(false);
+    color_sequence_id = 0;
+    pending_artnet_state.reset();
+    last_artnet_state.reset();
 
-    stop = false;
+    artnet_color_sequence = std::make_shared<ColorSequence>();
+    artnet_color_sequence->id = -1;
+    artnet_color_sequence->name = "ArtNet Runtime";
+    artnet_color_sequence->description = "Runtime colors provided via Art-Net";
+    artnet_color_sequence->selection = 0;
+    artnet_color_sequence->color_amount = 0;
+
+    stop.store(false);
     animating = nullptr;
-    show_strip = false;
+    show_strip.store(false);
 
     led_string = {};
+    initialize_artnet_settings();
 
     // Load sections
     auto section_data = SectionDB::fetch_sections();
@@ -106,15 +116,30 @@ Strip::Strip() {
     }
 
     active_scene = -1;
-    udp_server = new UDP(5005);
+    udp_server = new UDP(artnet_settings.port);
 
     create_animations();
     init_strip();
+    initialize_artnet_settings();
 
     if (ws2811_init(&led_string) != WS2811_SUCCESS) {
         std::cout << "ws2811_init failed!" << std::endl;
     }
-    std::cout << "Strip initialized with " << led_count << " LEDs." << std::endl;
+    else {
+        std::cout << "Strip initialized with " << led_count << " LEDs." << std::endl;
+    }
+
+    if (artnet_settings.debug) {
+        std::cout << "Art-Net listening on port " << artnet_settings.port
+                  << ", universe " << artnet_settings.universe
+                  << ", start address " << artnet_settings.start_address
+                  << ", LED range [" << artnet_settings.strip_start_led << ", "
+                  << artnet_settings.strip_end_led << "]" << std::endl;
+    }
+
+    if (!animating) {
+        animating = new std::thread(&Strip::animate, this, [this]() { return stop.load(); });
+    }
 }
 
 void Strip::update_config(const std::string& key, const nlohmann::json& value) {
@@ -122,6 +147,27 @@ void Strip::update_config(const std::string& key, const nlohmann::json& value) {
     config[key] = value;
     std::ofstream file(CONFIG_FILE);
     file << config.dump(4);
+}
+
+void Strip::initialize_artnet_settings() {
+    nlohmann::json artnet_cfg = config.contains("artnet")
+        ? config["artnet"]
+        : nlohmann::json::object();
+
+    artnet_settings.port = artnet_cfg.value("port", 6454);
+    artnet_settings.universe = static_cast<uint16_t>(artnet_cfg.value("universe", 0));
+
+    const uint16_t configured_start =
+        static_cast<uint16_t>(std::max(1, artnet_cfg.value("start_address", 1)));
+    artnet_settings.start_address = configured_start;
+
+    const int max_led_index = std::max(0, led_count - 1);
+    artnet_settings.strip_start_led =
+        std::clamp(artnet_cfg.value("strip_start_led", 0), 0, max_led_index);
+    artnet_settings.strip_end_led =
+        std::clamp(artnet_cfg.value("strip_end_led", max_led_index),
+                   artnet_settings.strip_start_led, max_led_index);
+    artnet_settings.debug = artnet_cfg.value("debug", true);
 }
 
 void Strip::init_strip() {
@@ -156,14 +202,15 @@ nlohmann::json Strip::fetch_config() {
 }
 
 void Strip::restart_strip() {
-    stop = true;
+    stop.store(true);
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(sleep_time() * 2100)));
 
     init_strip();
+    initialize_artnet_settings();
     if (ws2811_init(&led_string) != WS2811_SUCCESS) {
         std::cout << "ws2811_init failed!" << std::endl;
     }
-    stop = false;
+    stop.store(false);
     animating = new std::thread(&Strip::animate, this, [this]() { return stop.load(); });
 }
 
@@ -228,10 +275,19 @@ bool Strip::update_animation(int id, int section_id, const std::string& name, co
     return false; // Animation not found
 }
 
-bool Strip::set_brightness(int brightness) {
-    if (brightness < 0 || brightness > 255) return false;
-    this->brightness = brightness / 100;
-    update_config("brightness", this->brightness);
+bool Strip::set_brightness(int brightness, bool persist) {
+    if (brightness < 0) {
+        return false;
+    }
+    if (brightness > 255) {
+        brightness = 255;
+    }
+    this->brightness = static_cast<float>(brightness) / 100.0f;
+    if (persist) {
+        update_config("brightness", this->brightness);
+    } else {
+        config["brightness"] = this->brightness;
+    }
     return true;
 }
 
@@ -239,14 +295,19 @@ bool Strip::set_led_count(int led_count) {
     if (led_count < 0) return false;
     this->led_count = led_count;
     update_config("led_count", led_count);
+    initialize_artnet_settings();
     restart_strip();
     return true;
 }
 
-bool Strip::set_bpm(int bpm) {
+bool Strip::set_bpm(int bpm, bool persist) {
     if (bpm < 1) return false;
     this->bpm = bpm;
-    update_config("bpm", bpm);
+    if (persist) {
+        update_config("bpm", bpm);
+    } else {
+        config["bpm"] = bpm;
+    }
     return true;
 }
 
@@ -420,10 +481,54 @@ void Strip::add_animation(Animation* animation, Section section, ColorSequence c
 }
 
 void Strip::set_data(const std::vector<char>& new_data) {
-    // Convert char vector to string
-    std::string data_str(new_data.begin(), new_data.end());
-    data = data_str;
-    data_received = true;
+    const auto parsed = parse_artnet_dmx(new_data);
+    if (!parsed.has_value()) {
+        return;
+    }
+
+    const auto& frame = parsed->frame;
+    if (frame.universe != artnet_settings.universe) {
+        if (artnet_settings.debug) {
+            std::cout << "[ArtNet] Ignored packet for universe " << frame.universe << std::endl;
+        }
+        return;
+    }
+
+    if (frame.data.size() < artnet_required_channels()) {
+        if (artnet_settings.debug) {
+            std::cout << "[ArtNet] Frame length " << frame.data.size()
+                      << " shorter than required " << artnet_required_channels() << std::endl;
+        }
+        return;
+    }
+
+    const std::size_t offset = static_cast<std::size_t>(artnet_settings.start_address - 1);
+
+    ArtNetState state{};
+    state.sequence = frame.sequence;
+    state.alpha = frame.data[offset];
+    state.red = frame.data[offset + 1];
+    state.green = frame.data[offset + 2];
+    state.blue = frame.data[offset + 3];
+    state.bpm = frame.data[offset + 4];
+    state.animation = frame.data[offset + 5];
+
+    {
+        std::lock_guard<std::mutex> lock(artnet_mutex);
+        pending_artnet_state = state;
+    }
+    data_received.store(true);
+
+    if (artnet_settings.debug) {
+        std::cout << "[ArtNet] " << parsed->debug_message
+                  << " | alpha=" << static_cast<int>(state.alpha)
+                  << " r=" << static_cast<int>(state.red)
+                  << " g=" << static_cast<int>(state.green)
+                  << " b=" << static_cast<int>(state.blue)
+                  << " bpm=" << static_cast<int>(state.bpm)
+                  << " anim=" << static_cast<int>(state.animation)
+                  << std::endl;
+    }
 }
 
 void Strip::show_strip_handler(std::function<bool()> stop) {
@@ -440,101 +545,179 @@ void Strip::show_strip_handler(std::function<bool()> stop) {
 }
 
 void Strip::animate(function<bool()> stop) {
-    double avg = 0;
-    thread(&Strip::show_strip_handler, this, stop).detach();
+    std::thread(&Strip::show_strip_handler, this, stop).detach();
 
-    // Lambda to capture `this` and pass to the set_data function
-    std::function<void(const std::vector<char>&)> set_data = [this](const std::vector<char>& data) {
-        this->set_data(data);  // Calls the member function `set_data`
+    const auto receiver = [this](const std::vector<char>& data) {
+        this->set_data(data);
     };
 
-    // Create and start the UDP thread for receiving data
-    std::thread udp_thread([this, &stop, set_data]() {
-        udp_server->receive(stop, set_data);  // Correct: passing std::atomic<bool>&
+    std::thread udp_thread([this, &stop, receiver]() {
+        udp_server->receive(stop, receiver);
     });
     udp_thread.detach();
-    
 
-    auto starting_time = chrono::steady_clock::now();
+    auto loop_start = chrono::steady_clock::now();
     int step = 0;
     int beat = 0;
 
     while (!stop()) {
-        if (!running_animations.empty()) {
-            for (auto& animation : running_animations) {
-                animation->bpm = bpm;
-                animation->brightness = brightness;
+        if (data_received.exchange(false)) {
+            std::optional<ArtNetState> state_copy;
+            {
+                std::lock_guard<std::mutex> lock(artnet_mutex);
+                state_copy = pending_artnet_state;
+            }
+            if (state_copy.has_value()) {
+                apply_artnet_state(state_copy.value());
             }
         }
 
-        for (auto& animation : running_animations) {
-            
-            // if (bpm_detection == 1) {
-            //     switch (color_sequence_id) {
-            //         case 1:
-            //             if (animation->color_sequence->id != frequency_colors.color_sequence_id_1) {
-            //                 animation->color_sequence = std::make_shared<ColorSequence>(frequency_colors.color_sequence_id_1);
-            //             }
-            //             break;
-            //         case 2:
-            //             if (animation->color_sequence->id != frequency_colors.color_sequence_id_2) {
-            //                 animation->color_sequence = std::make_shared<ColorSequence>(frequency_colors.color_sequence_id_2);
-            //             }
-            //             break;
-            //         case 3:
-            //             if (animation->color_sequence->id != frequency_colors.color_sequence_id_3) {
-            //                 animation->color_sequence = std::make_shared<ColorSequence>(frequency_colors.color_sequence_id_3);
-            //             }
-            //             break;
-            //     }
-            // }
-
+        for (auto* animation : running_animations) {
+            animation->bpm = bpm;
+            animation->brightness = brightness;
             animation->animate(beat + animation->offset, step);
-
-            if (data_received && bpm_detection) {
-                data_received = false;
-                cout << "Server echoed: " << data << endl;
-
-                if (data.rfind("B", 0) == 0) {
-                    bpm = stoi(data.substr(1));
-                } else if (data.rfind("D0", 0) == 0) {
-                    cout << "Breakdown" << endl;
-                    color_sequence_id = 1;
-                } else if (data.rfind("D1", 0) == 0) {
-                    cout << "Drop" << endl;
-                    color_sequence_id = 2;
-                } else if (data.rfind("D2", 0) == 0) {
-                    cout << "andere Section" << endl;
-                    color_sequence_id = 3;
-                } else if (data.rfind("N", 0) == 0) {
-                    step = ANIMATION_STEPS - 1;
-                } else {
-                    cout << "Was diese?" << endl;
-                }
-            }
         }
 
-        auto elapsed = chrono::duration<double>(chrono::steady_clock::now() - starting_time).count();
-        double sleep_time_adjusted = (sleep_time() / ANIMATION_STEPS - elapsed);
+        const auto elapsed =
+            chrono::duration<double>(chrono::steady_clock::now() - loop_start).count();
+        const double target_interval = running_animations.empty()
+            ? 0.05
+            : std::max(0.0, static_cast<double>(sleep_time()) / static_cast<double>(ANIMATION_STEPS));
+        const double sleep_time_adjusted = target_interval - elapsed;
 
-        if (sleep_time_adjusted > 0) {
+        if (sleep_time_adjusted > 0.0) {
             this_thread::sleep_for(chrono::duration<double>(sleep_time_adjusted));
-        } else {
-            cout << "Code too slow!" << endl;
         }
 
-        starting_time = chrono::steady_clock::now();
-        show_strip = true;
+        loop_start = chrono::steady_clock::now();
 
-        step++;
-        if (step == ANIMATION_STEPS) {
-            beat = (beat + 1) % 16;
+        if (!running_animations.empty()) {
+            show_strip.store(true);
+            step = (step + 1) % ANIMATION_STEPS;
+            if (step == 0) {
+                beat = (beat + 1) % 16;
+            }
+        } else {
             step = 0;
-            avg = 0;
+            beat = 0;
         }
     }
 
-    color_wipe(Color(-1, 0, 0, 0, 0, 0)); // Turn off all LEDs
+    clear_running_animations();
+    apply_static_color(ArtNetState{0, 0, 0, 0, 0, 0, 0});
+    show_strip.store(true);
+}
+
+void Strip::apply_artnet_state(const ArtNetState& state) {
+    const auto current_brightness_percent =
+        static_cast<int>(std::round(brightness * 100.0f));
+    const int target_brightness_percent = static_cast<int>(
+        std::round(static_cast<float>(state.alpha) / 255.0f * 100.0f));
+    if (target_brightness_percent != current_brightness_percent) {
+        set_brightness(target_brightness_percent, false);
+    }
+
+    if (state.bpm > 0) {
+        const int mapped_bpm = std::clamp(
+            static_cast<int>(std::round(40.0 + (state.bpm / 255.0f) * 200.0f)),
+            40,
+            240);
+        if (bpm != mapped_bpm) {
+            set_bpm(mapped_bpm, false);
+        }
+    }
+
+    if (state.animation == 0) {
+        const bool color_changed = !last_artnet_state.has_value() ||
+            last_artnet_state->red != state.red ||
+            last_artnet_state->green != state.green ||
+            last_artnet_state->blue != state.blue ||
+            last_artnet_state->animation != state.animation;
+        if (color_changed || artnet_animation != nullptr) {
+            clear_running_animations();
+            apply_static_color(state);
+        }
+    } else {
+        ensure_artnet_animation(state);
+    }
+
+    last_artnet_state = state;
+}
+
+void Strip::apply_static_color(const ArtNetState& state) {
+    const auto [start_led, end_led] = artnet_led_range();
+    for (int led = start_led; led <= end_led; ++led) {
+        set_pixel_color(led, state.red, state.green, state.blue);
+    }
+    show_strip.store(true);
+}
+
+void Strip::ensure_artnet_animation(const ArtNetState& state) {
+    const auto [start_led, end_led] = artnet_led_range();
+
+    if (!artnet_animation) {
+        auto* strobe = new Strobe();
+        strobe->section_id = -1;
+        strobe->start_led = start_led;
+        strobe->end_led = end_led;
+        strobe->variation = 0;
+        strobe->direction = 0;
+        strobe->offset = 0;
+        strobe->strip = this;
+        strobe->bpm = bpm;
+        strobe->brightness = brightness;
+        strobe->color_sequence = artnet_color_sequence;
+        running_animations.push_back(strobe);
+        artnet_animation = strobe;
+    }
+
+    auto* strobe = dynamic_cast<Strobe*>(artnet_animation);
+    if (strobe) {
+        const uint8_t index = static_cast<uint8_t>(state.animation > 0 ? state.animation - 1 : 0);
+        strobe->variation = index % 3;
+        strobe->direction = (index / 3) % 4;
+        strobe->start_led = start_led;
+        strobe->end_led = end_led;
+        strobe->bpm = bpm;
+        strobe->brightness = brightness;
+        strobe->color_sequence = artnet_color_sequence;
+    }
+
+    Color runtime_color;
+    runtime_color.id = -1;
+    runtime_color.color_sequence_id = -1;
+    runtime_color.position = 0;
+    runtime_color.red = state.red;
+    runtime_color.green = state.green;
+    runtime_color.blue = state.blue;
+    artnet_color_sequence->selection = 0;
+    artnet_color_sequence->color_amount = 1;
+    artnet_color_sequence->set_runtime_colors({runtime_color});
+
+    show_strip.store(true);
+}
+
+void Strip::clear_running_animations() {
+    if (!artnet_animation) {
+        return;
+    }
+
+    running_animations.erase(
+        std::remove(running_animations.begin(), running_animations.end(), artnet_animation),
+        running_animations.end());
+    delete artnet_animation;
+    artnet_animation = nullptr;
+}
+
+std::pair<int, int> Strip::artnet_led_range() const {
+    if (artnet_settings.strip_start_led > artnet_settings.strip_end_led) {
+        return {0, std::max(0, led_count - 1)};
+    }
+    return {artnet_settings.strip_start_led, artnet_settings.strip_end_led};
+}
+
+std::size_t Strip::artnet_required_channels() const {
+    return static_cast<std::size_t>(artnet_settings.start_address - 1 + 6);
 }
 
 bool Strip::start_animate(int color_sequence_id, std::optional<Animation*> animation, 

@@ -7,5 +7,13 @@
     "dma": 10,
     "led_invert": false,
     "channel": 0,
-    "bpm": 128
+    "bpm": 128,
+    "artnet": {
+        "port": 6454,
+        "universe": 0,
+        "start_address": 1,
+        "strip_start_led": 0,
+        "strip_end_led": 59,
+        "debug": true
+    }
 }

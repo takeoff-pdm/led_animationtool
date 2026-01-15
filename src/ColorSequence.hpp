@@ -23,6 +23,7 @@ public:
     void update_colors();
     bool add_color(Color color);
     bool remove_color(int id);
+    void set_runtime_colors(std::vector<Color> colors);
 
 private:
     std::vector<Color> color_list;

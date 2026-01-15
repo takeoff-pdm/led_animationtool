@@ -3,6 +3,11 @@
 #include <functional>
 #include <thread>
 #include <atomic>
+#include <cstdint>
+#include <optional>
+#include <memory>
+#include <utility>
+#include <mutex>
 #include <nlohmann/json.hpp>
 #if __has_include(<ws2811.h>)
 #include <ws2811.h>
@@ -47,9 +52,9 @@ public:
     nlohmann::json fetch_config();
     void update_config(const std::string& key, const nlohmann::json& value);
     void show_strip_handler(std::function<bool()> stop);
-    bool set_brightness(int brightness);
+    bool set_brightness(int brightness, bool persist = true);
     bool set_led_count(int led_count);
-    bool set_bpm(int bpm);
+    bool set_bpm(int bpm, bool persist = true);
     bool add_section(const std::string& name, int start_led, int end_led);
     bool remove_section(int section_id);
     bool update_section(int section_id, const std::string& name, int start_led, int end_led);
@@ -85,10 +90,8 @@ public:
     std::atomic<bool> stop;
     std::atomic<bool> show_strip;
     int bpm;
-    bool data_received;
-    bool bpm_detection;
+    std::atomic<bool> data_received;
     int color_sequence_id;
-    std::string data;
     std::thread* animating;
     UDP* udp_server;
     std::vector<Animation*> running_animations;
@@ -98,4 +101,39 @@ public:
     int frequency;    
     FrequencyColors frequency_colors;
     std::mutex led_mutex;
+
+private:
+    struct ArtNetSettings {
+        int port;
+        uint16_t universe;
+        uint16_t start_address;
+        int strip_start_led;
+        int strip_end_led;
+        bool debug;
+    };
+
+    struct ArtNetState {
+        uint8_t alpha;
+        uint8_t red;
+        uint8_t green;
+        uint8_t blue;
+        uint8_t bpm;
+        uint8_t animation;
+        uint8_t sequence;
+    };
+
+    void apply_artnet_state(const ArtNetState& state);
+    void apply_static_color(const ArtNetState& state);
+    void ensure_artnet_animation(const ArtNetState& state);
+    void clear_running_animations();
+    std::pair<int, int> artnet_led_range() const;
+    std::size_t artnet_required_channels() const;
+    void initialize_artnet_settings();
+
+    ArtNetSettings artnet_settings;
+    std::optional<ArtNetState> pending_artnet_state;
+    std::optional<ArtNetState> last_artnet_state;
+    std::shared_ptr<ColorSequence> artnet_color_sequence;
+    Animation* artnet_animation;
+    std::mutex artnet_mutex;
 };

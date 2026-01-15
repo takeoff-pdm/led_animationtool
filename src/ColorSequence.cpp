@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <utility>
 
 #include "ColorSequence.hpp"
 #include "Color.hpp"
@@ -110,4 +111,9 @@ bool ColorSequence::remove_color(int id) {
     }
 
     return false;
+}
+
+void ColorSequence::set_runtime_colors(std::vector<Color> colors) {
+    color_list = std::move(colors);
+    color_amount = static_cast<int>(color_list.size());
 }

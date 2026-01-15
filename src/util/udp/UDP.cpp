@@ -36,7 +36,7 @@ void UDP::receive(const std::function<bool()>& stop, const std::function<void(co
     running = true;
 
     while (!stop()) {  // Call stop as a function (stop() is a std::function<bool()>)
-        std::vector<char> buffer(512);
+        std::vector<char> buffer(1024);
 
         ssize_t received = recvfrom(sock, buffer.data(), buffer.size(), 0, nullptr, nullptr);
         if (received > 0) {
