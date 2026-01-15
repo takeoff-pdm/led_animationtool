@@ -3,3 +3,4 @@ build
 LEDAnimationtool
 rpi_ws281x
 CMakeFiles/
+CMakeCache.txt
