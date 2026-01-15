@@ -218,12 +218,16 @@ void Strip::set_pixel_color(int pixel, int red, int green, int blue) {
     if (pixel < 0 || pixel >= led_count) return;
     if (!led_string.channel[0].leds) return;
 
-    // Invert colors if your LED strip treats 0 as full-on white
-    int inv_red   = 255 - static_cast<int>(red * brightness);
-    int inv_green = 255 - static_cast<int>(green * brightness);
-    int inv_blue  = 255 - static_cast<int>(blue * brightness);
+    const auto scale = std::clamp(brightness, 0.0f, 1.0f);
+    auto scale_component = [scale](int value) -> int {
+        return std::clamp(static_cast<int>(std::round(value * scale)), 0, 255);
+    };
 
-    int packed_color = (inv_red << 16) | (inv_green << 8) | inv_blue;
+    const int scaled_red = scale_component(red);
+    const int scaled_green = scale_component(green);
+    const int scaled_blue = scale_component(blue);
+
+    int packed_color = (scaled_red << 16) | (scaled_green << 8) | scaled_blue;
 
     std::lock_guard<std::mutex> lock(led_mutex);
     led_string.channel[0].leds[pixel] = packed_color;
