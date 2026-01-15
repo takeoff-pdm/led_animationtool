@@ -42,6 +42,7 @@ set(SOURCES
 
     src/util/configuration/AnimationData.cpp
 
+    src/util/udp/ArtNetPacket.cpp
     src/util/udp/UDP.cpp
 )
 
@@ -51,24 +52,23 @@ add_subdirectory(rpi_ws281x)
 # Add the executable
 add_executable(LEDAnimationtool ${SOURCES})
 
-# Find Boost
-set(BOOST_ROOT "/usr/local/include/")
-set(Boost_NO_SYSTEM_PATHS FALSE)
-find_package(Boost 1.88 REQUIRED COMPONENTS system thread)
-include_directories(${Boost_INCLUDE_DIRS})
-
-# Link Boost libraries
-target_link_libraries(LEDAnimationtool
-    PRIVATE
-    ${Boost_LIBRARIES}
-)
-
-# Find and link nlohmann_json
-find_package(nlohmann_json REQUIRED)
-target_link_libraries(LEDAnimationtool
-    PRIVATE
-    nlohmann_json::nlohmann_json
-)
+# Find and link nlohmann_json (header-only dependency)
+find_package(nlohmann_json CONFIG QUIET)
+if(nlohmann_json_FOUND)
+    target_link_libraries(LEDAnimationtool
+        PRIVATE
+        nlohmann_json::nlohmann_json
+    )
+else()
+    find_path(NLOHMANN_JSON_INCLUDE_DIR nlohmann/json.hpp)
+    if(NOT NLOHMANN_JSON_INCLUDE_DIR)
+        message(FATAL_ERROR "nlohmann_json headers not found. Install nlohmann-json-dev or provide nlohmann/json.hpp.")
+    endif()
+    target_include_directories(LEDAnimationtool
+        PRIVATE
+        ${NLOHMANN_JSON_INCLUDE_DIR}
+    )
+endif()
 
 # Find and link SQLite3
 find_package(SQLite3 REQUIRED)
